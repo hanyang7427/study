@@ -1,0 +1,215 @@
+数值转换函数：
+    str(obj)        __str__
+    cmomplex(x)     __complex__
+    int(obj)        __int__
+    float(obj)      __float__
+    bool            __bool__
+    例：
+      class MyInt():
+          def __init__(self,x)
+              self.data = x
+          def __float__(self):
+              try:
+                  self.data = float(x)
+              except:
+                  self.data = 0.0
+    bool测试运算符重写：
+      格式：
+        def __bool__(self):
+            ...
+      作用：
+        用于if，while语句的政治表达式中
+        用于bool()函数取值
+      说明：
+        当没有__bool__方法时，真值测试将以__len__的方法的返回值来进行布尔测试
+        当有__bool__也有__len__时，用__bool__
+
+in / not in 运算符重写：
+    重写方法：
+      def MyClass():
+          def __contains__(self,e):
+              pass
+    使用:
+
+索引和切片运算符的重写：
+    重写方法：
+      __getitem__(self,i)       # 用索引/切片获取值
+      __setitem__(self,i,value) # 设置索引或切片的值
+      __delitem__(self,i)       # 进行删除索引操作
+    作用：
+      让自定自定义对象能进行索引和切片操作
+    示意：
+      L = [1,2,3,4]
+      del L[0]      # L变为[1,2,3],buildin列表自带此功能
+    重写实现：
+     class MyList():
+          def __init__(self,*args):
+              self.data = [*args]
+          def __setitem__(self,index,value):
+              self.data[index] = value
+          def __getitem__(self,index):
+              return self.data[index]
+          def __delitem__(self,index):
+              del self.data[index]
+     myl = MyList(1,2,3,4)
+     myl[0] = 10     # myl[0] 从1变为10
+     print(a[0])     # 打印myl[0] -> 10
+     myl[0:5:2]      # 打印[1,3] 过程是将0:5:2变为slice对象传给index，index值为slice(0,5,2)
+     注：slice对象
+       0:5:2 为 slice(1,5,2)
+       当x:x:x 在[]当中时，会将 x:x:x 转换为slice(x,x,x)
+       myl[0:5:2] == myl.__getitem__(slice(0,5,2))
+函数模拟重写：
+    __call__方法：
+    作用：
+      让一个对象能像函数一样被调用
+    格式：
+      def __call__(self,参数列表):
+          ...
+    注：
+      此重写方法可以有一个或多个形参
+    示意：
+      class A:
+          pass
+      a = A()   # 创建一个实例，绑定到a
+      a()       # 出错：A Object is not callable
+
+      class A():
+          def __call__(self,x,y):
+              print(x,y)
+              return x+y
+      a = A()
+      b=a("hello","world!")       # 输出hello world 返回值b绑定 str "helloworld!"
+
+属性管理重写：
+    hasattr(obj, name[, default])
+    getattr(obj, name)
+    setattr(obj, name, value)
+    delattr(obj, name)
+    作用：
+      实现对特殊属性的管理
+      模拟一些特殊属性
+    重写格式：
+      def __setattr__(self,n,v)     设置属性
+      def __getattribute__(self,n)  获取属性
+      def __getattr__(self,n)       在__getattribute__产生AttributeError异常时重新尝试获取属性
+      def __delattr__(self,n)       删除属性
+      注：
+        以上四个方法当属性不存在时，需要产生AttributeError
+      例：
+        class Square():
+            length = 0
+            def __init__(self,x):
+                self.__class__.length = x
+            def __setattr__(self,name,value):
+                if name == "perimeter":
+                    self.__class__.length = value / 4
+                if name == "length":
+                    self.__class__.length = length
+            def __getattr__(self,name):
+                if name == "perimeter":
+                    return self.__class__.length * 4
+            #def __getattribute__(self):
+            def __del__(self,name)L
+                if name == "perimeter":
+                    print("不允许删除")
+                raise AttributeError
+        sq = Square(10)
+        # 下边这行会调用__getattr__()
+        sq.perimeter == sq.__getattr__(perimeter) == getattr(sq,perimeter)
+
+迭代器协议：
+    迭代器协议是指对象(实例)能够使用next函数获取下一项数据，在没有下一项数据时，
+    触发一个StopIteration异常来终止迭代的约定
+    # it是MyNum的一个实例
+    MyNum.__next__(it) == it.__next__() == next(it)
+    # iter(iterable) 生成一个 iterator
+    list.__iter__([1,2]) == [1,2].__iter__() == iter([1,2])
+    例：
+      class MyNum:
+      def __init__(self,b,e):
+          self.begin = b
+          self.end = e
+          self.curr = b
+      def __next__(self):               # 有__next__说明可以next()，是一个迭代器
+          if self.curr <= self.end:
+              r = self.curr
+              self.curr += 1
+              return r
+          else:
+              raise StopIteration       # 拿到最后StopIteration
+      def __iter__(self):               # __iter__让为迭代器可以迭代
+          self.curr = self.begin        # 没有词句下方的print([x for x in it])会为空列表
+          return self
+      it = MyNum(1,3)
+      for i in it:
+          print(i)
+      print([x for x in it])
+
+异常(高级)
+    with 语句：
+      语法：
+        with 表达式 [as 变量名]:
+            语句...
+        或
+        with 表达式1 [as 变量名1][,表达式2 [as 变量名2]...]：
+            语句...
+          说明：
+            as子句中的变量
+        作用：
+          使用与对资源进行访问的场合，确保使用过程中不管是否发生异常，都会执行必须的"清理"操作，并释放资源
+        例：
+          with open("file","r") as f:   # open("file","r")产生的对象由with环境管理
+              while True:
+                  3/0           # 触发异常但文件肯定会关闭
+                  l = f.readline()
+                  print(l, end =' ')
+                  if len(l) == 0:
+                    break
+
+环境管理器：
+    1、类内有__enter__ 和 __exit__方法的类被称为环境管理器
+    2、能够用with语句进行管理的对象必须是环境管理器
+    3、__enter__ 将在进入with语句时被调用，并返回 有as变量管理对象
+    4、__exit__将在离开with时被调用，且可以用参数来判断在离开with语句时是否有异常发生，并作出相应的处理
+    例：
+      class Cooker:
+          def open_gas(self):
+              print("正在打开天然气")
+          def close_gas(self):
+              print("正在关闭天然气")
+          def doworks(self):
+              print("正在制作小甜饼")
+          def __enter__(self):                          # 与exit一起标志着Cooker类的对象是环境管理器
+              self.open_gas()
+              return self                               # as的变量会绑定__enter__返回的对象
+          def __exit__(self,exc_type,exc_value,exc_tb): # 与enter一起标志着Cooker类的对象是环境管理器
+              self.close_gas()
+              if exc_type == None:
+                  print("with语句是异常退出的",伴随exc_value,exc_type)
+              else:
+                  print("with语句是正常退出的")
+      with Cooker() as c:
+          c.doworks()
+          3 / 0         # 产生错误类型ZeroDivisionError 和错误对象"division by zero"
+                        # exc_type绑定错误类型，exc_value绑定错误对象
+          c.doworks()
+
+注：
+    可以next的就是迭代器
+
+    为了遍历列表(list)，需要让列表支持next()，于是引进__iter__和__next__，给对象__iter__(返回self)
+    来让对象将可以做next操作并规定从哪里开始next(对于for in来说)，给对象添加__next__制定next返回值和
+    到哪里停止
+
+    for in 语句执行过程是先iter再next
+
+    A()代表A的实例
+    self是所有实例方法required
+
+    创建实例只能用A()不能用__init__因为init返回none
+    使用A()创建实例时会自动执行__init__()
+
+    a.h() == A.h(a)
+    加入A.h传入的第一参数是A的一个实例，那么这个实例将代替self，如果不是，将传给其他形参
+    a.h()会自动将a传给h的第一个参数(self)

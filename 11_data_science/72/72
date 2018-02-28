@@ -1,0 +1,105 @@
+统计星期均价
+代码：weekdays.py
+按周汇总价格数据
+代码：summary.py
+计算股票价格的平均真实波幅(ATR)
+ATR[i] = (ATR[i-1]x(N-1)+TR[i])/N, i=1,2,...,N-1
+N个交易日中的首日平均真实波幅(ATR[0])取各交易日真实波幅的平均值。
+代码：atr.py
+8.卷积计算
+       a         b
+---------- (X) ------
+1 2 3 4 5      6 7 8
+                 full
+    ---------------------------------
+    |             same              |
+    |   -----------------------     |
+    |   |       valid         |     |
+    |   |   |-----------|     |     |
+    6  19   40    61    82    67    40
+0 0 1  2    3     4     5     0     0
+8 7 6
+  8 7  6
+    8  7    6
+       8    7     6
+            8     7     6
+                  8     7      6
+                        8      7     6
+numpy.convolve()
+移动平均线
+代码：ma.py
+closing_prices
+[1/5 1/5 1/5 1/5 1/5]
+布林带
+中轨：就是平均线
+上轨：中轨加两倍标准差
+下轨：中轨减两倍标准差
+9.线性模型
+a b c d e f g
+                  ?
+aA+bB+cC=d
+bA+cB+dC=e
+cA+dB+eC=f
+-----------------
+dA+eB+fC = g
+-----------------
+/ a b c \     / A \     / d \
+| b c d  | X |  B | =   | e  |
+\ c d e /     \ C /      \ f /
+---------     -----      -----
+      a         x           b
+x = numpy.linalg.lstsq(a, b)
+g = bx
+价格预测
+linear.py
+趋势拟合
+kx + b = y
+kx1 + b = y1
+kx2 + b = y2
+...
+kxn + b + yn
+/ x1, 1 \     / k \     / y1 \
+| x2, 1  | X |  b | =   | y2  |
+| ...    |   \    /     | ... |
+\ xn, 1 /               \ yn /
+---------     ----      -------
+      a             x           b
+代码：trend.py
+10.ndarray的方法
+numpy.ndarray.clip()
+a = ...
+a.clip(min=3,max=4)
+numpy.ndarray.compress()
+从调用数组中筛选满足给定条件的元素。
+numpy.ndarray.prod()
+计算调用数组中各元素的乘积。
+numpy.ndarray.cumprod()
+计算调用数组中各元素的相乘的过程。
+三、numpy的便捷函数
+1.相关性
+A = [a1,a2,...,an]
+B = [b1,b2,...,bn]
+ave(A)=(a1+a2+...+an)/n
+ave(B)=(b1+b2+...+bn)/n
+dev(A)=A-ave(A)
+dev(B)=B-ave(B)
+var(A) = ave(dev(A)dev(A)) 方差
+var(B) = ave(dev(B)dev(B))
+std(A) = sqrt(var(A))
+std(B) = sqrt(var(B))
+cov(AB) = ave(dev(A)dev(B)) 协方差
+cov(BA) = ave(dev(B)dev(A))
+相关矩阵：
+    cov(AA)             cov(AB)
+---------------=1 -------------- [-1, 1]
+std(A)std(A)       std(A)std(B)
+    cov(BA)              cov(BB)                  记作[C]
+---------------      --------------=1
+std(B)std(A)       std(B)std(B)
+主对角线是两个1，辅对角线是两个真分数，绝对值越大代表相关性越强，绝对值越小表示相关性越弱，正值表示正相关，负值表示负相关。辅对角线上的两个值也叫相关性系数。
+numpy.cov(A,B) -> 相关性矩阵的分子矩阵
+numpy.corrcoef(A,B) -> 相关性矩阵
+分析两只股票收益率相关性
+代码：corr.py
+
+

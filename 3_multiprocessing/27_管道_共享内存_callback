@@ -1,0 +1,158 @@
+
+共享内存和队列\管道的区别
+共享内存是好比 两个虚拟机添加同一块硬盘，I/O在共享的磁盘上过程：
+进程a数据->共享内存->进程b数据(拷贝2次)
+管道和队列有缓冲区，放入缓冲区之前需要先序列化，过程：
+进程a数据->内存->缓冲区->内存->进程b数据(拷贝4次)
+##############################
+# 管道demo
+##############################
+# def consumer(pipe):
+#     (conn1,conn2) = pipe
+#     conn2.close()
+#     while True:
+#         try:
+#             item = conn1.recv()
+#             print(item)
+#         except:
+#             conn1.close()
+#             print("consumer done")
+#             break
+# def producer(seqeunce,send_pipe):
+#     for i in seqeunce:
+#         send_pipe.send(i)
+#
+# if __name__ == '__main__':
+#     (conn1,conn2) = Pipe()
+#     con_p = Process(target = consumer, args=((conn1,conn2),))
+#     con_p.start()
+#     conn1.close()
+#     seqeunce = [1,2,3,4,5]
+#     producer(seqeunce,conn2)
+#     conn2.close()
+共享内存
+有点：快速在进程之间传递数据
+缺点：多个进程操作一块内存区域，有安全风险，需要考虑锁的问题
+例如：
+两个进程a,b都到往共享内存写入数据，使用互斥量，a写时acquire(),这时如果要b如果要写就不能acquire到,等a写完，release后才能得到锁
+multiprocessing.Array 和 multiprocessing.Value
+# 创建共享数组
+a = multiprocessing.Array('i',10)
+# a是一个SynchronizedArray wrapper 对象
+>>>a
+<SynchronizedArray wrapper for <multiprocessing.sharedctypes.c_int_Array_10 object
+# 打印数组中的元素
+print(a[i])
+# 创建共享值
+v = multiprocessing.Value('i',2000)
+# v是是一个Synchronized wrapper
+>>> v
+<Synchronized wrapper for c_int(2000)>
+# 访问共享值
+>>>v.value
+##############################
+# 共享内存demo
+##############################
+import multiprocessing
+from datetime import datetime
+def trans(a,size):
+    print(num)
+    t = datetime.now()
+    for i in range(size):
+        print(a[i])
+    print('消耗了%s' % (datetime.now() - t))
+
+if __name__ == '__main__':
+    print('test share memory')
+    # 建立在进程间共享的共享内存数组
+    # 数组的类型是整形的，大小是100
+    num = 10
+    a = multiprocessing.Array('i',num)
+    # 创建进程，把共享数组和长度传递
+    p = multiprocessing.Process(target=trans,args=(a,num))
+    p.start()
+
+进程池
+预先创建一组进程，当有新任务来时，主进程通过某种方法分配给该组进程中的一个进程完成此任务，这种成组管理子进程的模式与实现称为进程池
+为什么使用进程池
+进程创建销毁需要cpu的时间开销，预先创建，以空间换时间，提供性能，通过合理分配任务，可以提高性能
+
+multiprocessing.Pool
+***API
+# 创建进程池，没有参数的Pool默认创建进程数是cpu核数
+p = multiprocessing.Pool()
+---向进程池添加任务的三种方式
+# 1向线程池添加任务，同步(一般不用)
+p.apply(fun[,arg[,kwds]])
+# 2向线程池添加任务，异步
+p.apply_async(fun[,arg[,kwds[,callback[,error_callback]]]])
+async代表异步，sync代表同步
+# 3 map
+p.map(func,iterable[,chunksize])
+# 关闭进程池，阻止任何更多的任务提交到进程池，一但所有任务完成，工作进程将退出
+p.close()
+# 进程池的join()必须在close()之后，意思是阻塞,执行完任务在继续往下执行
+p.join()
+注意：p.map不需要join,会直接执行完分配给进程池的任务
+     即会阻塞
+
+###########################################
+# 进程池apply_async异步(callback演示)demo 回调函数
+###########################################
+import os
+import time
+import multiprocessing
+def f(i):
+    print('process %d,%d' % (i,multiprocessing.current_process().pid))
+    time.sleep(3)
+    print("Pool:",i,os.getpid(),'end')
+    return i+'funcallback'
+def cdFunc(args):
+    print('callback',os.getpid(),args)
+if __name__ == '__main__':
+    p = multiprocessing.Pool(4)
+    for i in range(5):
+        p.apply_async(f,args=(i,),callback=cdFunc)      # callback后跟一个函数，该函数接收进程的返回值，并在主进程中执行(起到了通知主进程的作用)
+    p.close()
+    p.join()
+    # print("===================")
+    # p = multiprocessing.Pool(4)
+    # p.map(f,range(5))
+
+    while True:
+        time.sleep(2)
+        print(os.getpid())
+
+***当我们说阻塞和非阻塞的时候，是指一个进程的行为
+相对与我们的部门做好自己的事情，不许要外部干涉
+***当我门说异步和同步的时候，至少指两个进程的行为
+这是需要两个进程或线程之间协调，同步的执行流程是确定的，
+异步执行流程不可控，异步通常效率更高
+
+
+作业：
+1.修改数组的值
+2.进程池有3个进程，把4个任务放进去，并打印哪个进程执行了哪个任务 (apply,apply_async,map)
+3.1000瓶水中有一瓶毒药，有10只小白鼠，用10只小白鼠试出哪瓶是毒药
+本质，让10只老鼠的死活组合代表1000种可能
+############################################
+# 找毒药,老鼠怎么喝
+# def f(x):
+#     L = []
+#     for i in range(x):
+#         L.append(set())
+#     def Tobin():
+#         for i in range(2**x):
+#             yield ('{0:0>'+str(x)+'}').format('{0:b}'.format(i))
+#     for i in Tobin():
+#         counter=0
+#         for j in i:
+#             if j == '1':
+#                 L[counter].add(eval('0b'+i))
+#             counter += 1
+#     print(L)
+# f(10)
+
+
+
+

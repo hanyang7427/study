@@ -1,0 +1,107 @@
+数据库
+1. 建立blogdb数据库
+CREATE DATABASE IF NOT EXISTS 
+blogdb
+DEFAULT CHARACTER SET = UTF8
+2. 构建数据表
+-------- 用户表(tb_user)－用户的个人信息
+
+user_id         主键列　       auto_increment
+user_name       用户名         not null,unique
+user_password   密码          not null
+user_avatar     头像          [default null]
+user_city       城市          not null 例如:beijing
+user_createdat  数据创建时间   自动维护
+user_updatedat  数据更新时间　  自动维护
+
+create table if not exists tb_user(
+    user_id integer auto_increment,
+    user_name varchar(50) not null,
+    user_password varchar(20) not null,
+    user_avatar varchar(256),
+    user_city varchar(50) not null,
+    user_createdat datetime default current_timestamp,
+    user_updatedat datetime default current_timestamp on update current_timestamp,
+    primary key(user_id),
+    unique(user_name)
+)default charset = UTF8
+
+-------- 博客表(tb_blog)－博客的信息
+
+blog_id         主键列　        auto_incremnt
+blog_content　   博客正文　      not null
+blog_title      博客标题        not null
+blog_user_id    作者的信息       外键引用用户表主键
+blog_createdat  数据创建时间    自动维护
+blog_updatedat  数据更新时间　   自动维护
+
+create table if not exists tb_blog(
+    blog_id int auto_increment,
+    blog_user_id int not null,
+    blog_content varchar(1024) not null,
+    blog_title varchar(128) not null,
+    blog_createdat datetime default current_timestamp,
+    blog_updatedat datetime default current_timestamp on update current_timestamp,
+    primary key(blog_id),
+    foreign key(blog_user_id) references tb_user(user_id)
+)default charset = UTF8
+
+-------- 标签表(tb_tag)
+
+tag_id      主键列　auto_increment
+tag_name　   名称   not null
+
+create table if not exists tb_tag(
+    tag_id int auto_increment,
+    tab_name varchar(50) not null,
+    primary key(tag_id)
+)default charset = utf8
+
+-------- 博客标签关联表(tb_blog_tag)
+
+rel_id 主键列 auto_increment
+rel_blog_id     博客id  外键　引用博客表主键
+rel_tag_id      标签id　外键　引用标签表主键
+
+create table if not exists tb_blog_tag(
+    rel_id int auto_increment,
+    rel_blog_id int not null,
+    rel_tag_id int not null,
+    primary key(rel_id),
+    foreign key(rel_blog_id) references tb_blog(blog_id),
+    foreign key (rel_tag_id) references tb_tag(tag_id)
+)default charset = UTF8
+
+-------- 评论表(tb_comment)
+
+comment_id          主键列　    auto_increment
+comment_content     评论正文    not null
+comment_user_id     外键　     引用用户表主键
+comment_blog_id　    外键　     引用博客表主键
+comment_createdat　  自动维护
+comment_updatedat　  自动维护
+
+create table if not exists tb_comment(
+    comment_id int auto_increment,
+    comment_content varchar(1024) not null,
+    comment_user_id int not null,
+    comment_blog_id int not null,
+    comment_createdat datetime default current_timestamp,
+    comment_updatedat datetime default current_timestamp on update current_timestamp,
+    primary key(comment_id),
+    foreign key(comment_user_id) references tb_user(user_id),
+    foreign key(comment_blog_id) references tb_blog(blog_id)
+)default charset = UTF8
+
+
+insert into tb_user(user_name,user_password,user_city) values("abc","123","beijing")
+delete from tb_user where user_id = 5;
+update tb_user set user_name = 'aaa' where user_id = 5
+select * from tb_user
+
+操作数据表的一些要求
+1　不是所用的用户都发表了博客
+2　一个用户可以发表多个博客
+3　不是所有的博客都有标签
+4　不是所有博客都有评论
+5　可以自己评论自己的博客

@@ -1,0 +1,147 @@
+id函数：
+    id(obj)返回对象的标识(identity)
+运算符重写：
+    用自定义的规则实现实例之间的运算符操作
+    作用：
+      让实例像数学表达式一样进行运算操作或函数操作(+,-,*,/,...)
+      让实例像内建对象一样进行内建函数操作(len,str,...)
+      让程序简介易读
+  复习：
+    repr(obj)           # 给机器看的
+    eval(repr(s))==s    # always True
+    str(obj)            # 给人看的
+
+对象转字符串重写：
+    repr()函数的重写方法：
+      def __repr__(self):
+          ...
+    str() 函数重写方法：
+      def __str__(self):
+          ...
+    例：
+      class mynumber:
+          def __init__(self,value):
+              self.data = value
+          def __repr__(self):           # repr(mynumber(x)) 会执行并返回__repr__下的语句
+              print("repr被调用",end=' ')
+              return "mynumber(" + repr(self.data) + ")"
+          def __str__(self):            # str(mynumber(x)) 会执行并返回__str__下的语句
+              print("str被调用",end=' ')
+              return "mynumber(" + str(self.data) + ")"
+
+      print(mynumber(100))     # repr被调用 mynumber(100)
+      >>>mynumber(100)         # repr被调用 mynumber(100)
+      注：
+        1、如果对象没有__str__方法，则用repr(obj)函数的结果代替
+        2、print(x)时先会str(x)，上例有没有定义__str__会使用__repr__所以打印repr被调用
+        3、交互模式返回值会用__repr__
+算数运算符的重写：
+    +   __add__
+    -   __sub__
+    *   __mul__
+    /   __truediv__
+    //  __floordiv__
+    %   __mod__
+    **  __pow__
+    注：int类型的'+'定义在int类型的__add__方法里，int类型的__add__方法里的'+'使用c语言实现的
+二元运算符重写的格式：
+    理解：
+      1 * 2     # 实际执行1.__mul__(2)
+        注：int类型有内置方法__mul__其中实现了'*'运算符的功能
+    def __xxx__(self,other):
+        ...
+    注：二元运算符的重写方法的参数列表中只能有两个参数
+    重写说明：
+      运算符重写方法的参数已经有固定的含义，不可改变原有意义，除__call__方法外，其他重写方法的
+      参数个数不可改变
+    例：
+      class mynumber:
+          def __init__(self,value):
+              self.data = value
+          def __add__(self,rhs):
+              n = self.data + rhs.data
+              return mynumber(n)
+      n1 = number(100)
+      n2 = number(200)
+      n3 = n1.__add__(n2)       # n3为mynumber(300)
+      n3 = n1 + n2              # 等同于上一行
+
+反向算数运算符重写：
+    __radd__(self,lhs)      # 加法lhs + self
+    __rsub__(self,lhs)      # 减法lhs - self
+    __rmul__(self,lhs)      # 乘法lhs * self
+    __rtruediv__(self,lhs)  # 除法lhs / self
+    __rfloordiv__(self,lhs) # 地板除 lhs // self
+    __rmod__(self,lhs)      # 取模(取余) lhs % self
+    __rpow__(self,lhs)      # 幂 lhs ** self
+
+    lhs (left hand side) 左手边
+
+复合赋值算数运算符：增强算数作业
+    __iadd__(self,rhs)      # 加法 self += rhs
+    __isub__(self,rhs)      # 减法 self -= rhs
+    __imul__(self,rhs)      # 乘法 self *= rhs
+    __itruediv__(self,rhs)  # 除法 self /= rhs
+    __ifloordiv__(self,rhs) # 地板除 self //= rhs
+    __imod__(self,rhs)      # 取模(取余) self %= rhs
+    __ipow__(self,rhs)      # 幂 self **= rhs
+
+    rhs (lsft hand side) 右手边
+    注⚠️：
+      增强算数作业重写__i***___时，要在__i***__中加入return
+      例：
+        重写了x所属类的__iadd__之后，的在执行 x += y 时，return的对象会自动绑定x
+        执行x.__iadd__(y)则不会自动绑定，只是执行__iadd__下的语句
+        即 x += y  等同于  x = x.__iadd__(y)
+
+一元运算符的重写：
+    __neg__     - 负号
+    __pos__     + 正号
+    __invert__  ~ 取反
+    重写方法：
+      def __xxx__(self):
+          ...
+
+比较运算符的重写：
+    __lt__      <
+    __le__      <=
+    __gt__      >
+    __ge__      >=
+    __eq__      ==
+    __ne__      !=
+    重写方法：
+      def __lt__(self,rhs):
+          ...
+    注：
+      对于自定义类，重写了'=='，自动定义了'!='(等于的反面)
+位运算符重写：
+    __invert__      ~ 取反
+    __and__         & 位与
+    __or__          | 位或
+    __xor__         ^ 位异或
+    __lshift__      << 左移
+    __rshift__      >> 右移
+
+    见：help(int)
+
+内建函数的重写：
+    __abs__         abs(obj)
+    __len__         len(obj)
+    __reversed__    reversed(obj)
+    __round__       round(obj)
+    ...
+
+    见：help(int)
+重写总结：
+    重写可以实现自定义类的示例之间的加减乘除等操作(原本不能)
+    注意：二元运算符两边的自定义类示例如果都有运算符重写，先用前边的，前边不能运算，用后边的r*(反向算数运算)
+    例子：
+        class mylist():             # 自定义list
+            def __init__(self,*x):
+                self.data = [*x]
+            def __add__(self,rhs):      # '+'右边
+                return mylist(self.data + rhs)
+        mylist(1,2) + [3,4]
+        等同于：
+        mylist(1,2).__add__([3,4])
+

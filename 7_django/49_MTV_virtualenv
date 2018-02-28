@@ -1,0 +1,220 @@
+MVC和MTV(面试)   试图，模型，控制
+
+框架：整个或部分系统的重用设计，或者说被开发者定制的骨架
+为什么使用框架：
+  可以快速开发
+  可以解决大多数问题
+  bug少，稳定性高，经过验证
+
+
+重量级框架：功能全面，代码丰富
+轻量级框架：使用灵活方便
+
+URL：统一资源 定位符
+通过这个人的地理位置(定位)确定一个人
+URI：统一资源 标识符
+通过身份证号(标识符)确定一个人
+
+网站请求过程
+输入域名，域名解析
+tcp三次握手
+浏览器发送http请求，overtcp
+web服务器接受http请求
+web服务器处理http请求，并进行必要的数据交换
+将响应内容回发给客户端
+浏览器解析html
+
+分布：多终端分别完成任务的一部分，达到提高效率的目的
+集成：使用多终端，同时处理更多的并发任务，提高任务的执行能力
+
+python的web框架
+django  io多路复用(select,poll,epoll) 重量级
+tornado 轻量级     异步非阻塞   交互性强
+flask   轻量级框架  快速开发
+web2py
+webpy
+
+django 2005年诞生  是MTV框架模式
+优点：
+  1.开源框架，有完美的文档支持
+  2.解决方案众多，内部功能支持较多
+  3.优雅的url，路由完备
+  4.自助管理后台
+缺点：系统紧耦合
+
+什么是低耦合：模块之间的依赖少
+什么是高内聚：一个模块完成一个功能，把它做好
+
+设计模式：变成解决某一类问题的思路，是方法论
+框架模式：框架是代码的重用，框架模式解决的是如何设计框架的代码，里面可能包含了多种设计模式思想
+流行的框架模式：
+  MVC,MTV,MVP,MVVM,CBD,ORM
+MVC：
+  M     model 模型      应用程序中用于处理数据逻辑的部分，负责在数据库中存取数据
+  V     view  视图      应用程序中处理数据显示的部分，通常视图是依据模型创建的
+  C     control 控制器  应用程序中处理用户交互的部分,通常负责从视图获取数据，控制输入，向模型发送数据
+MTV：
+  M     模型  对应MVC:M
+  T     模板  对应MVC:V
+  V     视图  对应MVC:C
+框架模式是为了降低耦合度
+
+a=input("输入数字")     # input函数提供输入界面(是view)，变量a是负责逻辑和输入的交互(是control)
+a = a + 1              # a = a + 1  是逻辑(model)
+print(a)               # print函数提供输出界面(是view)
+没有变量a(control)就不能把输入的数字保存起来，也不能做逻辑运算(a=a+1)
+
+
+———————————————————— pip ————————————————————
+安装pip
+  sudo apt install python-pip
+  sudo apt install python3-pip
+
+$ pip3 -help
+Usage:
+  pip <command> [options]
+Commands:
+  install                     Install packages.
+  download                    Download packages.
+  uninstall                   Uninstall packages.
+  freeze                      Output installed packages in requirements format.
+  list                        List installed packages.
+  show                        Show information about installed packages.
+  search                      Search PyPI for packages.
+  wheel                       Build wheels from your requirements.
+  hash                        Compute hashes of package archives.
+  completion                  A helper command used for command completion
+  help                        Show help for commands.
+
+记录当前环境
+pip3 freeze > requirements.txt
+自动安装环境
+pip3 install -r requirements.txt
+
+使用pip安装的包在哪里
+/usr/local/lib/python3.5/dist-packages/
+
+—————————————————————— virtualenv ——————————————————
+pip3 install virtualenv     # pip安装virtualenv包
+mkdir myproject
+virtualenv my_env           # 新建virtualenv
+source my_env/bin/activate  # 进入my_env
+deactivate                  # 退出
+
+virtualenv -p /usr/bin/python2.7 python2.7     # 使用-p选项在创建虚拟环境的时候指定python版本
+
+————————————————————— virtualenvwrapper ——————————————
+虚拟环境管理工具
+virtualenvwrapper是virtualenv的扩展管理包
+pip3 install virtualenvwrapper      # pip安装virtualenvwrapper
+vi ~/.bashrc 添加                                # 配置
+export WORKON_HOME=~/myporject                  # 虚拟环境都放在myproject下
+source /usr/local/bin/virtualenvwrapper.sh      # 初始化
+
+mkvirtualenv env1       # 创建环境env1，会自动进入该目录，并激活该环境。
+mkvirtualenv env2       # 创建环境env2，会自动进入该目录，并激活该环境。
+
+workon env1     # 切换环境
+workon env2     # 切换环境
+workon          # 列出已有环境
+deactivate      # 退出环境
+rmvirtualenv    # 删除环境
+
+—————————————————————————————— django ——————————————————————————
+django windows下的安装
+使用pip安装
+  > pip3 install django==1.11.8
+使用python安装
+  1.官网下载django的包
+  2.解压，进如文件夹
+  3.> python setup.py install
+  4.安装后，django会启动文件自动
+
+django linux下的安装
+在python2安装
+  $ sudo pip install django==1.11.8
+  $ python setup.py install
+在python3中安装
+  $ python3 setup.py install
+  $ sudo pip3 install django==1.11.8
+查看版本
+  django.VERSION
+  django.VERSION
+
+———————————————————————————————— django 创建项目 ——————————————————————————
+$ django-admin startproject mysite
+$ tree mysite/
+mysite/
+├── manage.py           # 项目的命令脚本
+└── mysite
+    ├── __init__.py     # 表示这是一个包
+    ├── settings.py     # 项目设置文件
+    ├── urls.py         # 项目基础路由配置文件
+    └── wsgi.py         # uwagi接口文件
+1 directory, 5 files
+$ mysite/manage.py runserver 0.0.0.0:8888
+
+———————————————————————————————— settings.py ——————————————————————————————
+# BASE_DIR表示网站的根目录
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# 允许访问的地址
+ALLOWED_HOSTS = ['*']
+# 路径在/usr/lib/python3/dist-packages/django/bin/
+INSTALLED_APPS = (
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+)
+# 基础中间件
+MIDDLEWARE_CLASSES = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+)
+# 设置全局路由
+ROOT_URLCONF = 'mysite.urls'
+# 模板设置(MTV中的M)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+# 数据库设置(MTV中的T)
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),   # django 自动集成sqlite3
+    }
+}
+# 语言编码
+# LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-Hans'
+# 时区
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
+# 是否自动优化
+USE_I18N = True
+# 是否使用当前时区的格式
+USE_L10N = True
+# 是否使用自动时区还是设置的时区
+USE_TZ = True
+# 静态文件配置(css...)
+STATIC_URL = '/static/'

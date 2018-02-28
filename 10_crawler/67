@@ -1,0 +1,206 @@
+———————————————————————————————— 模拟post请求 ———————————————————————————————
+#-*- coding:utf-8 -*-
+import urllib
+import urllib2
+# 通过抓包的方式获取的url，并不是浏览器上显示的url
+url = "http://fanyi.youdao.com/translate?smartresult=dict&smartresult=rule&smartresult=ugc&sessionFrom=null"
+#http://fanyi.youdao.com/translate_o?smartresult=dict&smartresult=rule
+ua_headers = {
+    "Accept": "application/json, text/javascript, */*; q=0.01",
+    "X-Requested-With": "XMLHttpRequest",
+    "User-Agent": "Mozilla/5.0 (Windows NT 5.1; U; en; rv:1.8.1) Gecko/20061208 Firefox/2.0.0 Opera 9.50",
+    "Referer": "http://fanyi.youdao.com/",
+    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+}
+# 接受用户的输入
+keyword2Search = raw_input("请输入需要翻译的单词: ")
+#构造post的数据
+#i=door&from=en&to=zh-CHS&smartresult=dict&client=fanyideskweb&salt=1514856673717&sign=16f7ca7bca8393b9640806cf44d3529f&doctype=json&version=2.1&keyfrom=fanyi.web&action=FY_BY_REALTIME&typoResult=false
+formdata = {
+"i":keyword2Search,
+"from":"en",
+"to":"zh-CHS",
+"smartresult":"dict",
+"client":"fanyideskweb",
+"salt":"1514858369950",
+"sign":"3bc74cd12c6edafc1c159a65b0f0df2d",
+"doctype":"json",
+"version":"2.1",
+"keyfrom":"fanyi.web",
+"action":"FY_BY_REALTIME",
+"typoResult":"false"
+}
+# 对post的数据做urlencode
+data = urllib.urlencode(formdata)
+request = urllib2.Request(url, data=data,headers=ua_headers)
+html = urllib2.urlopen(request)
+print(html.read().decode('utf-8'))
+
+—————————————————————————— REDIS ——————————————————————————
+数据类型:
+  STRING(字符串)
+  HASH(哈希)
+  LIST(列表)
+  SET(集合)
+  ZSET(sorted set有序集合)
+  ...
+
+从右侧插入:RPUSH fruits 'apple' 'orange' 'banana'
+从左侧读取:LRANGE fruits 0 1
+
+作用:
+在内存中处理网页信息
+去重;可以设置信息的有效时间
+高效的缓存，可以做一个逻辑上的中转处理
+
+———————————————————————————— https ————————————————————————————
+#-*- coding:utf-8　-*-
+import urllib2
+import ssl
+# 忽略SSL安全认证
+context = ssl._create_unverified_context()
+url = "https://www.12306.cn/mormhweb/"
+ua_headers = {"User-Agent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:57.0) Gecko/20100101 Firefox/57.0"}
+request = urllib2.Request(url, headers=ua_headers)
+response = urllib2.urlopen(request, context=context)
+print(response.read())
+
+
+
+
+
+从DOM中拿数据的方法
+正则,XPath,LXml,BeautifulSoup
+Beautiful速度慢
+
+———————————————— BeautifulSoup ——————————————
+########### testBS.html
+<html>
+<head><title>Test BS</title></head>
+<body>
+    <p class='title' name='lesson'> <b>XPath</b> </p>
+    <a href="http://www.baidu.com">Link</a>
+</body>
+</html>
+
+########### testBS.py
+from bs4 import BeautifulSoup
+#soup = BeautifulSoup(open('testBS.html'),"html.parser")
+soup = BeautifulSoup(open('testBS.html'),"lxml")
+print(type(soup.title))
+print(soup.title)
+# <head><title>Test BS</title></head>
+print(soup.title.string)
+# <p class='title' name='lesson'> <b>XPath</b> </p>
+print(soup.p.b.string)
+
+———————————————————— XML ————————————————————
+########### bookstore.xml
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<bookstore>
+    <book>
+        <title lang="eng">Harry Potter</title>
+        <price>29.99</price>
+    </book>
+    <book>
+        <title lang="eng">Learning XML</title>
+        <price>39.95</price>
+    </book>
+</bookstore>
+
+########### test_lxml.py
+#-*- coding:utf-8　-*-
+from lxml import etree # lxml, XPath
+from xml.dom import minidom # dom, minidom
+#----------------lxml, XPath -------------------
+#html = etree.parse("bookstore.xml")
+# 使用XPath获取需要得到的信息
+# xpath w3c文档参照
+#result = html.xpath('/bookstore/book[price>29.00]/price')
+#print(len(result))
+#print(result)
+#print(result[0].xpath('string(.)'))
+#print(result[1].xpath('string(.)'))
+#----------------dom, minidom -------------------
+doc = minidom.parse("bookstore.xml")
+root = doc.documentElement
+books = root.getElementsByTagName("book")
+for book in books:
+    title = book.getElementsByTagName('title')
+    print(title[0].childNodes[0].nodeValue)
+
+———————————————————————— Json序列化 ————————————————————————
+import json
+jsonDic = {'One':'1', 'Two':'2'}
+jsonDumps = json.dumps(jsonDic)   # json encode
+print(jsonDumps) #{"Two": "2", "One": "1"}
+jsonLoads = json.loads(jsonDumps) # json decode
+#print(jsonLoads)
+for key,value in jsonLoads.items():
+    print(key, value)
+
+
+
+# 将post_data转换为字典(也可以使用工具)
+>>> str
+'i=door&from=en&to=zh-CHS&smartresult=dict&client=fanyideskweb&salt=1514856673717&sign=16f7ca7bca8393b9640806cf44d3529f&doctype=json&version=2.1&keyfrom=fanyi.web&action=FY_BY_REALTIME&typoResult=false'
+>>> dict([item.split('=') for item in str.split('&')])
+{'salt': '1514856673717', 'smartresult': 'dict', 'doctype': 'json', 'to': 'zh-CHS', 'client': 'fanyideskweb', 'typoResult': 'false', 'from': 'en', 'action': 'FY_BY_REALTIME', 'version': '2.1', 'keyfrom': 'fanyi.web', 'sign': '16f7ca7bca8393b9640806cf44d3529f', 'i': 'door'}
+
+———————————————————————————————— Cookie ———————————————————————————————
+# -*- coding:utf-8 -*-
+import urllib2
+# Accept
+# text/html,application/xhtml+xm…plication/xml;q=0.9,*/*;q=0.8
+# Accept-Encoding
+# gzip, deflate
+# Accept-Language
+# zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+# Connection
+# keep-alive
+# Cookie
+# anonymid=jbxdn1id-j9ztno; depo…shome; ch_id=10016; wp_fold=0
+# Host
+# www.renren.com
+# Referer
+# http://zhibo.renren.com/top
+# Upgrade-Insecure-Requests
+# 1
+# User-Agent
+# Mozilla/5.0 (X11; Ubuntu; Lixnu…) Gecko/20100101 Firefox/57.0
+url = "http://www.renren.com/961482489/profile"
+ua_headers={
+"Host":"www.renren.com",
+"Accept":"text/html,application/xhtml+xm…plication/xml;q=0.9,*/*;q=0.8",
+"Accept-Language": "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
+"Connection": "Keep-Alive",
+"Cookie":"anonymid=jbxdn1id-j9ztno; depovince=BJ; _r01_=1; jebe_key=b813bd94-73d6-4996-9caa-8ecee0341f55%7C65617699d9107c4fa92a82edbc369e2a%7C1514882880503%7C1%7C1514882880819; _de=7113E26C6AAF3646A83FD76533146E3C; ln_uact=18210577472; ln_hurl=http://head.xiaonei.com/photos/0/0/men_main.gif; wp_fold=0; jebecookies=483ac951-1d7c-4ffe-9c82-96b167c3771a|||||; JSESSIONID=abcSaJCP-Jscz_Zbtf2cw; ick_login=edaf2bd4-d771-4bda-aa9d-cba6880e7768; p=a199fbb8d4351b25c8b428d44b2fa2c29; first_login_flag=1; t=d36ae4881b148a477142fdd73ee87a079; societyguester=d36ae4881b148a477142fdd73ee87a079; id=961482489; xnsid=49eac2f8; loginfrom=syshome",
+"Referer":"http://zhibo.renren.com/top",
+"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linu…) Gecko/20100101 Firefox/57.0"
+}
+request = urllib2.Request(url, headers=ua_headers)
+response = urllib2.urlopen(request)
+with open("myrenren.html", "w") as f:
+    f.write(response.read())
+print("over")
+
+———————————————————— 避免重复爬去 —————————————————————
+记录抓取历史
+1.将访问过的url保存到数据库
+2.通过数据库的转保证唯一性，效率低
+3.将所有的url保存到内存中(Redis)，这样可以用接近O(1)的代价就可以确定当前url是否已经访问过了，耗内存
+4.将url做MD5,SHA-1等进行单项HASH，放入Redis或HashSet，以便去重
+5.Bit-Map方法:将URL的MD5值再次HASH，用一个或多个bit位记录一个URL
+6.bloom filter:3次hash
+
+———————————————————— Bit-map ————————————————————
+from bitarray import bitarray
+import mmh3
+# 设置bitmap的空间
+offset = 2^31-1
+bit_array = bitarray(4*1024*1024*1024)
+bit_array.setall(0)
+# 对url做hash，把相应的位置1
+url = "http://www.baidu.com"
+b1 = mmh3.hash(url,42)+offset
+bit_array[b1] = 1

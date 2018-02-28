@@ -1,0 +1,238 @@
+
+manage.py runserver 0.0.0.0:8888
+
+1.加载setting
+  1)全局配置文件
+  /usr/lib/python3/dist-packages/django/conf/global_settings.py
+  2)app配置文件
+  BASE_DIR/APP/ROOT_APP/setting.py
+  from django.conf import settings
+  print(settings.DEBUG)
+2.manage.py
+$ manage.py
+Available subcommands:
+
+[auth]
+    changepassword
+    createsuperuser
+
+[django]
+    check               检查项目的完整性
+    compilemessages     编译语言文件
+    createcachetable    创建缓存表
+    dbshell             进入django数据库的shell交互模式
+    diffsettings        查看setting配置与原有配置的区别
+    dumpdata            导出数据
+    flush               清空数据
+    inspectdb           将数据库导出为models
+    loaddata            导入数据
+    makemessages        创建语言文件
+    makemigrations      创建数据库日志
+    migrate             根据日志同步数据库
+    runfcgi
+    shell               进入django shell
+    showmigrations      查看数据库日志
+    sql
+    sqlall
+    sqlclear
+    sqlcustom
+    sqldropindexes
+    sqlflush
+    sqlindexes
+    sqlmigrate
+    sqlsequencereset
+    squashmigrations    数据库迁移
+    startapp            创建app
+    startproject
+    syncdb
+    test                启动测试脚本
+    testserver
+    validate
+
+[sessions]
+    clearsessions       清空会话
+
+[staticfiles]
+    collectstatic       收集静态文件
+    findstatic          查找静态文件
+    runserver
+
+—————————————————————— urls.py ——————————————————————
+$ cat urls.py
+"""day02 URL Configuration
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/1.8/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
+Including another URLconf
+    1. Add an import:  from blog import urls as blog_urls
+    2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
+"""
+from django.conf.urls import include, url
+from django.contrib import admin
+
+urlpatterns = [                                 # urlpatterns是 全局路由列表
+    url(r'^admin/', include(admin.site.urls)),  # url函数返回一个url对象
+]
+################ 注意在BASE_DIR下的与BASE_DIR同名的目录下的urls.py是全局路由表 ############
+
+
+url函数
+url(regx, views, kwargs=None, name=None)
+regx : 正则表达式，用来匹配request请求中的url
+views: url处理函数，值为自己写的函数，或系统自带的函数
+kwargs：关键字参数，用来传参
+name： 给当前url起一个名字，常配合模板标签{%url%}使用
+从上到下匹配，找到的第一个匹配项停止，不会继续向下查找
+
+———————————————————————————————————————— 使用app ——————————————————————————————————
+1.创建app
+$ mange.py startapp myapp       # 在当前目录中初始化一个myapp目录(注意是当前目录)
+tree myapp/
+myapp/
+├── admin.py
+├── __init__.py         # 这是一个包
+├── migrations          # 存放数据库日志
+│   └── __init__.py
+├── models.py           # 模型模块(MTV:M)
+├── tests.py            # 测试模块
+├── views.py            # 视图模块
+└── apps.py             #
+2.将app添加到setting.py中的INSTALLD_APPS列表中
+INSTALLED_APPS = (
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'myapp'                             # 添加新建的myapp
+)
+3.设置全局路由BASE_DIR/name_of_BASE_DIR/urls.py
+vi mysite/urls.py
+urlpatterns = [
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^index',include('myapp.urls'))        # 添加此项
+    # url(r'myapp/fn', fn)                      # 直接访问myapp的应用，需要先from myapp.views import *
+]
+4.给app写view
+$ vi myapp/views.py
+from django.shortcuts import render
+from django.http import HttpResponse
+def index(request):                     # 注意view中的定义的函数第一个形参必须是request
+    return HttpResponse("index page")
+5.为app设置路由(urls.py)
+$ cd myapp
+$ vi urls.py
+from django.conf.urls import url
+from myapp.views import index       # 前提是在myapp目录下的views.py中def index
+urlpatterns = [
+    url(r'index',index)
+]
+6.访问
+http://localhost:8000/index/index
+
+———————————————————————————————————————— url向view传参 ——————————————————————————————————
+1.使用正则表达式分组
+$ vi urls.py
+urlpatterns = [
+    url(r'(arguments1)/(\d{2})',f1)              # 给f1传group(1),和group(2)
+]
+2.使用命名分组传关键字参数
+urlpatterns = [
+    url(r'(?P<name_of_group>arguments2)/',f2)    #  f2(name_of_group='arguments2')
+]
+3.url函数字典传参
+urlpatterns = [
+    url(r'arguments3/',f3,{'x':'zhangsan'})      # f3(x='zhangsan')
+]
+
+django 模板 (T)
+1.设置模板的查找路径
+$ vi setting.py
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': ['templates',html],                                     # 表示在BASE_DIR目录下的templates或html中查找模板
+        'APP_DIRS': True,                                               # 在BASE_DIR的指定目录找不到则在app的templates里找
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+模板的查找顺序
+  #1.先从DIRS配置的文件夹中查找模板
+  #2.如果未找到，则会自动从注册的app下找templates文件夹，在这个个文件夹下查找目标
+  #3.如果均未找到则表示没有找到需要的模板，如果找到了一个则不会继续找
+  注意：不同的app templates目录不要有重名的html文件
+2.将模板放到指定位置
+mkdir myapp/templates
+vi form.html
+...
+<title>
+    {{title}}
+</title>
+...
+3.view中调用模板
+$ vi myapp/views
+from django.shortcuts import render
+from django.template import loader
+from django.http import HttpResponse
+def template(request):
+    t = loader.get_template('form.html')        # 在template目录里找html文件
+    html=t.render({"title":"MY TITLE"})         # 将html渲染为HttpResponse对象，并传参title="MY TITLE"
+    return HttpRespone(html)
+
+另一种rander函数用法(常用，与上边的t.render不同)
+return render(request,'form.html',{'title':'my title'})  # render 返回HttpRespone对象
+return render('form.html',{'title':'my title'})          # 老版本的写法
+
+———————————————————————————— 模板的变量 ——————————————————————
+变量
+cd myapp/templates
+vi template_args.html
+...
+<p>
+    num:{{arg1}}
+    list:{{arg2}}
+    dict:{{arg3}}
+    tuple:{{arg4}}
+</p>
+$ vi myapp/views
+from django.shortcuts import render
+from django.template import loader
+from django.http import HttpResponse
+def template_args(request):
+    arg1 = 1
+    arg2 = [1,2,3]
+    arg3 = {"name":"zhangsan","sex":"male"}
+    arg4 = ('2m','3m','4m')
+    return render(request,'template_args.html',{'arg1':1})
+    return render(request,'template_args.html',locals())    # 使用locals传当前作用域的所有变量
+模板变量名与字典的键一致，得到的是字典中对应的键的值
+locals()只能得到局部变量
+
+—————————————————————— Context ——————————————————————
+Context的本质就是一组用字典封装好的准备送给template的参数，在view和template中扮演桥梁的角色
+# Create a class with a single method
+>>> class Favorite():
+>>>    def get_color(self):
+>>>        return 'blue'
+>>>
+>>> favorite = Favorite()
+>>> c = Context({'favorite': favorite })
+>>> t = Template('My favorite color is {{ favorite.get_color }}.')
+>>> print t.render(c)
+My favorite color is blue.

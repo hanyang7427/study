@@ -1,0 +1,200 @@
+装饰器decorator:
+    装饰器是一个函数，主要作用是用来包装另一个函数或类
+    包装的目的是在不改变原函数名的情况下，改变被包装函数对象的行为
+    语法:
+      定义装饰器：
+        def deco(fn):
+            ...
+            return fn       # 可以不return传入函数
+      调用装饰器：
+        @deco
+        def myfunc(x):
+            ...
+    例：
+      def deco(fn):
+          print("装饰器被调用")
+          print(fn)
+          return lambda: print("hello world")
+      @deco
+      def myfunc():
+          print("函数mufunc被调用")
+      myfunc()      # myfunc() 已经变成print("hello world")
+    注：
+      @deco在定义函数上一行使用，表示
+      1、把下边定义的函数传入deco并执行deco()
+      2、下边定义的函数绑定到deco的返回的对象(一般是下边定义的函数，也可以是值)
+      3、下边定义的函数已经改变为deco返回的对象
+      @deco             \     /          def fn():
+      def fn():          } = {               ...
+          ...           /     \          fn = deco(fn)
+    被装饰函数带有参数的装饰器：
+      例：
+        def msg_service(fn):
+            def savemoney2(name,x):
+                print("欢迎，"+name+"，请取号")
+                fn(name,x)
+                print(name+"存入"+x+"元钱")
+            return savemoney2
+        @msg_service
+        def savemoney(name,x):
+            print("name", "存钱",x,"元")
+        savemoney("小张",200)
+        savemoney("小赵",500)
+函数的文档字符串：
+    语法：
+      def 函数名(参数列表):
+          "函数的文档字符串"        # 文档字符串必须在挨着def语句
+          ...
+    作用：
+      文档字符串通常用来说明函数的功能和用法
+    使用：
+      >>>help(函数名)
+函数的属性：
+    __name__:
+      用来记录函数的名字
+    __doc__:
+      用于记录文档字符串
+
+补充内容：
+    布尔测试：
+      boox(x)   # True/False
+      为False的情况：
+      None, False, 0, 0.0, 0+0j, [], '', (), {}, set(), frozenset()
+模块module：
+    模块是包含一系列变量，函数，类的程序组
+    模块是一个文件，模块文件名通常以py结尾
+    作用：
+      让一些相关的变量，函数，类等有逻辑的组织在一起，让逻辑结果更加清晰
+      模块中的变量，函数和类等可供其他模块或程序使用
+    分类：
+      1、内置模块(buildins)，在解析器的内部可以直接使用(解释执行器所用语言写的)
+      2、安装的标准库模块，安装python是已安装可以直接使用
+      3、第三方模块(通常开源)，需要自己安装(pip install)
+      4、用户自己编写的模块(可以作为其他人的第三方模块)
+模块的导入：
+    import语句：
+      语法：
+        import 模块名1 [as 模块新名1] ,模块2 [as 模块新名2]
+      示例：
+        import math
+        import sys,os
+      作用：
+        将某模块整体导入到当前模块
+      使用import的模块：
+        模块名.属性名
+        math.sin(3.14)
+    from import语句：
+      语法：
+        from 模块名 import 模块属性名1 [as 属性别名1], 模块属性名2 [as 模块属性别名2],...
+      作用：
+        将某模块内的一个或多个属性导入到当前模块
+      示例：
+        from math import sin
+        from math import pi
+        from math import factorial as fac
+    from import *
+      语法：
+        from 模块名 *
+      作用：
+        将某模块的所有属性导入到当前模块
+
+help(obj)函数：
+    查看模块相关的文档字符串
+dir(obj)函数：
+    返回模块所有属性的字符串列表
+    详细作用：
+      如果没有参数调用，则返回当前作用域内的所有变量的列表
+      如果给定一个对象作为参数，则返回这个对象的所有变量列表
+        对于模块，返回这个模块的全部变量
+        对于类，返回类对象的所有变量
+        对于其他对象，返回所有变量，类变量和基类变量
+内置模块：
+    buildins, sys, time, itertools, ..., math
+标准库模块
+    random, datetime, os, xml, ...
+http://docs.python.org
+
+时间模块time：
+    此模块提供了时间相关的函数，且一直可用
+    导入方式：
+      import time
+      from time import *
+      from time import xxx
+时间元组：
+    时间元组是一个9个整数组成的，依次为：
+      year (including century, e.g. 1998)
+      month (1-12)
+      day (1-31)
+      hours (0-23)
+      minutes (0-59)
+      seconds (0-59)
+      weekday (0-6, Monday is 0)
+      Julian day (day in the year, 1-366)
+      DST (Daylight Savings Time) flag (-1, 0 or 1)
+      注：
+        如果年份小于100，则会自动转换为加上1900后的值
+        时间元组内没有timezone
+    模块中的变量：
+      time.timezone     本地区时间与UTC时间差(秒为单位)
+      tzname            时区名称元组
+      time.altzone      夏令时时间与UTC时间差(秒为单位)
+      time.daylight     夏令时校正时间
+
+    time()          return current time in seconds since the Epoch as a float
+    clock()         return CPU time since process start as a float
+    sleep()         delay for a number of seconds given as a float
+    gmtime()        convert seconds since Epoch to UTC tuple
+    localtime()     convert seconds since Epoch to local time tuple
+    asctime()       convert time tuple to string
+    ctime()         convert time in seconds to string
+    mktime()        convert local time tuple to seconds since Epoch
+    strftime()      convert time tuple to string according to format specification
+    strptime()      parse string to time tuple according to format specification
+    tzset()         change the local timezone
+    注：新纪元时间等同于计算机元年(1970-1-1)
+时间简介：
+    公元纪年0000年1月1日开始
+    对于Unix/Linux系统，计算机元年是从1970-1-1零时开始
+
+    UTC时间(Universal Time Coordinated)(a.k.a. GMT)世界协调时间
+    UTC时间不会因时区问题而产生错误
+
+    DST阳光节约时间(Daylight Saving Time)
+    又称夏令时，是经过日照时间修正后的时间
+
+数学模块
+    模块名 math
+    注：
+      linux下内为内建模块，MacOS下为标准库模块
+    变量：
+      math.e        自然对数函数的底
+      math.pi       圆周率
+    函数：
+      math.ceil(x)  对x向上取整，比如x=1.2，返回2
+      math.floor(x) 对x向下取整，比如x=1.2，返回1
+      math.sqru(x)  返回x的平方根(开平方)
+      math.factorial        求x的阶乘
+      math.log(x[,base])    返回以bash为底的对数，如果不给base，则以自然数对数e为底
+      math.log10(x) 求以10位底x的对数
+      math.pow(x,y) 返回x**y
+      math.fabs(x)  返回x的绝对值
+      # 角度弧度转换
+      # 周长的360分之1对应的弧与圆心的连线形成的角为1角度
+      # 周长的2*pi分之1对应的弧与圆心的连线形成的角为1弧度
+      math.degrees(x)       将弧度x转换位角度
+      math.radians(x)       将角度x转换位弧度
+      # 三角函数
+      math.sin(x)   返回x的正弦(x为弧度)
+      math.cos(x)   返回x的余弦
+      math.tan(x)   返回x的正切
+      math.asin(x)   返回x的反正弦(x为弧度)
+      math.acos(x)   返回x的反余弦
+      math.atan(x)   返回x的反正切
+      ...
+练习：
+    1、输入圆的半径r和圆的角度d，算出圆的扇形的面积
+    2、打印电子时钟，格式为：
+       HH:MM:SS 格式
+       17:27:23
+       每个一秒，打印刷新一次
+    3、编写一个闹钟程序，启动时设定时间，到时间后打印一句话，然后退出

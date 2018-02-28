@@ -1,0 +1,71 @@
+import warnings
+import numpy as np
+import hmmlearn.hmm as hl
+import matplotlib.pyplot as mp
+warnings.filterwarnings('ignore', category=DeprecationWarning)
+closing_prices, volumes = np.loadtxt('goog.csv', delimiter=',',
+	usecols=(4, 6), unpack=True, skiprows=1)
+returns = np.diff(closing_prices) / closing_prices[:-1] * 100
+train_y = np.column_stack([returns, volumes[1:] / 1e6])
+train_x = np.arange(len(train_y))
+model = hl.GaussianHMM(n_components=3, covariance_type='diag',
+	n_iter=1000)
+model.fit(train_y)
+train_z = model.predict(train_y)
+test_x = np.arange(int(len(train_x) / 2))
+test_y, test_z = model.sample(len(test_x))
+mp.gcf().set_facecolor(np.ones(3) * 240 / 255)
+mp.subplot(231)
+mp.title('Train Returns', fontsize=16)
+mp.xlabel('Time', fontsize=12)
+mp.ylabel('Returns', fontsize=12)
+mp.tick_params(labelsize=10)
+mp.grid(linestyle=':')
+mp.scatter(train_x, train_y[:, 0], c=train_z,
+	cmap='brg', alpha=0.5, s=80)
+mp.plot(train_x, train_y[:, 0], c='black', linewidth=1)
+mp.subplot(232)
+mp.title('Train Volumes', fontsize=16)
+mp.xlabel('Time', fontsize=12)
+mp.ylabel('Volumes', fontsize=12)
+mp.tick_params(labelsize=10)
+mp.grid(linestyle=':')
+mp.scatter(train_x, train_y[:, 1], c=train_z,
+	cmap='brg', alpha=0.5, s=80)
+mp.plot(train_x, train_y[:, 1], c='black', linewidth=1)
+mp.subplot(233)
+mp.title('Returns & Volumes', fontsize=16)
+mp.xlabel('Returns', fontsize=12)
+mp.ylabel('Volumes', fontsize=12)
+mp.tick_params(labelsize=10)
+mp.grid(linestyle=':')
+mp.scatter(train_y[:, 0], train_y[:, 1], c=train_z,
+	cmap='brg', alpha=0.5, s=80)
+mp.subplot(234)
+mp.title('Test Returns', fontsize=16)
+mp.xlabel('Time', fontsize=12)
+mp.ylabel('Returns', fontsize=12)
+mp.tick_params(labelsize=10)
+mp.grid(linestyle=':')
+mp.scatter(test_x, test_y[:, 0], c=test_z,
+	cmap='brg', alpha=0.5, s=80)
+mp.plot(test_x, test_y[:, 0], c='black', linewidth=1)
+mp.subplot(235)
+mp.title('Test Volumes', fontsize=16)
+mp.xlabel('Time', fontsize=12)
+mp.ylabel('Volumes', fontsize=12)
+mp.tick_params(labelsize=10)
+mp.grid(linestyle=':')
+mp.scatter(test_x, test_y[:, 1], c=test_z,
+	cmap='brg', alpha=0.5, s=80)
+mp.plot(test_x, test_y[:, 1], c='black', linewidth=1)
+mp.subplot(236)
+mp.title('Returns & Volumes', fontsize=16)
+mp.xlabel('Returns', fontsize=12)
+mp.ylabel('Volumes', fontsize=12)
+mp.tick_params(labelsize=10)
+mp.grid(linestyle=':')
+mp.scatter(test_y[:, 0], test_y[:, 1], c=test_z,
+	cmap='brg', alpha=0.5, s=80)
+mp.tight_layout()
+mp.show()

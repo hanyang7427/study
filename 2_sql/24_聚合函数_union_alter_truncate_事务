@@ -1,0 +1,123 @@
+20171103-数据库编程-DAY4
+====================================================================
+SQL函数
+1.SQL aggregate 聚合函数
+  age()     :average 平均值
+  count()   :行数
+  max()     :最大值
+  min()     :最小值
+  sum()     :求和
+2.SQL Scalar标量函数(标量函数)
+  ucase()   :upper case以大写字母显示
+  lcase()   :lower case以小写字母显示
+  length()  :求字符长度
+  round()   :对某个数字字段进行指定小数位数的四舍五入
+    例:round(),length()
+      select round(salary,0),length(round(salary,0)),now() from customers;
+      round(salary,0)  四舍五入salary，取0位小数
+      length(salary)   将salary的值转换成字符串，再计算长度
+
+mid(列名,起始位置,长度)
+substring(列名,起始位置,长度)
+select mid(name,1,3) from customers;
+mid(name,1,3)其中1代表name的第一个字母，3代表取的长度为3
+mid和substring一样
+
+
+now()     :返回当前的系统日期和时间
+format()  :格式化某个字段的显示方式
+    格式:select format(列名,新的格式) from 表名
+date_format()
+as 别名
+例:
+    select date_format(now(),'%Y-%M-%D') as date from customers
+
+union 综合多个select语句,并返回不重复的行
+    注意:
+      1.每个select语句中必须选中相同数量的列
+      2.列的数目要一致
+      3.列的数据类型要一致
+      4.列的顺序要一致
+    例:
+      1.找出customers表中，年龄小于25和大于27岁的人的姓名和年龄
+      方法1:select name,age from customers where age < 25 or age > 27;
+      方法2:使用union
+        select name ,age from customers where age >27
+        union
+        select name,age from customers
+      2.找出customers表中，所有顾客的工资，并且最后行打印工资的总和
+        select name,salary from customers
+        union
+        select "总和",sum(salary) from customers
+union all 返回重复的行
+
+alter table
+向表中添加一个新的列
+alter table 表名 add 列名 数据类型;
+alter table customers add gender char(20) default 'F' NULL;
+向表中删除一个列
+alter table 表名 drop column 列名;
+alter table customers drop column gender;
+修改表中某列的数据类型
+alter table 表名 modify column 列名 新的数据类型;
+alter table customer modify column salary decimal(10,2)
+
+注:
+    修改表结构      add    | modify | drop
+    修改表中记录    insert | update | delete
+
+对表取消主键约束
+alter table 表名 drop primary key
+对表添加主键限制:先删除所有,再添加
+alter table 表名 drop primary ,add primary key(列名);
+ALTER TABLE registration DROP PRIMARY KEY, ADD PRIMARY KEY (c_id);
+
+对表取消外键约束(外键约束名使用show create table 表名查看外键约束名)
+alter table 表名 drop foreign key 外键约束名
+对表添加外键约束:例
+ALTER TABLE 
+ADD CONSTRAINT registration_ibfk_2
+  FOREIGN KEY (term)
+  REFERENCES courses(name)
+  ON DELETE RESTRICT
+  ON UPDATE RESTRICT;
+
+对表添加非空限制
+alter table 表名 modify 列名 数据类型 not null;
+对表删除非空限制
+alter table 表名 modify 列名 数据类型;
+alter table 表名 change 列名 新列名 类型
+    例:alter table customers change id idd int;
+
+truncate table保留表结构，清空表中的记录
+truncate table customers_1
+
+truncate table 表名
+等同于
+delete from customer_1
+
+
+执行事物
+事物机制:为了确保数据一致性
+
+事务的4个属性:
+  1.原子性 一个事务是一个不可分割的工作单位，事务中包括的各个操作要么都做，要么都不做
+  2.一致性 事务必须使数据库从一个一致性状态变到另一个一致性状态
+  3.隔离性 一个事务的执行不能被其他并发的事务干扰
+  4.持久性 一个事务一旦提交，它对数据库中数据的改变就应该是永久性的
+
+mysql中默认sql语句的结果自动commit到数据库(遇到分号就会commit)
+开始需要写start transatcion ,这样自动commit就会被禁用，知道我们用commit或rollback终止这个transaction
+start transaction;
+sql1;
+sql2;
+...
+sqlN;
+commit;
+
+start transaction;
+insert into customers values(5,'Lili',20,'Beijing',3000,'F');
+insert into customers values(5,'Feng',22,'Beijing',4000,'M');
+commit;   (提交到数据库)
+rollback; (撤销)
+

@@ -1,0 +1,198 @@
+———————————————————————————— 模板标签的使用 ——————————————————————————————
+{{变量}}
+{%for %}
+{%if %}
+{#注释内容#}
+———————————————————————————— 过滤器 ——————————————————————————————
+{{value | filter}}
+
+自定义过滤器
+1.在应用目录里，添加过滤器文件夹，templatetags
+2.templatetags是一个包，在该目录添加__init__.py
+3.创建过滤器(py文件)
+  vi poll_extras.py
+  from django import template
+  register = template.Library()
+  @register.filter(name = 'rep')     # 以后使用过滤器时使用name指定的名字，不是def指定的名字
+  def rep(value,arg):                # value是前边传来的，必须有，后边还可以有一个参数(最多两个参数)
+      return value.replace(arg,'#')  # 将传入的字符串中的arg替换为#
+4.调用
+  在html文件中
+  先在html文件第一行导入{%load poll_extras%}
+  {{i | rep:' '}}
+
+
+————————————————————————————— url起名 ——————————————————————————————
+vi urls.py
+urlpatterns += [
+    url = (r'myfilter',myfilter,name = myfilter')
+]
+vi link.html
+...
+<a href={%url 'myfilter'%}>a link</a>
+...
+
+
+————————————————————————————— 模板的嵌套 ——————————————————————————————
+vi base.html
+...
+{%block title%}{%endblock%}
+{%block content%}{%endblock%}
+<p>xxx corpright</p>
+...
+
+访问page1时，只有出现在base.html的block才会显示
+vi page1.html
+{%extends 'base.html'%}
+{%block title%}page1 title{%endblock%}
+{%block content%}page1 content{%endblock%}
+<h1>我不会显示，因为没出现在模板中</h1>
+————————————————————————————— include ——————————————————————————————
+{%include 'include.html'%}
+把include.html加进来
+
+———————————————————————————— 加载全局变量 ——————————————————————————————
+不需要views函数向模板传递，模板可以直接使用这个变量
+vi views.py
+def global_setting(request):
+    NAME = 'Tarena'
+    GEYAN='for free'
+    return locals()
+
+vi setting.py
+myapp.views.global_setting
+
+vi html.html
+在html中直接引用NAME 和 GEYAN
+
+
+—————————————————————————————— 模型操作 ——————————————————————————————
+ORM概念
+对象关系映射模型
+1.解决了面向对象与关系数据库数据相互不匹配的问题
+2.在需要数据持久化操作的时候，可以使的统一的模型进行操作，不需要单独操作数据库，不再硬编码(为每一种可能数据访问都提供方案)
+
+django支持的数据库
+sqlite
+mysql
+oracle
+postgresql
+
+python2 MySQLdb
+python3 pymysql
+
+设置django使用的数据库
+1.在mysql中创建数据库
+create database webdb default character set utf8 collate utf8_general_ci;
+2.vi setting.py
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'webdb',
+        'USER':'root',
+        'PASSWORD':'123456',
+        'HOST':'localhost',
+        'PORT':'3306',
+    }
+    # 多个数据库
+    # 'db1':{...}
+    # 'db2':{...}
+}
+
+—————————————————————— 创建表结构 继承自models.Model ——————————————————————
+vi app/models.py
+from django.db import models
+class Publisher(models.Model):
+    name = models.CharField(max_length = 30)
+    address = models.CharField(max_length = 50)
+    city = models.CharField(max_length = 60)
+
+    # python3 用__str__ python2用__Unicode__
+    # 当使用Author.objects.all()方法查询数据时不会只显示对象
+    def __str__(self):
+        return self.name
+
+class Author(models.Model):
+    name = models.CharField(max_length = 30)
+    age = models.IntegerField()
+    email = models.EmailField()
+# ——————————————————————————— relation start ——————————————————————————
+    publisher = models.OneToOneField(Publisher,null = True)
+# ——————————————————————————— relation end ——————————————————————————
+    class Meta:                 # Django模型类的Meta是一个内部类，它用于定义一些Django模型类的行为特性
+        # db_table = 'author'   # 自定义数据库中表的名字
+        ordering = ['age']      # 显示时以age排序,Author.objects.all()返回的列表顺序是按作者的age排序的
+        verbose_name = '作者'    # 表在网页中的显示名字
+        verbose_name_plural = verbose_name
+    def __str__(self):
+        return self.name
+
+class Book(models.Model):
+    title = models.CharField(max_length = 100)
+    publication_date = models.DateField()
+
+# ——————————————————————————— relation start ————————————————————————
+    # ManyToMany会生成一张表
+    author = models.ManyToManyField(Author)
+    publisher = models.ForeignKey(Publisher,null=True)
+# ——————————————————————————— relation end ——————————————————————————
+    def __str__(self):
+        return self.title
+
+每一个类是一个表，一个成员变量是一个字段，生成成员变量的类决定了字段的数据类型
+字段选项决定了字段的其他属性
+  null      数据库中可否为空 默认false
+    age = models.IntegerField(null=True)
+  blank     后台填写数据时是否可以为空 默认false
+  choices   作为数据选项
+  default   设置默认值
+  primary   设置是否作为主键
+  error_message 为字段设置错误信息
+  verbose_name  给字段取一个别名
+  db_column 数据中列名称
+  db_index  数数据库中的顺序
+注：表关系在下一节详细讲
+—————————————————————————— migration ——————————————————————————
+# 将models.py中的表结构迁移到mysql
+./manage.py makemigrations      # 生成日志
+tree app/migrations
+migrations
+  ├── 0001_initial.py
+  ├── 0002_auto_20171211_0837.py
+  └── __init__.py
+./manage.py migrate             # 执行迁移
+注意：前提是在settinigs中配置了DATABASE，且数据库已经启动
+
+# 数据版本切换
+./manage.py migrate myapp 0001
+
+—————————————————————————— 数据库导入导出 ——————————————————————————
+# mysql数据库转models.py
+./manage.py inspectdb > file.py
+
+# 数据库导出
+mysqldump -u root -p webdb > webdb.sql
+# 只导出表结构
+mysqldump -u root -p -d webdb > webdb_structure.sql
+# 导出特定表，符合特定条件的
+mysqldump -uroot -p123456 webdb myapp_author --where="author.name='老舍'" >/tmp/1.sql
+# 导出多张表
+mysqldump -uroot -p123456 webdb myapp_author myapp_book myapp_publisher > /tmp/2.sql
+# 数据库导入
+mysql -u root -p webdb < webdb.sql
+—————————————————————————— 添加数据 ——————————————————————————
+vi views.py
+from myapp.models import *
+from django.http import HttpResponse
+def add(request):
+    # insert into myapp_author(name,age,email,publisher_id) values('dd',33,'11@11.com',null)
+    # 方式1 使用Manager(objects是Manager的实例)
+    Author.objects.create(name='moyan',age=56,email='moyan@xxx.com')
+    # 方式2 save
+    obj = Book(title='python web',publication_date='2017-12-12')
+    obj.save()
+    # 方式3 save
+    d={'name':'人民教育出版社','city':'北京','address':'五道口','country':'中国','website':'http://renmin.cn'}
+    obj = Publisher(**d)
+    obj.save()
+    return HttpResponse('add done')

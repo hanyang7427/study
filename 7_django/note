@@ -1,0 +1,69 @@
+models.Model        创建表结构                51
+models.Field        自定义字段类型             52
+models.QuerySet     自定义查询                52
+models.Manager      自定义查询                52
+admin.ModelAdmin    自定义admin后台展示        52
+forms.Form          自定义表单                53
+forms.ModelForm     根据表结构自定义表单        53
+MiddlewareMixin     自定义中间件              54
+ListView                自定义通用视图         55
+DetailView              自定义通用视图         55
+View                    自定义通用视图         55
+AbstractUser        自定义用户表的表结构(来自auth.models)       55
+    需要在settings.py中添加AUTH_USER_MODEL = 'myapp.User'
+
+
+————————————————————————————————————————————————————————————————————————
+# 数据库导出
+mysqldump -u root -p webdb > webdb.sql
+# 只导出表结构
+mysqldump -u root -p -d webdb > webdb_structure.sql
+# 导出特定表，符合特定条件的
+mysqldump -uroot -p123456 webdb author --where="author.name='老舍'" >/tmp/1.sql
+# 导出多张表
+mysqldump -uroot -p123456 webdb author book publisher > /tmp/2.sql
+# 数据库导入
+mysql -u root -p webdb < webdb.sql
+————————————————————————————————————————————————————————————————————————
+# centos 安装pip3
+yum install python-setuptools
+easy_install pip
+————————————————————————————————————————————————————————————————————————
+manage.py shell
+from myapp.models import *      # 之后可以操作数据库
+from myapp.views import *       # 之后可以调用view
+from django.shortcuts import render     # 之后可以返回http应答
+from django.http import HttpRequest     # render需要传入<HttpRequest>对象,先导入
+render(HttpRequest(),'data.html',{}).content()    # 查看http应答的内容
+————————————————————————————————————————————————————————————————————————
+# 创建数据库
+create database webdb default character set utf8 collate utf8_general_ci;
+COLLATE utf8_general_ci:数据库校对规则。该三部分分别为数据库字符集、解释不明白、区分大小写
+# settings配置数据库
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'webdb',
+        'USER':'root',
+        'PASSWORD':'123456',
+        'HOST':'localhost',
+        'PORT':'3306',
+    }}
+————————————————————————————————————————————————————————————————————————
+# 解决runserver报错问题
+vi BASE_DIR/name_of_project/__init__.py
+import pymysql
+pymysql.install_as_MySQLdb()
+
+————————————————————————————————————————————————————————————————————————
+# reverse使用
+url(r'^profile/(?P<user_id>\d+)/$', 'get_info', name='profile')
+————————————————————————————————————————————————————————————————————————
+return redirect('profile',user_id=123)
+等同于
+url = reverse('profile', kwargs={ 'user_id':123 })
+return redirect(url)
+————————————————————————————————————————————————————————————————————————
+
+
+http://xxx.com/profile/110

@@ -1,0 +1,163 @@
+———————————————————————— 静态文件 ————————————————————————
+css js image
+vi settings.py
+# 浏览器中看到的静态文件地址全是以STATIC_URL开始的。
+# 当访问url:/static/xxx 会在STATICFILES_DIRS或app/static中查找静态文件
+STATIC_URL = '/static/'
+# manage.py collectstatic将所有STATICFILES_DIRS中所有文件夹中的文件，以及各app中static中的文件都复制到STATIC_ROOT
+# 把这些文件放到一起是为了用apache等部署的时候更方便
+STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
+
+# 存放公共静态文件，例如jquery.js，里面不能包含 STATIC_ROOT
+# 如果不想用 STATICFILES_DIRS 可以不用，找不到在app 里的static中找
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "common_static"),
+    '/path/to/others/static/',  # 绝对路径写法,用不到的时候可以不写这一行
+)
+# 这个是默认设置，Django 默认会在 STATICFILES_DIRS中的文件夹再在各app下的static文件夹中找文件
+# 注意有先后顺序，找到了就不再继续找了
+STATICFILES_FINDERS = (
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder"
+)
+
+静态文件的使用
+1.存在 BASE_DIR/static/image/1.jpg
+2.vi BASE_DIR/myapp/templates/static.html
+{%load staticfiles%}            # INSTALLED_APPS = (...,'django.contrib.staticfiles',...)
+                                # django/contrib/staticfiles/templatetags/staticfiles.py定义了staticfiles标签
+3.使用url指向该模板
+<img src="{%static 'image/1.jpg'%}">
+
+———————————————————————— request ————————————————————————
+request.sheme
+request.body
+request.path
+request.method
+request.content
+request.method
+request.Meta
+request.Meta['REMOTE_ADDR']
+request.GET
+request.POST
+request.COOKIES
+
+request.get_host()
+
+CSRF处理方法
+方式1
+  vi setting.py
+  MIDDLEWARE_CLASSES = (
+      ...
+      'django.middleware.csrf.CsrfViewMiddleware',
+      ...
+  )
+方式2
+  vi views.py
+  from django.views.decorators.csrf import csrf_protect
+  @csrf_protect
+  def ...
+方式3(推荐)
+  在form 表单中加{%csrf_token%}
+
+去除CSRF
+from django.views.decorators.csrf import csrf_exempt
+vi views.py
+# 这个装饰器用于不再进行表单验证提交
+@csrf_exempt
+def ...
+
+———————————————————————— 自定义表单 ————————————————————————
+form表单和数据库交互
+取出数据，然后使用models模型进行数据的增删改查操作
+>>>>>>>>>>>>>>>>>>>>>>>> form.py <<<<<<<<<<<<<<<<<<<<<<<<
+vi myapp/forms.py
+from django import forms
+from myapp.models import Author
+
+TOPIC_CHOICES = (
+    ('level1','好评'),
+    ('level2','中评'),
+    ('level3','差评'),
+)
+# 自定义表单  继承自forms.Form
+class RemarkForm(forms.Form):
+    # 自定义表单属性
+    # 字段类型和常见参数,不同的类型有不同的模板展现方式，也决定了输入框可以输入什么样的数据,参数丰富了输入框的属性
+    subject = forms.CharField(max_length = 100,label = '标题',initial = 'the title')
+    mail = forms.EmailField(label = '邮件',error_messages={'required': '你到底填不填'})
+    topic = forms.ChoiceField(choices = TOPIC_CHOICES,label = '评价')
+    message = forms.CharField(label = '内容',widget = forms.Textarea)
+    cc_myself = forms.BooleanField(required = False,label = '订阅')
+
+# 根据表结构 定义表单  继承自forms.ModelForm
+class AuthorForm(forms.ModelForm):
+    class Meta:
+        model = Author              # 该表单参照哪个表的列
+        fields = "__all__"          # 哪些列可用
+        # fields = ['name','age']
+        labels = {
+            'name':'姓名',
+            'age':'年龄',
+            'email':'邮箱',
+        }
+>>>>>>>>>>>>>>>>>>>>>>>> view.py <<<<<<<<<<<<<<<<<<<<<<<<
+vi myapp.views.py
+from django.shortcuts import render
+from django.http import HttpResponse
+from myapp.forms import *
+from myapp.models import *
+def formset(request):
+    if request.method == 'POST':            # 如果请求是POST就在终端打印请求的内容，在浏览器返回ok
+        form = RemarkForm(request.POST)     # 用自定表单类将post请求生成表单对象
+        if form.is_valid():                 # 生成的表单对象是否符合自定义表单要求，符合才有cleaned_data
+            cd = form.cleaned_data          # 如果符合生成字典
+            print(cd['subject'])            # 在控制台打印post请求的内容
+            print(cd['mail'])
+            print(cd['topic'])
+            print(cd['message'])
+            print(cd['cc_myself'])
+            return HttpResponse('get form message ok')
+    else:                                   # 如果请求不是POST，返回使用自定义表单渲染的html
+        form = RemarkForm()
+        return render(request,'formset.html',{'form':form})
+def authorset(request):
+    if request.method == 'POST':            # 如果请求是POST就将请求数据写入数据库，在浏览器返回ok
+        form = AuthorForm(request.POST)     # 用自定表单类将post请求生成表单对象
+        if form.is_valid():                 # 生成的表单对象是否符合自定义表单要求，符合才有cleaned_data
+            cd = form.cleaned_data          # 将cleaned_data字典保存给cd变量
+            Author.objects.create(**cd)     # 将字典写入数据库
+            # form.save()                   # form.save()是将post的数据存入数据库更简单的方法,54有save的高级用法
+            return HttpResponse('get form message ok')
+    form = AuthorForm()                     # 如果请求不是POST，返回使用自定义表单渲染的html
+    return render(request,'authorset.html',{'form':form})
+
+>>>>>>>>>>>>>>>>>>>>>>>> html <<<<<<<<<<<<<<<<<<<<<<<<
+vi myapp/templates/formset.html
+<form action="/formset/" method="post">
+        {%csrf_token%}
+        {%for field in form%}
+            <div>
+            {{field.label}}:{{field}}
+            {{field.errors}}
+            </div>
+        {%endfor%}
+        <!-- {{form.as_table}} -->
+        <!-- {{form.as_p}} -->
+        <!-- {{form.as_ul}} -->
+        <div>
+        <p><input type="submit" value='留言'></p>
+        </div>
+        </form>
+vi myapp/templates/authorset.html
+<form action="/authorset/" method="post">
+        {%csrf_token%}
+        {%for field in form%}
+            <div>
+            {{field.label}}:{{field}}
+            </div>
+        {%endfor%}
+        <div>
+        <p><input type="submit" value='提交'></p>
+        </div>
+        </form>

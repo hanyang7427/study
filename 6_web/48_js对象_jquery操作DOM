@@ -1,0 +1,200 @@
+1.js中创建新对象
+  1)直接创建对象 - 使用Object
+    var newObj = new Object();
+    // 添加属性
+    newObj.property1 = value1;
+    newObj.property2 = value2;
+    // 添加方法
+    newObj.method1 = function(){...}
+    // 例如
+    <script>
+        var user = new Object();
+        user.name = '张无忌'
+        user.age = 18
+        user.show = function () {
+            console.log('这是show方法')
+            console.log(this.name+'的年龄是'+this.age);
+            }
+        console.log(typeof user)
+        console.log(Object.prototype.toString.call(user))
+    </script>
+  2)使用构造器创建对象
+    function 对象名(参数1,参数2,...){
+        //为属性赋值
+        this.属性1 = 参数1
+        this.属性2 = 参数2
+        //创建方法
+        this.funName = function(){...}
+        }
+    var obj1 = new 对象名(实参1,实参2)
+    // 例如
+    function Person(name,age){
+        this.name = name
+        this.age = age
+        this.show = function(){
+            console.log('姓名:'+this.name)
+            }
+        }
+    var per1 = new Persion('张无忌',18)
+    per1.show()
+  3)使用JSON创建对象
+    什么是JSON：JaveScript Object Notation - JS对象表现形式
+    通常会作为数据交换个是(轻量级)
+    a.声明JSON
+      使用键值对的方式来声明数据
+      所有的属性必须用""引起来，值，如果是字符串的话也要用""引起来
+      属性和值之间使用:隔开
+      多对属性和值之间使用,隔开
+    //例如
+      var xiaoming = {
+          "name" = "xiaoming"
+          "age" = 18
+          }
+2.jQuery操作DOM
+  1)
+    a.基本操作
+      html()    读取或修改jQuery对象中的HTML内容
+      text()    读取或修改jQuery对象中的文本内容
+      val()     读取或修改jQuery对象中的value属性值(表单控件)
+    b.属性操作
+      attr()        读取或修改jQuery对象的属性值(设置多个值使用JSON)
+        $('img').attr({"src":"a.jpg","alt":"test image"})
+      removeAttr()  删除jQuery对象的指定属性
+    c.样式操作
+      attr('class','class值')    动态绑定class属性值
+      addClass('className')      动态的为元素添加一个类选择器，可以添加多个，返回添加完的jQuery对象
+        $('#d1').addClass('class1').addClass('class2')
+      removeClass('className')   动态的移除一个选择器
+      removeClass()              移除所有的类选择器
+      toggleClass('className')   切换样式，元素如果有className类选择器，则删除，元素如果没有className选择器，则添加
+      hasClass('className')      判断元素是否具备className类选择器
+      css('属性名','属性值')       动态的为元素设置css属性值
+      css(JSON对象)               动态的为元素设置一组的css属性值
+  2)遍历节点
+    children() / children(selector)
+      获取某jQuery对象的所有子元素，或带有制定选择的子元素(只考虑直接子节点)
+    next() / next(selector)
+      获取某jQuery对象的下一个兄弟元素 / 满足selector的下一个兄弟元素
+    prev() / prev(selector)
+      获取某jQuery对象的上一个兄弟元素 / 满足selector的下一个兄弟元素
+    siblings() / siblings(selector)
+      获取某jQuery对象的其兄弟元素 / 满足selector的其他兄弟元素
+    find(selector)
+      查找指定选择器的后代元素
+    parent()
+      查找某jQuery对象的父元素
+  3)创建节点
+    语法：$('要创建的内容')
+    返回一个jQuery对象
+    ex:
+      $('<div>123</div>')  创建一个div元素里边有123
+  4)插入节点
+    a.内部插入节点
+      append()    $('obj1').append($obj2);    将obj2(jquery对象)作为obj1的子节点插进去
+      prepend()   $('body').prepend($div);    将div(jquery对象)插入到body的第一个子元素位置处
+    b.外部插入节点
+      after()       作为下一个兄弟节点添加进来
+      before()
+  5)删除节点
+    remove()            删除当前的节点
+    remove(selector)    按选择器删除某个节点
+    empty()             清空当前节点
+  6)复制和替换
+    a.替换元素
+      replaceWith()     将所有匹配的元素用参数内容进行替换
+      replaceAll()      颠倒了replaceWith的顺序
+    b.复制元素
+      clone()           复制当前的元素以及子元素们，并返回复制好的jQuery对象
+        ex:
+          var $newD1 = $('#d1').clone()
+      clone(true)       复制当前的元素以及子元素们，连同节点行为(事件)也一同复制
+3.jQuery事件
+  1)页面加载之后执行
+    三种方式
+    $(document).ready(function(){
+        //DOM树加载完成后，则运行该函数
+        //页面初始化内容
+        })
+    $().ready(function(){
+        //DOM树加载完成后，则运行该函数
+        //页面初始化内容
+        })
+    $(function(){
+        //DOM树加载完成后，则运行该函数
+        //页面初始化内容
+        })
+    注意：window.onload是在渲染之后，jQuery的都是在渲染之前
+  2)与其他JS库共存(了解)
+    a.将$的控制权交给其他js库
+      jQuery.noConflict()
+      以后想使用$时，都用jQuery
+    b.进行封装重新获取$的控制全
+      方式1：
+      jQuery(function($){
+        //允许正常使用 $
+        })
+      方式2：
+      (function($){
+        //允许正常使用 $
+        })(jQuery)
+  3)jQuery事件绑定
+    a.事件绑定语法
+      方式1：
+        $obj.bind('事件名称',事件处理函数)
+        ex：
+          $aButton.bind('click',function(){
+              // 事件的操作
+              // 允许使用this来表示引用处理事件的DOM元素
+              })
+      方式2：
+        $obj.事件名称(事件处理函数)
+        ex：
+          $obj.click(function(){
+              // 是按的操作
+              })
+      注意：
+        $obj.click() 表示要触发$obj的click事件
+  4)模拟操作
+    即使用代码的方式触发事件
+    方式1：
+      $obj.trigger('事件名称')
+      ex：
+        $obj.trigger('click')   // 执行$obj的click事件
+    方式2：
+      $obj.click()
+  5)事件对象
+    与DOM中的事件基本相同
+    方式1：
+    $obj.bind('click',function(event){
+        // event 表示事件对象
+        })
+    方式2：
+    $obj.click(function(event){
+        // event 表示事件对象
+        })
+    注意：event.target返回DOM对象
+  6)事件冒泡
+    阻止事件冒泡：stopPropagation()
+4.jQuery动画
+  1)基本显示 / 隐藏
+    语法：
+      $obj.show() / $obj.show(执行时间ms)   //显示
+      $obj.hide() / $obj.hide(执行时间ms)   //隐藏
+  2)滑动式显示 / 隐藏
+    语法：
+      $obj.slideDown(执行时间ms)    //显示
+      $obj.slideUp(执行时间ms)      //隐藏
+  3)淡入淡出式显示 / 隐藏
+    语法：
+      $obj.fadeIn(执行时间ms)   //显示
+      $obj.fadeOut(执行时间ms)  //隐藏
+  4)自定义动画
+    语法：
+      $obj.animate(js对象,执行时间ms)
+      js对象是一个JSON对象，描述动画完成后元素的样式
+      $('#d1').animate({
+          'border-radius:'50%',
+          'font-size':'12px',
+          'width':'200px',
+          'height':'200px'
+          },5000)

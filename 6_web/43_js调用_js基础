@@ -1,0 +1,180 @@
+JavaScript概述
+  JavaScript简称JS，是一种专门运行于JS解释器/引擎中的解释型脚本语言
+发展史
+  1.1992年Nombas开发了一款脚本语言，可以运行在网页中，名称c--,更名为ScriptEase
+  2.1995年Netscape(网景)为自己的Navigator2.0浏览器开发了另一款脚本语言LiveScript，后更名为JavaScript
+  3.1996年Microsoft，为自己的IE3.0发布了一个JaveScript的克隆版本 Jscript
+  4.1997年Netscape找到了ECMA(欧洲计算机制造商协会)，将JS的核心提交给了ECMA，从此JS的核心更名为ECMA script 简称ES
+   JS组成：
+     1、核心 - ECMAScript
+     2、文档对象模型(Document Object Model简称DOM),允许JS操作网页上的内容
+     3、浏览器对象模型(Browser Object Model)简称BOM，允许操作JS操作浏览器
+     注DOM是BOM的子集
+
+1.使用JS
+  1)使用元素事件执行JS
+    事件：用户在元素上所激发的一些行为操作
+      onclick：当用户点击元素时，要激发的操作
+    语法：
+      <ANY onclick="JS脚本代码">
+    JS脚本：
+      console.log("向控制台输出一句话")
+      ex:
+        <input type="button" onclick="console.log('我的第一个JS程序')">
+  2)嵌入在网页中的<script>
+    语法：
+      <script>
+        若干的JS脚本代码
+      </script>
+    特点：
+      网页加载时就执行所有的脚本
+  3)将JS脚本编写在外部的JS文件中
+    创建一个js文件(*.js)，并编写js脚本
+    在使用js的页面上对js文件进行引入
+    <script src="js文件路径"></script>
+2.JS的基础语法规范
+  1)语法规范
+    js都是由语句组成的
+    语句由运算符，表达式，以及关键字组成
+    js严格区分大小写
+    每一条语句最好以分号来表示结束
+  2)注释
+    单行：//注释...
+    多行：/* ... */
+  3)js中的变量和常量
+    变量：     表示js中一个可以变化的数据
+    声明变量：  var 变量名;
+    赋值：     变量名 = 值;
+    声明并赋值：var 变量名=值;
+    注意：
+      在声明变量时尽量使用var关键字，如过省略var关键字也可以。， ？。？“。，美女帮忙/，mn，但容易出问题
+      声明变量如果未赋值的话，则默认值为undefined
+    ex:
+      var name="张无忌",age=18,ubobby;
+      document.write(name,age,ubobby)
+    变量个命名规范
+      不能是js中的关键字或保留关键字
+      有字母，数字，下划线，以及$组成
+      不能以数字开头
+      变量名称尽量不要重复
+      尽量要见名知意
+      如无特殊需求，尽量使用驼峰命名法进行命名
+    常量：一经声明就不允许修改的数据就是常量
+    语法：
+      const 常量名=值;
+    注意：
+      通常情况下，常量名采用全大写的形式
+  4)数据类型
+    用来分配存贮数据的空间
+      bit - 位     8bit = 1byte
+      byte - 字节  1024byte = 1kb
+      kb - 千字节   1024kb = 1mb
+      mb - 兆字节   1024mb = 1gb
+      gb - 千兆字节 1024gb = 1tb
+    js数据类型分类
+      基本数据类型
+        原始类型 或 值类型
+          a.number类型：数字类型，可以表示32(4字节)位的整数，以及64(8字节)位的浮点数
+            可以表示十进制，八进制，十六进制的数字
+            十进制：var num = 121
+            八进制：var num = 023
+            十六进制：var num = 0x1a
+            小数：
+              小数点计数法：var num = 123.456
+              指数计数发： var num = 1.2e10
+          b.string类型：字符串类型
+            由Unicode的字符，数字，标点符号组成
+            查看字符的unicode码：'张'.charCodeAt(0)
+          c.转义字符
+            /n : 换行
+            /t : 制表符
+            /" : "
+            /' : '
+            \\ : \
+          d.boolean类型
+            布尔类型，只用于表示真(true)或假(false)
+            注意：在参与到数字运算时，true当做1运算，false当做0运算
+            ex:
+              var r = 185 * false ;//结果是0
+              var r = 185 * true ; //结果是185
+          e.查看数据类型
+            使用tpyeof(1)或typeof 1
+          f.js是弱类型的编程语言
+            var str = '字符串';     //str是string类型的
+            str = 15;              //str是number类型的
+            隐式转换：不同数据在做 加法运算时会进行自动转换
+              数字+字符串：将数字转换为字符串
+                var num = 15; //number
+                var str = '18'  //string
+                var r = num + str //结果为：1518，string
+              数字+布尔值：将布尔值转换为数字
+                当boolean值参与到数字运算时，true为1，false为0
+              字符串+布尔值：将布尔值转为字符串true为'true',false为'false'
+              布尔值+布尔值：将布尔值转换为数字
+            强制转换 - 转换函数
+              toString()    将任意类型的数据转换成字符串，并返回转换后的结果
+              parseInt()    将指定的数据尽量转换成整数，如果实在无法转换，则返回NaN(Not a Number)
+                ex: var r = parseInt("13你好")  // 13
+              parseFloat()  将指定的数据尽量转换成小数，如果实在无法转换，则返回NaN(Not a Number)
+              Number()      将指定的数据转换成数字，只要包含非法字符，结果就为NaN
+                ex: var r = Number("235你好")   // NaN
+              isNaN()       验证指定的数字是否为非数字，不是数字返回true，是数字返回false
+                ex：var r = isNaN("285ABC")    // true 括号里的会自动使用Number转换
+  5)运算符 算数运算符优先级高于关系运算符
+    a.算数运算符 - 优先转为string
+      +,-,*,/,%
+      ++    自增运算符，在本身数据基础上做+1
+        num++   先返回num的值，使用完成后再自增
+          var num = 10
+          console.log(num++)    // 先打印10，在num = num+1
+          console.log(++num)    // 先num = num+1 在打印12
+        ++num   先对num进行自增，再返回num的值
+      --    自减运算符，在本身数据基础上做-1
+    b.关系运算符 - 优先转为number
+      >,<,>=,<=,==,!=,===,!==
+      运算符两端，如果有一个是数字的话，另外一个会自动通过Number()转换成数字再进行比较
+        '10' > 5    // true
+      字符串的比较的是每位unicode的比较
+        '10' > '5'  // false
+      NaN与任何数据做!=，结果都为true
+      NaN与任何数据做==，结果都为false
+    c.逻辑运算符
+      !:非
+      &&:与
+        条件1 && 条件2  两个条件都为true结果才为true
+      ||:或
+        条件1 || 条件2  两个条件有个true结果就是true
+      注：&& 优先级大于 ||
+    d.条件运算符 / 三目运算符
+      单目运算符(一元运算符)，只有一个操作数的运算符(++, --, -)
+      双目运算符(二元运算符)，需要两个操作数的运算符(+,-,*,/,%,<,>,<=,>=,==,!=,&&,||)
+      三木运算符(三元运算符)，需要三个操作数的运算符(只有一个)
+        语法 ? :
+          var result = 条件表达式 ? 表达式1 : 表达式2;
+          判断条件表达式的结果，如果结果为真，则运行表达式1，并将表达式1的结果赋给result，否则，运行表达式2，并将表达式2的结果赋给result
+3.流程控制
+  1)分支结构
+    a.if(条件) {语句块}
+    b.if(条件) {语句块1} else {语句块2}
+    c.if(条件1){语句块1} else if(条件2){语句块2} else if(条件N){语句块N} [else{语句块N+1}]
+    d.switch 等值判断
+      switch(变量){
+            case 值1:语句块1;
+            break;  // 跳出语句块,可选的
+            case 值2:语句块2;
+            break;
+            ...
+            default:语句块N    //所有语句块都没匹配上，执行default
+            break
+            }
+      注：switch语句内遇到break才会跳出，不遇到会执行完defalut才退出
+4.api
+  1)console.log("向控制台输出一句话")
+  2)document.write()
+    向网页内容区域输出一句话，但如果将document.write()放在按钮中执行的话，则会刷新整个页面
+    document.write()输出的东西会给html解释
+  3)window.alert("弹出提示框")
+  4)小数的方法toFixed(2)小数点精确到两位
+  5)'张三丰'.charCodeAt(0) ,0为索引
+  6)str = '\u5f20' unicode码 赋值给str，str存的是汉字
+  7)var input = window.prompt("请输入一个数字：") 弹出一个输入框，input变量保存的就是用户输入的数据

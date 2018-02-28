@@ -1,0 +1,18 @@
+什么是池：
+一开始就已经整理好的一些资源，随时可以拿来用(空间换时间)
+
+防爬
+user_agent限制
+ip地址限制
+
+
+———————————————————— bloom filter ————————————————————
+git clone https://github.com/axiak/pybloomfiltermmap.git
+python3 setup.py install
+
+依赖libssl-dev
+
+OCR 光学字符识别
+tesseract-ocr
+
+见 bloomfilter.py

@@ -1,0 +1,55 @@
+{%extends base.html%}
+{%block head%}
+<script type="text/javascript" src={{static_url('js/jquery-3.2.1.js')}}></script>
+<script type="text/javascript">
+    $(function () {
+         $('#input_username').blur(function () {
+             $.ajax({
+                 url:'/check',
+                 data:{'username':$('#input_username').val(),"type":"emptyname"},
+                 type:'post',
+                 async:'true',
+                 dataType:'json',
+                 success:function (data,status,xhr) {
+                     var msg = data.msg;
+                     if(msg=='ok'){
+                         $('#span_username').text('用户名可用').css({color:'green'})
+                     }else{
+                         $('#span_username').text('用户名已经注册').css({color:'red'})
+                     }
+                 },
+                 error:function (xhr,status,err) {
+                     console.log(status);
+                     console.log(err);
+                 },
+             });
+         });
+     });
+    $(function () {
+        $('#input_password').blur(function () {
+            $.ajax({
+                url:'/check',
+                data:{'password':$('#input_password').val(),'type':'check_password_length'},
+                type:'post',
+                async:'true',
+                dataType:'json',
+                success:function (data,stauts,xhr) {
+                    if(data.msg=='ok'){
+                        $('#span_password').text('密码长度符合要求').css({color:'green'})
+                    }else if(data.msg=='fail'){
+                        $('#span_password').text('密码太短了,要求'+data.password_len+'位以上').css({color:'red'})
+                    }else{
+                        console.log(data)
+                    }
+                },
+                error:function (xhr,status,err) {
+                    console.log(status);
+                    console.log(err);
+                }
+            })
+        })
+    })
+</script>
+{%end%}
+{%block title%}register page{%end%}
+{%block body%}{%module registermod()%}{%end%}

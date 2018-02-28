@@ -1,0 +1,214 @@
+Mongodb介绍
+
+数据类型  区分大小写
+  对象id
+    ObjectId("5a0b9d641b365041590ad58a")
+  null  空值或者不存在的字段
+    {'x':null}
+  布尔型  true,false
+    {'x':true}
+  数值  shell默认使用64位浮点型数值
+    {'x':3.14}{'x':3}
+  字符串  utf-8字符串都可表示为字符串类型的数据
+    {'x':'test'}
+  日期  被存储为自新纪元以来经过的毫秒数，不存储时区
+    {'x':new Date()}
+  数组  []代表数组
+    {'x':['a','b','c']}
+
+文档(document)：Mongodb中数据的基本单位，类似于关系型数据库中的'行'
+  以bson文档形式存储数据，bson是json的二进制格式
+# 文档示例(键值是字符串必须加引号，key可以不加)
+{
+  k:[
+      1 ,       # 数组里可以是数字
+      'a' ,     # 数组里可以是字符
+      k:'v' ,   # 数组里可以使k:'v'
+      {         # 数组例可以是{k:'v',...}
+        k:'v' ,
+        k:'v'
+      }
+    ] ,
+  k:{           # value可以是{k:'v',...}
+      k:'v' ,
+      k:'v'
+    },
+  k:'v'
+  {k:'v',k:'v'} # 错误 不能是单独的{k:'v',...}
+  k:'v'         # 错误 k:'v'左右必须有{}
+  name:1        # key重复会只保留一个
+  name:2
+}
+
+集合(collection)：一组文档，类似于关系数据库中的表
+  集合的命名规范：
+    集合名字不能是空字符串
+    不能包含\0字符，这种字符标识集合名结束
+    不能以system开头，这是系统集合保留的前缀
+    不能包含保留字符'.'和'$'
+数据库(database)：多个文档组合成集合，多个集合组成数据库
+  数据库的命名规范：
+    不能是空字符串
+    可以是字母数字下划线开头
+    最多为64字节
+
+系统的数据库
+  admin:admin数据库则主要存储MongoDB的用户、角色等信息
+  local:local数据库主要存储副本集的元数据
+
+从小到大存储单位：
+{key:value}(文档) < 集合(collection) < 数据库
+
+非关系型数据库
+  适合存储文档数据
+  更灵活
+  不适合存储关系型数据
+
+mongo命令
+1.创建数据库
+> use 数据库名字
+2.显示当前使用的数据库
+> db
+3.显示所有的数据库
+> show dbs
+4.创建collection，并插入document
+> db.movie.insert('name':'Pie')
+5.删除数据库
+> use mydb        # 必须先use
+> db.dropDatabase()
+6.创建集合
+> use test
+> db.createCollection("mycollection")
+> show collections
+7.删除集合
+> use test
+> show collections
+> db.mycollecton.drop()
+> show collections
+8.插入文档
+> db.集合名.insert( { key:value } )
+例：
+> use test
+switched to db test
+> db.mycol.insert({
+... title:'MongoDB Overview',
+... by:'tp author',
+... tags:['mongodb','database','nosql'],
+... likes:100,
+... price:90
+... })
+WriteResult({ "nInserted" : 1 })
+
+9.同时插入多条文档
+> db.mycol.insert([
+... {
+... title:"Mysql Overview",
+... by:"tp point",
+... tag:['mysql','database'],
+... likes:130,
+... price:70
+... },
+... {
+... title:"Network Overview",
+... by:"renming",
+... tags:['python','internet'],
+... likes:40,
+... price:90
+... }
+... ])
+BulkWriteResult({
+	"writeErrors" : [ ],
+	"writeConcernErrors" : [ ],
+	"nInserted" : 2,
+	"nUpserted" : 0,
+	"nMatched" : 0,
+	"nModified" : 0,
+	"nRemoved" : 0,
+	"upserted" : [ ]
+})
+
+10.查询文档
+> db.mycol.find()
+11.用pretty()格式化显示结果
+> db.mycol.find().pretty()
+12.findOne()查询集合中的一条文档(自动pretty)
+db.mycol.findOne()
+13.删除文档
+remove()将文档从集合中永久删除
+注意：remove({})，将会把集合内的所有文档全部删除
+db.集合名，remove(条件,0|1)   # 1代表删一条 默认是0代表全删
+例子：
+db.mycol.remove({'title':'MongoDB Overview'},1)
+db.mycol.find()
+
+14.条件语义查询
+# <lt, <=lte, >gt, >=gte, !=ne
+db.mycol.find({'by':'tp author'}).pretty()
+db.mycol.find({'likes':{$lt:50}}).pretty()
+15.$and , $or
+# 作者是tp author 且 100赞
+db.mycol.find({$and:[{'by':'tp author'},{'likes':100}]}).pretty()
+# 赞大于50 且 赞小于 110
+db.mycol.find({$and:[{'likes':{$gt:50}},{'likes':{$lt:110}}]}).pretty()
+# 赞大于50 或 赞 小于110
+db.mycol.find({$or:[{'likes':{$gt:50}},{'likes':{$lt:110}}]}).pretty()
+
+db.mycol.find({'likes':{$gt:50},'likes':{$lt:110}}).pretty()       # 同一个field 表示或
+db.mycol.find({'by':'tutorials point','likes':100}).pretty()       # 不同的filed 表示且
+
+15.in和not in
+$in(in) 和 $nin(not in)
+db.mycol.find({title:{$in:["Mongo Overview","MySql Overview"]}})
+db.mycol.find({title:{$nin:["Mongo Overview","MySql Overview"]}})
+# 假如tags是[ "mongodb", "database", "nosql" ]？？？？
+db.mycol.find({tags:{$in:['database']}})
+
+16.更新文档
+update()更改已经存在的文档中的值，接收至少两个参数
+1)查询文档：用于定位需要更新的目标文档
+2)修改器文档:用于说明要对找到的文档进行那些修改
+语法：
+    db.集合名.update(查询文档，修改器文档)
+作用：
+    update的修改器是一种特殊的键，用来指定复杂的更新操作($set:{...} --> key:value模式)
+# 准备数据
+post = {name:"Joe",age:30,sex:"M",location:"Beijing"}
+db.users.insert(post)
+零、不带修改器的update
+# { "_id" : ObjectId("xxx"), "1" : 1 }  --> { "_id" : ObjectId("xxx"), "2" : 2 }
+db.users.update({"_id" : ObjectId("xxx")},{2:2})
+# 将 name:Joe那行改为name:Bob(原来文档什么都没了，只剩name:Bob,ObjectID不会变除外)
+db.users.update({'name':'Joe'},{'name':"Bob"})
+一、$set修改器:指定一个字段的值，如果该字段不存在，则创建它
+# filed不存在则添加
+db.users.update({name:"Joe"},{$set:{"favorite book":"War and Peace"}}) # favourate book必须加引号(因为处在set的值的位置)
+# 将Joe喜欢的书改为Python Overview
+db.users.update({name:"Joe"},{$set:{"favorite book":"Python Overview"}})
+# 把Joe喜欢的书，变为一个数组["Python Overview","War and Peace"]
+db.users.update({name:"Joe"},{$set:{"favorite book":["Python Overview","War and Peace"]}})
+
+二、$unset修改器：将某个键删除
+db.users.update({name:"Joe"},{$unset:{"favorite book":1}})
+
+三、$inc修改器(increase) 用来增加已有的键的值，或者该键不存在的话，就创建一个
+注意：只能用于数据数值类型
+db.transcript.insert({"name":"Bob"})            # 没有score field
+db.transcript.update({"name":"Bob"},{$inc:{"score":20}})    # field变为20,自动添加score field
+db.transcript.update({"name":"Bob"},{$inc:{"score":20}})    # field变为40
+db.transcript.update({"name":"Bob"},{$inc:{"score":-10}})   # field变为30
+
+四、$push修改器 添加元素
+如果数组已经存在，它会向已有的数组末尾加入一个元素，要是数组不存在，就创建一个新的数组
+例子：
+db.transcript.update({'name':'Bob'},{$push:{'comment':{'Yang':'good'}})        # 不存在添加comment filed
+db.transcript.update({'name':'Bob'},{$push:{'comment':'Wei is nice'}})         # 存在则在comment的值(一个数组)添加
+
+五、$pop从数组任何一端删除元素
+{$pop:{"key":1}} 从数组末尾删除一个元素
+{$pop:{"key":-1}} 从数组头部删除一个元素
+db.lists.insert({"do":['dishes','homework','clean','cook']})
+db.lists.update({},{$pop:{"do":1}})
+db.lists.update({},{$pop:{"do":-1}})
+
+六、$pull 基于特定条件来删除元素，而不仅仅是依据元素位置删除
+db.lists.update({},{$pull:{"do":'homework'}})

@@ -1,0 +1,37 @@
+{%extends base.html%}
+{%block title%}login page{%end%}
+{%block head%}
+<script type="text/javascript" src={{static_url('js/jquery-3.2.1.js')}}></script>
+<script type="text/javascript">
+    $(function () {
+        $('#img_code').click(function () {
+         console.log('img_code click')
+         $('#img_code').attr("src","/code?abc="+Math.random());
+     });
+
+        $('#input_loginname').blur(function () {
+            $.ajax({
+                url:'/check',
+                data:{'loginname':$('#input_loginname').val(),"type":"checkavatar"},
+                type:'post',
+                async:'true',
+                dataType:'json',
+                success:function (data,status,xhr) {
+                var msg = data.msg;
+                if(msg=='default'){
+                    $('#img_avatar').attr("src","static/images/default_avatar.png");
+                }else{
+                    $('#img_avatar').attr("src","static/images/"+msg);
+                }
+             }
+            })
+        })
+    })
+    $(function () {
+        $('#btn_regist').click(function () {
+            window.location.href='/register';
+        });
+ });
+</script>
+{%end%}
+{%block body%}{%module loginmod()%}{%end%}

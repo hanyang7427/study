@@ -1,0 +1,311 @@
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 前提1
+vi models.py
+from django.db import models
+class Publisher(models.Model):
+    name = models.CharField(max_length=30)
+    address = models.CharField(max_length=50)
+    city = models.CharField(max_length=60)
+    def __str__(self):
+        return self.name
+    class Meta:
+        db_table = 'publisher'
+        verbose_name = "出版社"
+        verbose_name_plural = verbose_name
+class Author(models.Model):
+    name = models.CharField(max_length=30)
+    age = models.IntegerField(null=True)
+    email = models.EmailField()
+    def __str__(self):
+        return self.name
+    class Meta:
+        ordering = ['-age']
+        verbose_name = "作者"
+        verbose_name_plural = verbose_name
+class Book(models.Model):
+    title = models.CharField(max_length=100)
+    publication_date = models.DateField()
+    price = models.FloatField(default=0.0)
+    author = models.ManyToManyField(Author)
+    publisher = models.ForeignKey(Publisher, null=True)
+    def __str__(self):
+        return self.title
+    class Meta:
+        ordering = ['price']
+        verbose_name = "图书"
+        verbose_name_plural = verbose_name
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 前提2
+
+vi forms.py
+from django import forms
+from myapp.models import *
+TOPIC_CHOICES = (
+    ('level1','好评'),
+    ('level2','中评'),
+    ('level3','差评'),
+)
+class RemarkForm(forms.Form):
+    subject = forms.CharField(max_length = 100,label = '标题',initial = 'the title')
+    mail = forms.EmailField(label = '邮件',error_messages={'required': '你到底填不填'})
+    topic = forms.ChoiceField(choices = TOPIC_CHOICES,label = '评价')
+    message = forms.CharField(label = '内容',widget = forms.Textarea)
+    cc_myself = forms.BooleanField(required = False,label = '订阅')
+class AuthorForm(forms.ModelForm):
+    class Meta:
+        model = Author
+        fields = "__all__" #['name','age']
+        labels = {
+            'name':'姓名',
+            'age':'年龄',
+            'email':'邮箱',
+        }
+——————————————————————————— 以上为前提 ———————————————————————————————
+
+———————————————————— 定义有1:N 或 N:N 的form ————————————————
+vi forms.py
+from django import forms
+from myapp.models import *
+class BookForm(forms.Form):
+    publisher = forms.ModelChoiceField(queryset = Publisher.objects.all())
+    author = forms.ModelMultipleChoiceField(queryset = Author.objects.all())
+
+vi views.py
+from myapp.forms import *
+from myapp.models import *
+def bookset(request):
+    if request.method == 'POST':
+        form = BookForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            print(cd)
+            return HttpResponse('get form message ok')
+    form = BookForm()
+    return render(request,'bookset.html',{'form':form})
+
+vi bookset.html
+<form action="/bookset/" method="post">
+        {%csrf_token%}
+
+        {%for field in form%}
+            <div>
+            {{field.label}}:{{field}}
+            </div>
+        {%endfor%}
+
+    <div>
+        <p><input type="submit" value='提交'></p>
+    </div>
+</form>
+—————————————————————— 1:N 或 N:N在 HTML 中的体现 ——————————————————
+vi forms.py
+class BookForm1(forms.ModelForm):
+    class Meta:
+        model = Book
+        fields = "__all__" #['name','age']
+        labels = {
+            'title':'书名',
+            'publication_date':'出版日期',
+            'price':'售价',
+            'author':'作者',
+            'publisher':'出版社',
+        }
+vi views.py
+def form_key(request):
+    form = BookForm1()
+    return render(request,'form_m2m.html',{'form':form})
+
+vi form_m2m.html
+<form action="/form_key/" method="post">
+        {%csrf_token%}
+        {%for field in form%}
+            <div>
+            {{field.label}}:{{field}}
+            </div>
+        {%endfor%}
+    <div>
+        <p><input type="submit" value='提交'></p>
+    </div>
+</form>
+
+—————————————————————————————— form.save ————————————————————————————
+vi views.py
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.views.decorators.csrf  import csrf_protect
+from myapp.forms import *
+from myapp.models import *
+def form_save(request):
+    if request.method == 'POST':
+        # 1.更改某一条数据
+        # obj = Author.objects.get(id=2)
+        # form = AuthorForm(request.POST,instance = obj)
+        form = AuthorForm(request.POST)
+        if form.is_valid():
+            # 2.后台对数据进行修改
+            # point = form.save(commit = False)
+            # point.email = 'lvze@123.com'
+            # point.save()
+            form.save()
+            return HttpResponse('change author')
+    form = AuthorForm()
+    return render(request,'form_save.html',{'form':form})
+
+——————————————————————————— 多对多关系使用form.save ————————————————————————————
+def form_key(request):
+    if request.method == 'POST':
+        form = BookForm1(request.POST)
+        if form.is_valid():
+            form.save()             # 多对多关系使用form.save 会自动在数据库的N:N中间表中添加记录
+            return HttpResponse('change book ok')
+    form = BookForm1()
+    return render(request,'form_m2m.html',{'form':form})
+
+———————————————————————————— widget ——————————————————————————
+方式1：在models.py中的 子类Meta中
+class Publisher(models.Model):
+    ...
+    class Meta:
+        ...
+        widget = [...]
+方式2：在forms.py中的 自定义表单中
+class RemarkForm(forms.Form):
+    subject = forms.CharField(max_length = 100,label = '标题',initial = 'the title',widget=forms.Textarea)
+
+https://docs.djangoproject.com 中search widget
+
+———————————————————————————————— Response对象 —————————————————————————————————
+response = HttpResponse("show response")
+print(dir(response))
+print(response.status_code)
+print(response.charset)
+print(response.closed)
+
+http响应码
+vi views.py
+def response_child(request):
+    raise Http404
+    # response = HttpResponseBadRequest("400 error")
+    response = HttpResponseNotFound("404 error")
+    return response
+
+—————————————————————————— 转跳 ———————————————————————————
+>>>>>>> 一 HttpResponseRedirect转跳
+vi views.py
+from django.shortcuts import render
+from django.http import *                           # HttpResponseRedirect来自django.http
+def skip1(request):
+    if 'q' in request.GET and request.GET['q']:
+        qeury = request.GET['q']
+        return HttpResponseRedirect(qeury)          # 如果query是http://...则跳转到该url，如果是以/开头(/xxx)则转跳到当前站点的/(/xxx)
+    return render(request,'skip1.html',{})
+vi skip1.html
+<form action="/skip1/" method="get">
+        {%csrf_token%}
+            <input type="text" name = 'q' value = ''>
+            <input type="submit" name = '' value = "提交">
+        </form>
+>>>>>>> 二 redirect转跳
+vi views.py
+from django.shortcuts import render,redirect        # redirect需要先导入
+from django.core.urlresolvers import reverse        # resverse需要先导入
+def skip2(request):
+    if 'q' in request.GET and request.GET['q']:
+        qeury = request.GET['q']
+        # return redirect(reverse('response_test')) # redirect跳转 response_test是urlpatterns中项目的name
+        return redirect(show_response)              # redirect跳转 参数是views.py中的函数名称
+    return render(request,'skip2.html',{})
+vi urls.py
+urlpatterns = [
+    url(r'^response/$',show_response,name = 'response_test'),   # name = 'response_test'供redirect使用
+]
+vi skip2.html
+<form action="/skip2/" method="get">
+    {%csrf_token%}
+        <input type="text" name = 'q' value = ''>
+        <input type="submit" name = '' value = "提交">
+</form>
+>>>>>>> 三 转跳到HTTP_REFERER
+def skip3(request):
+    # 从request的META(元)包含request属性的大字典，字典的get方法获取HTTP_REFERER的值，没有这个键则返回/
+    # HTTP_REFERER指从哪里跳转过来的
+    return redirect(request.META.get('HTTP_REFERER','/'))
+>>>>>>> 四 高级跳转
+vi urls.py
+urlpatterns = [
+    url(r'index/(?P<un>.*)', index, name='aa'),
+    url(r'skip4', skip4),
+]
+vi views.py
+from django.shortcuts import render,redirect            # redirect需要先导入
+from django.core.urlresolvers import reverse
+def index(request,un='guest'):
+    return render(request,'index.html',{'un':un})
+def skip4(request):
+    if 'q' in request.POST and request.POST['q']:
+        # return redirect('aa',un=request.POST['q'])          # 先reverse('aa',kwargs={'un':request.POST['q']})，再redirect(reverse生成的url)，作用等同于以下两句
+        # a = reverse('aa',kwargs={'un':request.POST['q']})   # 生成URL字符串，首先找到viewname为aa，然后生成将正则中的?P<un>填充为request.POST['q']的URL
+        # return redirect(a)
+        return redirect(request.POST.get('source_url')+'/'+request.POST['q'])
+    return render(request,'skip4.html',{})
+vi skip4.html
+<body>
+    {{request.META.HTTP_REFERER}}
+    <form action="/skip4/" method="post">
+    {%csrf_token%}
+        <input type="text" name = 'q' value = ''>
+        <input type="hidden" name="source_url" value="{{request.META.HTTP_REFERER}}">
+        <input type="submit" name = '' value = "登录">
+    </form>
+</body>
+
+
+———————————————————————————— 中间件 ————————————————————————————
+中间件分为request和response两种
+执行时机：request在接收请求 请求提交给应用服务器之前进行预处理
+
+cat settings.py
+MIDDLEWARE_CLASSES = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+)
+MIDDLEWARE_CLASSES的顺序有讲究，request从上到下，response从下到上
+
+—————————————————————————————————— 自定义中间件 继承自MiddlewareMixin ——————————————————————————————————
+mkdir BASE_DIR/Middle       # 创建中间件目录
+cd Middle
+touch __init__.py           # 中间件是一个包
+vi m.py                     # 编写中间件
+from django.utils.deprecation import MiddlewareMixin    # 导入需要的包
+class Row1(MiddlewareMixin):
+    def process_request(self,request):              # process_request固定名字，用来处理request
+        print("666")
+    def process_response(self,request,response):    # process_response股东名字，用来处理request
+        print("777")
+        return response                             # 必须return
+class Row2(MiddlewareMixin):
+    def process_request(self,request):
+        print("888")
+    def process_response(self,request,response):
+        print("999")
+        return response
+
+在settings中注册
+vi settings.py
+MIDDLEWARE_CLASSES = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'Middle.m.Row1',
+    'Middle.m.Row2',
+)

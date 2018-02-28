@@ -1,0 +1,28 @@
+chr <---> ord
+chr     Return a Unicode string of one character with ordinal i; 0 <= i <= 0x10ffff.
+ord     Return the Unicode code point for a one-character string.
+———————————————————————————————————————— 计算机计算 ——————————————————————————————————————
+# '知'使用utf8编码
+>>> a = '知'.encode('utf-8')     b'\xe7\x9f\xa5'
+>>> b = a.hex()                 'e79fa5'
+>>> c = eval('0x'+b)            15179685
+>>> d = bin(c)                  '0b111001111001111110100101' 得到二进制结果
+———————————————————————————————————————— 手动计算 ——————————————————————————————————————
+# 1. 找到'知'的 Unicode码位(十进制)
+>>> x = ord('知')                30693
+# 2. 将十进制转为二进制，记录下需要几位二进制，此处是15位 len(b)-2
+>>> y = bin(a)                  '0b111011111100101'
+# 3. 根据表决定用多少字节
+0xxxxxxx                                                    # 7位二进制
+110xxxxx 10xxxxxx                                           # 11位二进制
+1110xxxx 10xxxxxx 10xxxxxx                                  # 16位二进制  '知'是15位，所以'知'占三位字节
+11110xxx 10xxxxxx 10xxxxxx 10xxxxxx                         # 21位二进制
+111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx                # 26位二进制
+1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx       # 21位二进制
+# 4. 将二进制填充到x的位置高位补0(从低位开始补)
+1110xxxx 10xxxxxx 10xxxxxx
+     111   011111   100101      # y去掉0b
+11100111 10011111 10100101      # 得到二进制结果
+# 5. 结果与计算机的结果相同
+111001111001111110100101
+111001111001111110100101

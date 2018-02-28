@@ -1,0 +1,200 @@
+1.js中的其他内置对象  ---- 由 ECMAScript 维护
+  1)js对象是js中重要的API
+    js中包含多种对象
+      内置对象 - ES定义
+      外部对象
+        window(BOM)   - 没人维护   浏览器对象模型(Browser Object Model)简称BOM，允许操作JS操作浏览器
+        document(DOM) - W3C维护   文档对象模型(Document Object Model简称DOM),允许JS操作网页上的内容
+      自定义对象
+        function
+    对象 包含属性和方法
+      对象.属性
+      对象.方法()
+  2)RegExp对象
+    RegExp ： RegularExpression - 正则表达式
+    pattern和flags组合起来叫做regexp
+    a.创建RegExp
+      var regExp1 =/pattern/flags;      //如果flags有g，test和exec方法会返回下一个匹配结果
+      var regExp1 =new RegExp('pattern','flags')
+    b.RegExp对象常用的方法
+      regExp1.test(string)
+        string ： 要验证的字符串
+        若果string符合regExp的格式的话，则返回true，否则返回false
+      regExp1.exec(string)
+        检索并返回满足个格式的子字符串
+  3)Math对象
+    执行与数学相关的运算和数据
+    属性
+      Math.PI
+      Math.E
+    方法
+      三角函数
+        Math.sin(x)
+        Math.cos(x)
+        Math.tan(x)
+      计算函数
+        Math.sqrt(x)    开平发
+        Math.log(x)     对数
+        Math.pow(x,y)   求x的y次幂
+      数值比较函数
+        Math.abs(x)     绝对值
+        Math.max(x,y,z) 最大值
+        Math.min(x,y,z) 最小值
+        Math.random()   返回[0,1)之间的小数
+        Math.round(x)   将x进行四舍五入到整数
+  4)Date对象
+    Date()      显示当前日期(字符串)
+    创建Date对象
+      获取当前系统的日期时间
+        var now = new Date()
+      初始化自定义日期时间
+        var date = new Date('2017/12/2 17:00:00')
+    date对象的方法：
+      读取设置时间毫秒数
+        getTime()       自1970.1.1以来的到now经过的毫秒数 time=getTime()
+        setTime(毫秒)    自1970.1.1以来的到now经过的毫秒数 time.setTime(12345678)
+      读写时间分量
+        getFullYear()   读取当前事件对象的年份
+        getYear()       返回自1900年，到当前时间对象所经过的年数
+        getMonth()      当前月份减1
+        getDate()       返回当前时间对象的日
+        getDay()        返回当前时间对象的星期(星期日 ：0 星期一 ：1 )
+        getHours()
+        getMinutes()
+        getSeconds()
+      转换为字符串
+        toString()
+        toLocaleTimeString()     返回当前的时间字符串(时分秒)
+        toLocaleDateString()     返回当前的日期字符串(年月日)
+      Function对象
+        在js中每一个函数就是一个Function对象
+        语法：
+          function 函数名(参数列表){
+              ...
+              }
+        函数的返回值：
+          函数中允许有返回值，有返回值的话需要使用return
+          如果不手动return，默认return undefined
+        参数
+          需要从函数外部传递到函数内部进行辅助运算的数据，就是参数
+          是一个或多个或没有，参数列表中的多个参数用逗号隔开
+          如果有参数的函数在调用时，尽量按照位置和数量进行传参，如果声明参数未传的话，参数的值是undefined(不是错误)
+
+          ***html调用直接调用函数***
+          <script>function f(){console.log('test')}</script>
+          <input type=button value='点我调用函数'  onclick='f()'>     //onclick的值直接写js代码
+
+          注意：
+            在js函数中，会将所有的参数都默认的封装到一个arguments的数组中
+      函数的其他创建方式
+        使用Function对象创建函数
+          var funName = Function(arg1,arg2,...,funBody);
+        ex:
+        var add = new Function('x','y','return (x+y);');
+        等同于
+        function add(x,y){
+            return x+y;
+            }
+      匿名函数
+        function(x,y){return x+y;}
+          var fun = function(x,y){return x+y;}
+          VS
+          function add(x,y){
+            return x+y;
+            }
+      全局函数
+        全局函数适用于所有的js操作中，由ES提供，不需要单独声明，直接使用
+        parseInt() / parseFloat()
+        isNaN() / Number()
+        eval() - 执行由字符串来表示的js代码
+2.外部对象
+  BOM
+    浏览器对象模型(Browser Object Model)
+    将浏览器比喻成一个对象，我们可以通过该对象灵活的操控浏览器，如，地址栏，历史记录，屏幕相关
+    window  浏览器的js才有，nodejs没有
+      |-history
+      |-navigator
+      |-document ---> DOM
+        |-iframe
+        |-Anchor
+        |-image
+        |-form
+          |-input
+          |-select textarea
+        |-tabke
+          |-TableTell
+          |-TableRow
+      |-location
+      |-screen
+
+  DOM是BOM的子集
+    文档对象模型(Document Object Model)
+    将整个HTML文档比喻诚一个对象，我们可以通过该对象灵活的操控文档中的任何内容
+3.外部对象的window对象
+  表示的是浏览器的窗口
+  浏览器的js中所有的全局函数，属性都是window对象的成员，在使用时，可以省略window(script标记的环境是window对象 consle.log(this))
+  常用属性
+    document：表示窗口中显示的html文档对象，同时也是DOM中最顶层的对象
+    history ：当前窗口所浏览过的历史记录
+    location：表示当前窗口中地址栏对象
+    screen：  当前屏幕对象
+    navigator：浏览器相关信息对象
+  window中的对话框
+    警告框：window.alert()/alert()
+    输入框：window.prompt()/prompt()
+    确认框：window.confirm()/confirm()
+    按确定按钮，返回值为true,其他操作全为false
+  window中的定时器
+    周期性定时器：每隔一段时间执行一次
+        var ret=setInterval(fun,time)
+          fun：要周期性执行的操作，可以是一个匿名函数
+          time：时间间隔，毫秒
+          ret(返回值)：返回已启动的定时器对象
+        clearInterval(timer)
+          停止已启动的定时器对象
+          timer：要停止的定时器对象
+    一次性定时器：在指定时间过后执行一次(就1次)
+        同周期定时器，一次性执行，停止需在在执行前停止
+  window的子对象
+    screen对象
+      包含客户端显示器的一些相关信息
+      属性：
+        width/height            显示器的宽和高
+        availWidth/availHeight  可用的宽和高
+    history对象
+      包含当前窗口访问过的url地址们
+      属性
+        length ： 访问过的url数量
+      方法
+        back() - 后退
+        froward() - 前进
+        go(num) - 去往历史记录中的第num个页面
+          go(1) : 前进1步
+    location
+      包含当前浏览器地址栏中的信息
+      属性
+        href：当前窗口正在浏览的地址，如果为href设置值，相当于实现浏览器跳转功能
+      方法
+        reload()：重新载入当前网页
+    navigator
+      包含浏览器的相关信息
+      属性
+        userAgent：当前计算机中所安装的浏览器信息
+4.window.document对象
+  document是DOM中最顶层的对象，封装了所有和HTML文档相关的属性和方法。网页加载时，会自动创建document对象
+  注：在浏览器中css和html能做什么，document就能做什么
+  网页在加载时，会在底层形成一颗节点树(DOM树)
+
+  DOM提供的操作
+    查找节点
+    读取节点信息
+    修改节点信息
+    创建新节点
+  查找节点
+    var elem = document.getElementById(元素ID)        通过元素id查询
+      元素ID：要获取的元素的id属性值
+      elem： 得到的元素对象 - DOM对象
+    DOM对象的属性
+      innerHTML： 获取或设置当前元素的HTML值
+      innerText： 获取或设置当前元素的文本值
+      更多的属性或方法用console.dir(elem)

@@ -1,0 +1,27 @@
+二十九、评价聚类效果
+轮廓系数得分=(x-y)/max(x,y)
+x: 同一个集群中某个数据点与其它数据点的平均距离
+y: 该数据点与最近的另一个集群所有数据点平均距离
+sklearn.metrics.silhouette_score(输入数据，计算得到的聚类输出数据,
+     metric='euclidean') -> 轮廓系数得分(0~1)
+代码：score.py
+三十、利用DBSCAN算法单独标记异常样本
+代码：dbscan.py
+三十一、利用聚类划分客户类别
+代码：sales.py
+三十二、管线
+代码：map.py、reduce.py、cascade.py、function_composer.py
+三十三、通过管线连接特性选择器和随机森林分类器
+代码：pipeline.py
+BRE - Busyness Romment Engine
+三十四、寻找最近邻
+代码：fnn.py
+三十五、基于KNN算法的分类与回归
+代码：knnc.pyok
+代码：knnr.py
+三十六、计算欧氏距离得分
+代码：euclid.py
+       abc       def        ghi
+A:      9         5          7
+B:      8         6          5
+C:      5         3          4

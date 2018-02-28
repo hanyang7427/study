@@ -1,0 +1,33 @@
+
+    <form method="post" action="/login">
+        <fieldset>
+        <table>
+
+            <tr>
+                <td colspan="2" align="center">
+                    <img src="static/images/default_avatar.png"
+                         width="96px" height="96px"
+                         style="border-radius: 50%;" id="img_avatar">
+                </td>
+            </tr>
+
+            <tr>
+                <td>用户名：</td>
+                <td><input type="text" name="name" id="input_loginname"></td>
+            </tr>
+        <tr>
+            <td>密码：</td>
+            <td><input type="password" name="password"></td>
+        </tr>
+
+            <tr>
+                <td colspan="2">{{result}}</td>
+            </tr>
+
+            <tr>
+                <td><input type="submit" value="登录"></td>
+                <td><input type="button" value="注册" id="btn_regist"></td>
+            </tr>
+        </table>
+        </fieldset>
+    </form>

@@ -1,0 +1,266 @@
+—————————————————————————————————— 缓存 ——————————————————————————————————
+缓存一般用于有些界面或者网站需要被频繁访问刷新的情况
+开辟一些空间，将用户访问的界面暂时存储到这个空间
+1.缓存的作用范围：
+  作用于网站 The per-site cache
+    MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    # 缓存设置开始 START
+    'django.middleware.cache.UpdateCacheMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
+    #   缓存设置结束 END
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+2.使用什么做缓存
+>>>>> 使用数据库做缓存 <<<<<
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache_table',
+    }
+}
+# 需要createcachetable
+./manage.py createcachetable
+>>>>> 使用文件做缓存 <<<<<
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        # 'LOCATION': '/var/tmp/django_cache',
+        'LOCATION':os.path.join(BASE_DIR,'django_cache'),
+    }
+}
+3.缓存参数Cache arguments
+in this example, a filesystem backend is being configured with a timeout of 60 seconds, and a maximum capacity of 1000 items:
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        # 'LOCATION': '/var/tmp/django_cache',
+        'LOCATION':os.path.join(BASE_DIR,'django_cache'),
+        'TIMEOUT': 60,
+        #　'OPTIONS': {
+        #    'MAX_ENTRIES': 1000
+        # }
+    }
+}
+4.缓存作用于什么地方
+作用于某一个页面 The per-view cache
+  vi views.py
+  from django.views.decorators.cache import cache_page
+  @cache_page(5)
+  def cache_test(request):
+      import time
+      ctime = time.time()
+      return render(request,'cache.html',{'ctime':ctime})
+作用于页面的某一部分 Template fragment caching
+  vi cache.html
+  {%load cache%}
+      <h1>{{ctime}}</h1>
+      {%cache 5 ck%}
+          <h1>{{ctime}}</h1>
+      {%endcache%}
+
+———————————————————————————— 上传图片 ————————————————————————————
+vi image.html
+<body>
+    <form action="/uploadImage/" method='post' enctype="multipart/form-data">
+        {%csrf_token%}
+        <input type="file" name='imageFile'>
+        <input type="submit" value='提交'>
+    </form>
+</body>
+########文件上传###################
+vi views.py
+import datetime as dt
+import os
+import json
+from django.conf import settings
+def postImage(request):
+    return render(request,'image.html')
+def make_save_dir():
+    today = dt.datetime.today()
+    dir_name = 'django' + '/%d/%d/'%(today.year,today.month)
+    if not os.path.exists(settings.MEDIA_ROOT+'/'+dir_name):
+        os.makedirs(settings.MEDIA_ROOT+'/'+dir_name)
+    return dir_name
+def image_upload(files):
+    allow_suffix = ['jpg','png','gif','bmp']
+    file_suffix = files.name.split('.')[-1]
+    if file_suffix not in allow_suffix:
+        return {'error':1,'message':'图像格式不正确'}
+    save_path = make_save_dir()
+    path = os.path.join(settings.MEDIA_ROOT,save_path)
+    path_file = os.path.join(path,files.name)
+    print(path_file)
+    with open(path_file,'wb') as f:
+        f.write(files.file.read())
+    return {'error':0,'message':'图片上传'}
+def uploadImage(request):
+    '''
+    error:0  message:'图片地址不正确'
+    error:1  message:'图像格式不正确'
+    error:2  message:'上传错误'
+    '''
+    files = request.FILES.get('imageFile',None)
+    if files:
+        result = image_upload(files)
+    return HttpResponse(json.dumps(result),content_type='application/json')
+
+—————————————————————— 用户头像上传 ——————————————————————
+vi settings.py
+MEDIA_URL='/upload/'
+MEDIA_ROOT=os.path.join(BASE_DIR,'upload')
+
+vi loginapp/models.py
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+class User(AbstractUser):
+    mobile = models.CharField(max_length = 11,verbose_name = '电话')
+    weixin = models.CharField(max_length = 20,blank=True,null=True,verbose_name = '微信')
+    avatar = models.ImageField(upload_to = 'avatar/%Y/%m',default = 'static/default.png',max_length = 500,blank = True,null = True)
+    class Meta:
+        verbose_name = 'User'
+        ordering = ['-id']
+    def __str__(self):
+        return self.username
+vi loginapp/forms.py
+from django import forms
+class RegForm(forms.Form):
+    username = forms.CharField(widget = forms.TextInput(attrs={'placeholder':'Username','required':'required'}),max_length = 50)
+    password = forms.CharField(widget = forms.PasswordInput(attrs={'placeholder':'Password','required':'required'}),max_length = 20)
+    email = forms.EmailField(widget = forms.TextInput(attrs={'placeholder':'Email','required':'required'}),max_length=50)
+    tel = forms.CharField(widget = forms.TextInput(attrs={'placeholder':'telephone','required':'required'}),max_length = 13)
+    avatar = forms.ImageField(required = False)
+vi reg.html
+<form action="/loginapp/register/" method="post">
+    {%csrf_token%}
+    <ul>
+        <h2>新用户</h2>
+        <li>{{reg_form.username}}</li>
+        <li>{{reg_form.password}}</li>
+        <li>{{reg_form.email}}   </li>
+        <li>{{reg_form.tel}}     </li>
+        <li>{{reg_form.avatar}}  </li>
+    </ul>
+    <p><input type="submit" value='注册'></p>
+</form>
+vi loginapp/views.py
+from django.contrib.auth.hashers import make_password
+def reg(request):
+    try:
+        if request.method == 'POST':
+            reg_form = RegForm(request.POST)
+            if reg_form.is_valid():
+                cd = reg_form.cleaned_data
+                # make_password方法将明文转为密文
+                dic = {'username':cd['username'],'password':make_password(cd['password']),'email':cd['email'],'mobile':cd['tel'],'avatar':cd['avatar']}
+                User.objects.create(**dic)
+                return redirect('/loginapp/login/')
+            else:
+                return HttpResponse('register failed')
+        else:
+            reg_form = RegForm()
+    except Exception as e:
+        print(e)
+    return render(request,'reg.html',locals())
+
+———————————————————————— 分页器 ————————————————————————
+#分页使用方法
+from django.core.paginator import Paginator,InvalidPage,EmptyPage,PageNotAnInteger
+# page_list 要分页的对象 n 表示每n个元素占一页
+def page(request,page_list,n):
+    paginator = Paginator(page_list,n)
+    try:
+        p = int(request.GET.get('page',1))
+        page_list = paginator.page(p)
+    except (InvalidPage,EmptyPage,PageNotAnInteger):
+        page_list = paginator.page(1)
+    return page_list
+def getPage(request):
+    article_list = ['a1','a2','a3','a4','a5','a6','a7','a8','a9','a1','a2','a3','a4','a5','a6','a7','a8','a9']
+    article_list = page(request,article_list,5)
+    return render(request,'page.html',{'article_list':article_list})
+
+vi page.html
+<body>
+    {% for article in article_list %}
+    <p>{{ article}}</p>
+    {% endfor %}
+<div class="pagination">
+    <span class="step-links">
+        {% if article_list.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ article_list.previous_page_number }}">上一页</a>
+        {% endif %}
+        <span class="article">
+            第{{article_list.number}}页/共{{ article_list.paginator.num_pages }}页
+        </span>
+        {% if article_list.has_next %}
+            <a href="?page={{ article_list.next_page_number }}">next</a>
+            <a href="?page={{ article_list.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+</body>
+
+—————————————————————————————— 部署 ——————————————————————————————
+apache + mod_wsgi + django
+nginx  + uwsgi    + django
+
+CGI     通用网关接口
+WSGI    WSGI是Web Server Gateway Interface的缩写。以层的角度来看，WSGI所在层的位置低于CGI
+        wsgi.py --> It exposes the WSGI callable as a module-level variable named ``application``.
+uwsgi   线路协议，连接web服务器和python程序，一般python端需要用符合WSGI的接口规范
+uWSGI   实现了uwsgi的web服务器
+
+1 将代码放到服务器指定目录下，安装相应的python环境
+  pip3 install -r requirments.txt
+2 安装uWSGI服务器 并配置，保持启动
+  pip3 install uwsgi
+vi BASE_DIR/uwsgi.ini
+[uwsgi]
+http = :9000
+socket = 127.0.0.1:8001
+chdir = BASE_DIR
+wsgi-file = name_of_project/wsgi.py
+processes = 4
+threads = 2
+stats = 127.0.0.1:8080
+vacuum = true
+启动uwsgi uwsgi uwsgi.ini
+3 安装nginx
+  * install nginx
+  nginx start
+4 拷贝 nginx 的 etc 目录中的 uwsgi_params 文件到项目目录中
+  cp path_to_nginx_etc/uwsgi_params BASE_DIR/
+5 编写配置nginx配置文件，并将文件软连接到BASE_DIR
+vi path_to_nginx_etc/include/name_of_project.conf
+upstream django{
+    server　127.0.0.1:8001;
+}
+server {
+  listen            8000;
+  server_name day.example.com;
+  charset           utf-8;
+  client_max_body_size 75M;
+
+  location /media {
+    alias BASE_DIR/name_of_project/upload;
+  }
+  location /static {
+    alias BASE_DIR/name_of_project/static_file;
+  }
+  location / {
+    uwsgi_pass django;
+    include BASE_DIR/name_of_project/uwsgi_params;
+  }
+}
+ln -s path_to_nginx_etc/include/name_of_project.conf BASE_DIR/name_of_project.conf
+6 重启nginx服务器
+nginx restart
+7 注意static的静态文件目录需要进行收集
+  manage.py collectstatic

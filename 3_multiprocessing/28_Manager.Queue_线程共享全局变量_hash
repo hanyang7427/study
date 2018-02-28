@@ -1,0 +1,111 @@
+queue.priorityQueue优先队列
+multiprocessing.Queue 用于进程间通信时传递数据
+
+**********进程间通信
+在多个进程中传递数据一般而言用队列就可以了(multiprocessing.Queue)
+  队列在复制前会序列化,如果要快速高效的话考虑共享内存；
+在多个进程中传递信号可以用:
+  互斥量(multiprocessing.Lock)主要用于在多个进程间加锁
+    互斥量可以看做一种特殊的信号量，互斥量可以看做是一个消费者中一个信号的信号量
+  信号量(multiprocessing.Semaphore)
+  事件(multiprocessing.Event)
+
+为了高效可以考虑 共享内存+信号量
+***********
+
+对于进程池而言，python提供了一些配套设施，对于队列的管理使用
+multiprocessing.Manager.Queue
+进程池的进程间传递数据来用multiprocessing.Manager
+#############################################
+# 进程池例的进程通信Manager.Queue demo
+##############################################
+from multiprocessing import Manager,Pool
+def read(q):
+    for i in range(q.qsize()):
+        print("read from manager queue: %s" % q.get_nowait())
+def write(q):
+    for i in 'Aid1709':
+        q.put(i)
+if __name__ == '__main__':
+    # 创建一个在进程池的进程交互数据的队列
+    q = Manager().Queue()
+    # 创建进程池
+    p = Pool()
+    # 给进程池分配任务
+    p.apply(read,(q,))
+    p.apply(write,(q,))
+
+    p.close()
+    p.join()
+进程池当中的进程和自己创建的差别：
+    进程池中不需要关心我们任务分配给进程的策略；
+    而自己创建的进程则需要关心细节；
+
+进程与线程
+进程：cpu分配资源单位
+线程：cpu执行流程单位(比如一个py文件中代码执行顺序)，是轻量级的进程
+
+Thread(group=None,target=None,name=None,args=(),kwargs=())
+
+#################################################
+# 线程 共享全局变量demo
+# from threading import Thread
+# import time
+# g_num = 100
+# def getTime(interval):
+#     global g_num
+#     while True:
+#         g_num += 100
+#         time.sleep(interval)
+#         print("in child num is %d"%g_num)
+#
+# if __name__ == '__main__':
+#     p = Thread(target=getTime, args=(2,))
+#     p.start()         # 此处相当于执行 getTime()
+#
+#     while True:
+#         g_num += 1
+#         print("Current num is %d"%g_num)
+#         time.sleep(1)
+线程如果join就相当于在代码流程中加了target指定的代码，target的代码和主代码流程可以共享变量(在target指定的函数中使用global),也可以不共享(不用global)
+线程如果不join，就是主流程和target同步执行
+
+python中线程的问题
+GIL(Global interperter Lock)全局解释锁
+由于历史原因，cpython天生有一个缺陷
+python的线程并不是真正的多线程
+想要实现多核执行，可以使用进程，因为进程会启动新的解释器，解释器有独自的GIL锁
+怎么办：
+    1)在cpu计算密集情况下，使用多进程
+    对于python的每一个进程，python会单独起一个解释器，多进程可以真正实现并行
+    2)在I/O密集的情况下，使用多线程，突破GIL可以使用c扩展
+    在I/O密集情况下，线程很多时间是在等待I/O，所以在等待I/O的时候可以让出cpu资源
+    3)尽量使用进程池
+
+
+1.网络下载问题：
+    1.获取文件原地址，网络数据传输 readFromInternet
+    2.保存数据到本地writeToDisk
+    g_buffer[MAXSIZE],readThread,writeThread,?mutex互斥量?,?semaphore信号量?
+2.使用多线程实现生产者消费模型
+3.大作业
+通过一个进程池来实现,文件夹下大量文件的拷贝，至少1000个文件，有方法证明你拷贝的文件是ok的
+*****
+############################
+# hashdemo
+############################
+import hashlib
+digest = hashlib.sha512()   # 创建sha512算法
+digest.update('1'.encode('utf-8'))
+print(digest.hexdigest())
+
+1.进程有哪三态，哪五态，相互之间怎么切换
+三态：就绪，执行，阻塞
+五态：新建--就绪，执行，阻塞--终止
+2.什么是死锁，例举出一个死锁的例子，怎么避免死锁
+p1和p2都是同时需要r1和r2才能工作，p1拿到了r1，p2拿到了r2，p1和p2都在等等待对方释放资源，都在阻塞状态
+超时，资源有序化
+3.进程和线程有什么区别
+进程会起多个解释器，线程不会
+4.多线程同步与互斥有几种方法实现，都是什么
+5.python的多进程，多线程分别适合于什么场景下使用，爬虫适合说那个多进程还是多线程

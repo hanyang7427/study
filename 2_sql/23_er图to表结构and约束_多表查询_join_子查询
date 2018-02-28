@@ -1,0 +1,160 @@
+20171101-数据库编程-DAY03
+=======================================================================
+数据库的设计:
+    需求分析,概念设计,逻辑设计,物理设计
+    1.概念设计ER图:
+      概念模型(entity-relationship model):实体关系图
+        实体(entity)	 -> 表
+        实体的属性 	 -> 字段
+        联系(relationship) -> 表与表的关系(eg. 1:1, 1:N, N:N)
+      注意:
+      不允许N:N的关系，N:N要转化成多个1:N
+      1:1是的两张表可以合并成一张表
+      1:N的在表在1表里添加外键关联到N的主键
+      N:N添加一张表
+    2.逻辑设计
+      数据类型(eg. int, decmail)
+      指明约束:(eg. not null, 主键约束, 有效性约束)
+        非空约束:  not null
+        键(pk):    索引
+        主键约束:  唯一标识表中的记录,可以是多个字段(eg.身份证号),主键会自动变为索引(可以二分查找)
+        唯一键():  整个表中只包含唯一值的字段,都可以做候选键
+        外键约束:  在1:N关系中,给1表添加外键(使用N的主键作为1的外键)
+        一门课只能由一个老师教,所以在课程的表中添加老师姓名字段作为外键(FK),老师姓名在教师表中是主键
+    3.物理设计:
+      数据库公司思考物理设计
+
+从逻辑模型 -> 用sql实现数据库
+课程是一个实体，老师是一个实体，找到唯一标识实体的属性做主键
+一门课只能由一个老师教，课程对应老师 = 1对应1
+    1、通过课程名可以确定唯一授课老师,所以可以构成表中的行和列
+       课程名    授课老师
+       Python     Wei
+        ...       ...
+    2、老师是一个实体所以这张表的授课老师是外键
+       (foreign key(courses_t.teacher_id) references teachers_t(teacher_id))
+一个老师可以教多门课程，老师对应课程 = N对应1
+    1、通过授课老师不能确定唯一的一门课程，所以不能构成表中的行和列
+       老师姓名  授课课程
+         Wei     Python,C++,...		# 错误
+一个学生可以选多门课程，一门课程可以多个学生选  学生对应课程 = N对应N，需要添加[学生-课程]实体
+    1、学生注册表:首先确定表的主键(什么能唯一标识该表)
+       学生-课程组合可以确定唯一的一条记录(组合主键)
+       Primary key(student_id,courese_id)
+       a) 通过一条学生选课记录可以确定一个学生，学生选课记录对应学生 = 1对应1
+       b) 通过一条学生选课记录可以确定一门课程，学生选课记录一应课程 = 1对应1
+          
+总结：
+    第一步、ER图确定实体，确定实体和实体之间的对应关系1:1/1:N/N:N
+    第二步、通过对应关系确定外键，通过实体确定主键
+    第三步、使用数据库软件实现
+    注:1:1可以确定表的字段，1:N确定什么不能做为字段，N:N需要增加实体转换成1:N
+
+高级SQL:
+create table orders(o_id int not null,o_name varchar(50),date datetime,c_id int,amount decimal(10,2));
+insert into orders values
+(100,'Cumputer'  , '2011-11-01 12:34:56' ,1,8800),
+(101,'iphone'    , '2011-10-10 15:20:45' ,3,6600),
+(102,'microphone', '2017-09-08 12:33:44' ,3,450),
+(103,'ipad'      , '2014-02-17 18:24:17' ,4,9200),
+(104,'iwatch'    , '2017-09-12 10:34:33' ,1,5700),
+(105,'mouse'     , '2012-06-23 09:44:33' ,5,200),
+(106,'pen'       , '2013-09-20 11:45:23' ,6,300),
+(107,'iphone'    , '2016-04-23 12:25:32' ,6,7800),
+(108,'ipad'      , '2016-02-12 20:20:08' ,5,12000);
+
+多表查询:
+    利用两个表中共同含有的列的相同值来连接
+    语法:一个表的外键等于另一个表的主键
+      select 列名from 第一个表,第二个表 where 第一个表.列名 = 第二个表.列名
+    例:
+      select id,name,salary,o_name,amount from customers,orders where customers.id = orders.c_id
+    过程:
+      先找到coutomer.id和orders.c_id相等的id，在将这些id在两个表的查询结果合并
+join查询
+CREATE table a
+(
+id int,
+name varchar(200)
+)
+CREATE table b
+(
+id int,
+name varchar(200)
+)
+INSERT INTO b VALUES(1,'a');
+INSERT INTO b VALUES(2,'b');
+INSERT INTO b VALUES(3,'c');
+INSERT INTO b VALUES(4,'d');
+INSERT INTO b VALUES(5,'e');
+
+INSERT INTO a VALUES(1,'f');
+INSERT INTO a VALUES(2,'a');
+INSERT INTO a VALUES(3,'e');
+INSERT INTO a VALUES(4,'g');
+INSERT INTO a VALUES(5,'h');
+
+
+第一种：join(inner join)
+解释：第一步a和b的笛卡尔积，第二步查找b.name=a.name的行
+SELECT * FROM b JOIN a on b.name=a.name
++------+------+------+------+
+| id   | name | id   | name |
++------+------+------+------+
+|    1 | a    |    2 | a    |
+|    5 | e    |    3 | e    |
++------+------+------+------+
+第二种：left join
+解释：第一步a和b的笛卡尔积，第二步查找b.name=a.name的行，并且保证left左手边的表每一行都出现(右边表没有则为null)
+注意：必须有条件 on
+SELECT * FROM b left JOIN a on b.name=a.name;
++------+------+------+------+
+| id   | name | id   | name |
++------+------+------+------+
+|    1 | a    |    2 | a    |
+|    5 | e    |    3 | e    |
+|    2 | b    | NULL | NULL |
+|    3 | c    | NULL | NULL |
+|    4 | d    | NULL | NULL |
++------+------+------+------+
+第三中：right join
+注意：必须有条件 on
+解释：第一步a和b的笛卡尔积，第二步查找b.name=a.name的行，并且保证right右手边的表每一行都出现(左边表没有则为null)
+SELECT * FROM b right JOIN a on b.name=a.name;
++------+------+------+------+
+| id   | name | id   | name |
++------+------+------+------+
+|    1 | a    |    2 | a    |
+|    5 | e    |    3 | e    |
+| NULL | NULL |    1 | f    |
+| NULL | NULL |    4 | g    |
+| NULL | NULL |    5 | h    |
++------+------+------+------+
+注：复杂的join查询的执行顺序，先执行join...on...生成一张表，然后在生成的表上查询
+
+子查询:嵌入到另一个select语句中的select语句
+    select 列名或者表达式 from 表名 where 表达式 比较操作符 {all | any} (select子查询语句);
+    1.返回单值的子查询
+      select * from customers where customers.id = (select c_id from orders where o_id = 100)
+    2.返回多值的子查询
+      select * from customers where customers.id in (1,2,3)
+      select * from customers where customers.id in (select c_id from orders where amount > 5000)
+    3.any和all子查询
+select嵌套到insert
+    原本是inser into 表名 values(...);
+    insert into 表名 [列名1,列名2,...列名N] select [列名1,列名2,...,列名N] from 表名 [where 条件];
+select嵌套到update
+    update 表名1 set 列名 = 新的值 where 列名 操作符 (select 列名 from 表名2 [where 条件]) 
+    update customers set salary=salary*1.5 where age in (select age from customers_1 where age>20)
+    注:
+      update from的表名不能和嵌套的select from的表名相同否则报错
+      ERROR 1093 (HY000): You can't specify target table 'customers_1' for update in FROM clause 
+      不能指定customers_1(update customers_1 set ...)
+delete 语句嵌套子查询
+    语法:
+      delete from 表名1 where 列名 操作符 (select 列名 from 表名2 [where 条件]);
+    例:
+      delete from customers_1 where age in (select age from customers where age > 27);
+    注:
+      delete from的表名不能和嵌套的select from的表名相同否则报错
+      ERROR 1093 (HY000): You can't specify target table 'customers_1' for update in FROM clause

@@ -1,0 +1,30 @@
+# 使用os模块给子进程设置nice值，p.pid是存的是子进程的pid，子进程没有结束时可以获取
+os.setpriority(os.PRIO_PROCESS, p.pid, 5)
+
+
+# 获取当前进程的name和pid
+multiprocessing.current_process().name
+multiprocessing.current_process().pid
+
+gcc 编译成共享库文件(so)
+gcc in.c -shared -o out.so
+
+from types import *
+from threading import Thread
+# 加载共享库
+lib = cdll.LoadLibrary("./dloop.so")
+# 创建线程任务是dloop.so中的Deadloop函数
+t = Thread(target=lib.Deadloop)
+t.start()
+
+阻塞
+
+同步：a进程调用b进程，等待b进程的执行结果，阿不再干事情(阻塞),等b进程执行完再继续执行
+异步：a进程调用b进程，不等待b进程的结果继续执行，当b程执行完，会通知a进程
+并发：cup一会执行a任务，一会执行b任务
+并行：多个cpu同时执行
+     因为有GIL多线程无法使用多个cpu，因为多进程会启动新的解释执行器所以有多个GIL，可以突破这个限制
+协程；本质是生成器函数
+     在单进程单线程中，程序以执行顺序执行，调用next跳到函数内，函数内的yield有跳会主程序
+
+异步的一个重要概念：回调函数(callback)

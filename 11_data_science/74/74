@@ -1,0 +1,103 @@
+4)在numpy中绝大多数的算术运算符都隐式关联于内置的一般函数，
+因此都可以适用于对任意维数组进行算术运算操作。
+      1 1 1 1 1 1
+  F  1 0 1 0 1 0
+1 1 2 1 3 2 5 3 ...
+1 0 1 1 2 1 3 2
+F^1
+      F^2
+            F^3
+                        ...F^n-1[0,0]->fn
+代码：fibo.py
+0.618 vs. 0.382 - 黄金分割
+  f(n)
+------- ---n->oo---> 0.618
+f(n-1)
+f(n-2) + f(n-1) = f(n)
+f(n-2)/f(n-1) + 1 = f(n)/f(n-1)
+limf(n)/f(n-1) = x = limf(n-1)/f(n-2)
+1/x + 1 = x
+1 + x = x^2
+x = (V5-1) / 2 = 0.618
+5)一些常用的数学函数，比如三角函数、对数函数等，也被numpy用
+一般函数实现为可针对数组进行计算。
+y=sin(x)
+x=Asin(at+pi/2)
+y=Bsin(bt)
+利萨如曲线
+代码：lissa.py
+方波
+4sin(x)/pi + 4sin(3x)/3pi + 4sin(5x)/5pi + ... +
+4sin((2N-1)x)/(2N-1)pi
+=(4/pi) SIGMA(sin(kx)/k)
+              k=1,3,5...
+代码：square.py
+f(x)=-2/pi SIGMA(sin(2kpix)/k)
+                 k=1,2,3...
+6)实现位运算的一般函数
+A.异或：^/__xor__()/bitwise_xor()
+1^0=1 \
+1^1=0   \ 不同为1，
+0^0=0   / 相同为0
+0^1=1 /
+检验两个整数是否同号。
+if a^b < 0 then a和b必然异号
+B.位与：&/__and__()/bitwise_and()
+1&0=0 \
+1&1=1   \ 只有同为1的位与的结果才是1，
+0&0=0   / 只要有一个为0，结果就是0
+0&1=0 /
+1 2 4 8 16 32 64 ...
+32     00100000
+31     00011111 &
+---------------------
+         00000000
+if a&(a-1) == 0 then a一定是2的整数次幂
+C.左移：<</__lshift__()/left_shift()
+代码：bit.py
+五、numpy的子模块
+1.线性代数(linalg)
+1)inv
+矩阵A与其逆矩阵的乘积是一个单位矩阵。
+AA^-1=E
+B = numpy.linalg.inv(A)
+2)solve
+x-2y+z=0
+2y-8z-8=0
+-4x+5y+9z+9=0
+-------------------
+  1x + -2y +  1z =  0
+  0x +  2y + -8z =  8
+-4x +   5y +  9z = -9
+-----------------------
+/  1  -2   1 \    / x \     /  0 \
+|   0   2  -8 | x | y  | = |   8  |
+\ -4   5   9 /    \ z /     \ -9 /
+-------------    -----     ------
+         a              x           b
+ax = b
+x = numpy.linalg.solve(a, b)
+3)eigvals/eig
+对于n阶方阵A，如果存在数a和非零n维向量x，使得Ax=ax成立，则
+称a是矩阵A的一个特征值，x是矩阵A属于特征值a的特征向量。
+| m n | x | u | = | mu+nv | = | au |
+| o  p |    | v |     | ou+pv |     | av |
+a: 特征值
+x = (u, v) 特征向量
+3)pinv
+对于任何n行m列的矩阵A，如果有一个m行n列的矩阵B，使得
+AB=E成立，则成A和B广义互逆。
+B = numpy.pinv(A)
+4)det
+计算行列式的值
+| a b | ad - bc
+| c d |
+| a b c | a | e f | - b | d f | + c | d e |
+| d e f |    | h i |       | g i |       | g h |
+| g h i |  a(ei-fh)-b(di-fg)+c(dh-eg)
+代码：linalg.py
+2.快速傅立叶变换(fft, fast fourier transform)
+y = Asin(wx+f)
+代码：fourier.py
+基于傅立叶变换的降噪滤波
+代码：filter.py

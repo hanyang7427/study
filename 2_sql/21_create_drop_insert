@@ -1,0 +1,132 @@
+20171030-数据库编程-day1
+
+1、关系型数据库建模构建块
+
+数据是以行和列的形式存储，这一系列的行和列成为表(关系)，表中每一个行表示一条记录(元组)，表中每一列表示
+记录的一个属性，一组表组成了数据库，表与表之间的逻辑关联叫关系(表与表之间有关系的数据库才叫关系型数据库)
+
+关系型数据库的核心内容有两点：数据库和数据库之间的逻辑关系
+
+查询：查询的结果是一个集合(set)
+    选择：操作行
+    投影：操作列
+并：union(相同记录不显示)(union all才显示相同记录)
+    两个表并的前提：字段顺序和字段个数必须相同
+差：-
+多表查询和join
+子查询
+笛卡尔积:两个表的所有组合(所得行数是两个表行数的乘积)
+  a表:			  b表:			      a*b
++------+		+------+		+------+------+
+| a_id |		| b    |		| a    | b    |
++------+		+------+		+------+------+
+| 1    |		| 3    |		| 1    | 3    |
+| 2    |		| 4    |		| 1    | 4    |
++------+		+------+		| 2    | 3    |
+						        | 2    | 4    |
+						        +------+------+
+2 row in set    2 rows in set	4 rows in set(2*2)
+
+
+2、mysql服务器
+    启动：sudo /etc/init.d/mysqld start
+    客户端链接：mysql -uroot -p123456 -hhostname -P3306 database
+      \c：清除之前输入的sql语句，重新开始输入
+        例：清除
+          mysql> asdf \c show databases;
+3、SQL
+    structured query language(结构化查询语言)
+    注意：不区分大小写(表名区分大小写)
+    以关键字开头：select, instert, update, delete, alter, drop, create, use, show.
+    1)、创建数据库：
+    create database testDB;
+    create table '表名'(
+     'cloumn1' datatype parameter,
+     [PRIMARY KEY('column*')]);
+    数据类型(datatype)：
+      字符串       varchar
+      整数        int
+      定长小数     decimal(例子：decimal(5,2)123.45，如果输入没有小数点的数，自动加.00)
+      浮点型       (float)
+    2)、创建表：
+    create tables customers(
+     ID INT,
+     NAME VARCHAR(20),
+     AGE INT,
+     ADDRESS CHAR(25),
+     SALARY DECIMAL(18,2)
+    );
+    3)、显示创建表时的语句
+    show create table customers
+    练习：
+      创建数据库schools
+      使用该数据库
+      创建表students，其中包括字段：
+        id      int
+        name    varchar(20)
+        gender  char(20)
+        age     int
+      查询当前数据库中的所有表格
+      查询表students中的所有属性名称和数据类型
+    4)、删除表和数据库：
+      select database();	# 查看当前所在数据库
+      drop table 表名
+      drop database 数据库名
+    5)、往表中插入数据
+      两种语法：
+        1) insert into 表名(column1,colum2,...,columnN) values(value1,value2,...,valuseN);
+        2) insert into 表名 valuse(value1,value2,...,valueN);
+        例：
+          insert into customers(id,name,age,address,salary) values(1,'Ann',30,'Beijing',2000)
+          insert into customers values(2,'Bob',22,'Tianjin',3000)
+    6)、一次插入N条数据：
+      insert into customers(id,name,age,address,salary) values
+      (1,'Bob',25,'Beijing','2000'),(2,'John',30,'Shenzhen','4000') ,...;
+    7)、select 查询语句：
+      select column1, column2,...,columnN from 表名;
+      查询表中所有记录(包含所有列)：
+      select * from customers;
+      投影选择：
+      select name,age from customers
+      select查询的列,各个列的数据个数必须相同,且一行的数据必须有对应关系
+    8)、用一个表去填充另一个表：
+      insert into 第二个表(column1,column2,...columnN) select column1,column2,...columnN) from 第一张表
+      例：
+        create table t2(id int,name varchar(20),age int);
+        insert into t2(id,name,age) select (id,name,age) from t1;(注意字段名顺序一样id,name,age);
+    9)、指名操作符：
+      = ,!=, <>(不等于), >,<,<=,>=,(!<,!>)这两个看版本
+    10)、逻辑：
+      ALL所有，AND并，ANY任意一个，BETWEEN在...之间，EXISTS存在，IN在...里，LIKE像...，NOT非，
+      OR或者，IS NULL 为空值，UNIQUE唯一值(不重复的值)
+      select * from tb1 where id in (select id from tb2)    # tb1的id在tb2的id里
+      select * from tb1 where id > any(select id from tb2)  # 查找条件为tb1的id大于tb2中的最小id
+      select * from tb1 where id > all(select id from tb2)  # 查找条件为tb1的id大于tb2中的最大id
+    11)、where 条件语句(必须和select一起使用)：
+      select column1,column2,...columnN from 表名 where 条件;
+      select * from customers where name <> 'Jimmy'
+      注:
+        空值用null表示(... where ... is null),非空用not null表示(... where ... is not null)
+        select * from customers where name is null
+        select * from customers where name is not null
+        select * from customers where name is not 'null'	# 'null'表示字符串null
+        select * from customers where name = null		# 错误
+    12)、AND & OR：
+      select column1,column2,...columnN from 表名 where 条件1 and 条件2 and 条件N
+      select column1,column2,...columnN from 表名 where 条件1 and 条件2 or 条件N
+      例：
+        select name, salary, from customers where age>20 and age<25 and gender='f'
+      注：
+        and 的优先级高于or，向优先算or可以把or用()括起来
+
+练习：
+    创建数据库schools
+    使用该数据 use
+    创建students表，包括字段，id int ，name varchar(20) ， gender chr(20)，age int
+    往表中插入几条学生信息，要求用不同的方法插入
+    首先插入一条数据
+    之后，同时插入多条数据
+    再复制students表到一个新的表，新的表的名字叫student_copy
+    选择性别为女，并且，年龄大于20的学生麻将这些学生信息插入到新生成的表students_copy中
+    提示：insert into t2 select *  from t1 where a and b
+

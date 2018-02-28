@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="jquery-1.11.3.js"></script>
+
+</head>
+<body>
+<div id="d1" style="transform-style: pr">2222</div>
+<span id="s1">ddddd</span>
+<button onclick="a()">clone</button>
+<button onclick="b()">clone true</button>
+<script>
+    function a() {
+        document.getElementById('d1').setAttribute('classh',undefined)
+    }
+    function b() {
+        var c2 = $('s1').clone(true)
+        $('d1').append(c2)
+    }
+</script>
+</body>
+</html>

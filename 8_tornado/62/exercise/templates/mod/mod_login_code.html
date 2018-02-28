@@ -1,0 +1,15 @@
+<form action="/login" enctype="application/x-www-form-urlencoded">
+    <fieldset>
+        <img id='img_avatar' src={{static_url('images/default_avatar.png')}}>
+    <p>用户：<input id='input_loginname' type="text" placeholder="输入用户名" name="username"></p>
+    <p>密码：<input type="password" name="password"></p>
+        <img width="80px" height="20px" src="/code" id="img_code">
+        {{result}}
+    <input type="submit" value="登录">
+        {# 两种转跳方法 #}
+        {# <a href="/register" style="text-decoration: none"><input type="button" value="注册"></a> #}
+        {# <input type="button" value="注册" onclick="window.location.href='/register'">#}
+        <input id='btn_regist' type="button" value="注册">
+    </fieldset>
+    检测验证码是否正确功能没有做，使用ajax，点击登录时，发送ajax
+</form>

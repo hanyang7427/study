@@ -1,0 +1,102 @@
+二进制文件：
+bytes类型：
+    以字节(8bit)为单位存储数据，每个字节范围为0~255
+    bytes常量的表示方式：
+      b''       空字节串(三单引，双引，三双引均可，大写b也可)
+      例：
+        b'ABCD'         有四个字节的字节串
+        b'\x41'         有一个字节的字节串(\x表示两位16进制)
+      注意：
+        字节串只能显示ASCII编码的字符(两位16进制16*16只能表示256种字符)，中文显示为\xXX
+    bytes运算符：
+      + += * *= < <= > >= == !+ in/not in
+    bytes相关函数：
+      len max min all any sum
+    创建字节串的函数：
+      bytes(整型可迭代对象)
+      bytes(字符串,encodeing='utf-8')
+      bytes(n)              创建n个字节串
+      bytes()               创建空的字节串
+    字节串是不可变序列
+    >>>help(bytes)  查看帮助
+    bytes和str的转换：
+      str -> bytes：
+        str.encode(encoding='utf-8')
+        例：b = '英文abc'.encode('utf-8')
+      bytes -> str：
+        bytes.decode(encoding='utf-8')
+二进制文件的读写：
+    xxd命令：
+      make a hexdump or do the reverse(hex to bin).
+    二进制文件：
+      文件中以字节(Byte)为单位存储，换行符(\n)不是换行的文件(二进制文件不存在换行)
+    二进制文件的操作方法：mode="*b"
+      f.read(size=-1)       从一个文件流中最多读取size个字符
+      f.write(字符串/字节串)  写一些数据到文件流中，返回写入的字节数(字符数)
+      f.tell()              返回当前文件流的绝对位置(文件光标概念)
+      f.readable()          判断这个文件是否可读，可读返回True
+      f.writeable()         判断这个文件是否可写，可写返回True
+      f.seek(cookie,whence=0)   改变数据流的位置，返回新的绝对位置
+        f.seek(偏移量,whence=相对位置)     # 以1234567890为例
+          偏移量：移动多少个
+            大于0的数代表向文件尾方向移动n个字节，小于0代表向文件头方向移动n个字节
+          相对位置：从哪开始移
+            0代表从文件头开始偏移         seek(5,0) --> 1234⑤67890
+            1代表从当前位置开始偏移       seek(2,1) -->  123456⑦89
+            2代表从文件尾开始偏移         seek(-1,2) --> 12345678⑨0
+    注意：f.read() 返回类型不同：
+      文本文件，返回字符串
+      二进制文件，返回字节串(字节序列)
+bytearray：
+    bytes类型为不可变类型，bytearray为可变数据类型
+    运算符：
+      + += * *= < <= > >= == !=
+      slice / index
+    创建bytearray：
+      几乎和创建bytes一样
+      bytesarray(整型可迭代对象)
+      bytesarray(字符串,encodeing='utf-8')
+      bytesarray(n)              创建n个字节串
+      bytesarray()               创建空的字节串
+    bytearray方法：
+      b.clear           清空
+      b.append(n)       追加一个字节(n为0~255)
+      b.remove(value)   删除第一次出现的字节，如果没有则产生ValueError错误
+      b.reverse()       字节的顺序进行反转，改变变量原来绑定的值
+      b.decode(encoding='utf-8')
+      b.find(sub[,start[,end]])     找到返回位置，找不到返回-1
+标准输入输出文件：默认已经打开的文件
+    sys.stdin           # sys.stdin.read()，一直输入直到ctrl+d
+    sys.stdout
+    sys.stderr
+汉字编码：
+    GB18030 > GBK > GB2312：
+      GB2312-80编码(1980)：
+        用两个字节编码，编码范围(A1A1~FEFE)包含6763个汉字，682个其他字符
+      GBK(1995)：
+        用两个字节编码，编码范围(8140-FEFE)(不含xx7F)收录文字21003个(藏文蒙文回文)
+      GB18030-2005编码：
+        用两字节或四字节编码，收录27533个汉字
+    UNICODE(ISO制定)
+      UNICODE16(2字节)
+        0x0000~0xFFFF
+        0x0000~0x007F   # ASCII(0~127)
+      UNICODE32(4字节)
+        0x00000000~0x0000007F   # ASCII(0~127)
+      UTF-8(8-bit Unicode Transformation Font/Format)
+        UTF-8使用unicode的[字符<->码]对应关系，
+        UTF8的字节数是可变的：
+          0xxxxxxxx                         ASCII内的字符使用1字节
+          110xxxxxx 10xxxxxxxx              2字节的UTF-8
+          1110xxxxx 10xxxxxxxx 10xxxxxxxx   三字节的UTF-8
+      注：UTF-8方便网络传输(字节数不多，且包含字符全面)
+    注意：
+      python默认使用utf-8编码，python在打开GB编码的文件时，会出现乱码
+      解决方法：
+        f = open("file_with_GBK","rb")      # 以二进制方式打开
+        s = f.read()                        # 读取所有内容
+        s.decode("GBK")                     # 以GBK解码
+    BIG5(繁体)
+
+
+

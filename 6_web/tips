@@ -1,0 +1,89 @@
+lorem
+
+JS中可以直接使用16进制；
+var a = 0xff; //255
+
+将任意进制字符串转换为十进制，如二进制，八进制，十六进制, 第二数数不写即为最常用的转换为整型十进制；
+
+parseInt("11", 2);   // 3   2进制转10进制
+parseInt("77", 8);   // 63  8进制转10进制
+parseInt("af", 16);  //175  16进制转10进制
+
+将10进制转换为2进制，八进制，十六进制字符串
+Object.toString(n) : 即可 (n) 表示进制，如
+
+(152).toString(2)  // "10011000" ;  先用括号将152转换“包”成一个对象， 或者如下写法;
+152..toString(2)   // 这里第一个点将152转换成float类型的小数，第二个点是引出对象方法;
+152..toString(16)  // "98" : 十进制转16进制
+152..toString(32)  // "4o" ：十提制转32进制
+
+同样Javascript支持最大进制是36 （26个英文字母　+　10个数字）
+
+35..toString(36)   // "z" : 支持最大编码"Z", 不区分大小写
+
+程序执行时间
+var start = new Date();
+...
+var end = new Date();
+console.log(end.getTime()-start.getTime())
+
+<input type=button value='点我' onclick="window.alert('hello')">
+等同于
+<button onclick="window.alert('hello')">点我</button>
+
+nodejs中没有window对象
+console.dir(window)     //查看对象的属性和方法
+
+// 简便的使用document.getElementById
+创建common.js
+function $(id){
+    return document.getElementById(id)
+    }
+在html文件添加
+<script src='common.js'></script>
+
+// 遍历数组
+arr =[1,2,3,4]
+for(i=0;i<arr.length;i++){
+   console.log(arr[i])
+   }
+
+// this
+$('button1').onclick=function(){
+    console.log(this.innerText)     // this指id为button1的元素节点
+}
+
+浏览器解析文档的步骤
+发送请求获取响应 --> 解析html构建DOM树 --> css渲染 --> 显示
+                   └─ js操作DOM
+
+查看数据类型
+console.log(typeof function(){})
+console.log(Object.prototype.toString.call(function f(){}))
+
+创建一个自适应整个页面的div
+<html style="height: 100%;">
+  <body style="height: 100%;">
+    <div style="height: 100%;">
+        这样这个div的高度就会100%了
+    </div>
+  </body>
+</html>
+在使用height: 100%;时需要注意的一些事项
+1、Margins 和 padding 会让你的页面出现滚动条，也许这是你不希望的。
+2、如果你的元素实际高度大于你设定的百分比高度，那元素的高度会自动扩展。
+
+加入p超出了上级元素的宽度，就多余的显示...
+<div style="width:100px">
+    <p style="margin: 0px auto;width:100px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+    我是一个张三四五六七八九十
+    </p>
+</div><>
+我是一个张...
+
+通过window.location.href转跳
+$(function () {
+        $('#btn_regist').click(function () {
+            window.location.href='/register';
+        });
+ });

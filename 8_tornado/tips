@@ -1,0 +1,52 @@
+———————————————————————————————— curl ——————————————————————————————
+curl URL
+curl -d 'key1=1&key2=2' URL
+curl -H 'aa:aa' -H 'bb:bb' -d 'key1=1&key2=2' URL
+
+发送json格式
+curl -H "Content-Type:application/json" -X POST -d '{1:1,2:2}' URL
+
+如果登陆后网页被重定向，而我们想追踪这个重定向的话可以加上-L参数（L必须大写），表示追踪重定向
+curl -L -d "username=admin&password=admin" "www.xxx.com/doLogin"
+
+保存登陆cookie信息到文件
+curl -c cookie.txt  -d "username=admin&password=admin" "www.xxx.com/doLogin"
+
+携带登陆信息进行post请求需要使用-b选项
+curl -L -b cookie.txt -d "key=value" "url"
+
+上传文件
+<form action="upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="myfile1">
+    <input type="file" name="myfile2">
+    <button type="submit">submit<button>
+</form>
+curl -F "myfile1=@file1.zip" -F "myfile2=@file2.zip" "www.xxx.com/upload"
+
+-v：查看请求的整个完整的过程
+-i：查看请求头信息
+-o：保存响应结果到指定路径的文件中，如： curl -o tmp.txt http://www.csdn.net   # 保存响应到tmp.txt
+
+header中的Content-Type
+application/x-www-form-urlencoded   默认值，允许将所有的文本提交给服务器
+multipart/form-data                 允许将文件提交给服务器
+text/plain                          只允许将普通文本提交给服务器，特殊字符不可以
+application/json                    传json
+
+
+> GET / HTTP/1.1                        # 请求行
+> Host: localhost:8000
+> User-Agent: curl/7.47.0
+> Accept: */*
+
+< HTTP/1.1 500 Internal Server Error    # 响应行
+< Server: TornadoServer/4.5.2
+< Content-Type: text/html; charset=UTF-8
+< Content-Length: 93
+< Myheader: mymymyheader
+< Date: Tue, 19 Dec 2017 03:56:33 GMT
+———————————————————————— render ——————————————————————————————————————
+谁render谁传参
+login.html -> {%extends base.html%}
+           -> {%module modlogin%} -> app = Application([...,ui_modules={'modlogin':MyloginModule}) -> class MyloginModule -> mod/mod_login.html
+——————————————————————————————————————————————————————————————————————

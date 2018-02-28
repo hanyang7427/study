@@ -1,0 +1,120 @@
+数据分析
+一、numpy入门
+1.numpy是什么？
+1)Numerical Python，数值的Python。
+2)专门针对科学计算应用的数据库。
+3)底层使用纯C语言编写，效率高，速度快。
+4)作为scipy/scikits/matplotlib等其它科学计算库的底层库。
+2.numpy的历史背景
+1)1995，numeric，早期科学计算库。
+2)2001，scipy项目启动，开始使用numeric作为底层库，后来又开发出一个扩展库numarray，针对数组实现计算。
+3)2005，numeric+numarray+补充->numpy，做为scipy的一部分。
+4)2006，numpy作为独立的数据分析工具包独立发布，v1.0。
+3.为什么使用numpy？
+1)numpy的编程接口(APIs)最简单。
+2)numpy的运行时性能最好的的。
+3)numpy是完全开源的且免费的，没有任何法律风险。
+4)越来越多的科学计算以及金融分析应用项目向numpy移植。
+4.numpy的安装
+python -m pip install numpy
+numpy-1.13.3+mkl-cp36-cp36m-win_amd64.whl
+https://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy
+5.numpy的核心：以数组作为基本的运算对象。保证数组和非数组类型性能相近，而且可以避免使用循环。
+代码：sum.py
+二、numpy基础
+1.数组对象
+1)numpy数组是numpy.ndarray类类型的对象，其中包括：实际数据、描述性元数据。大部分针对数组的操作仅仅是访问元数据部分，而并不涉及对底层数据的访问。
+2)numpy数组是同质的，其中的元素类型必须相同。
+3)数组元素也可以通过从0开始的下标访问，可以通过dtype属性获取元素的数据类型，可以通过shape属性获取数据的维度。
+4)创建数据对象的函数：
+numpy.arange() - 创建一维数组
+numpy.array() - 创建任意维数组
+代码：shape.py
+2.numpy数组支持的元素类型
+1)python的内置类型
+bool/int/float/complex/str/tuple/list/dict/set
+2)numpy的数据类型
+bool_
+int8/int16/int32/int64/uint8/uint16/uint32/uint64
+float16/float32/float64
+complex64/complex128
+str_
+3)自定义数据类型
+A.通过类型字符码定义数据类型
+<a><b><c><d><e>
+a：大端(>)/小端(<)
+b：维度(如：(3, 4))
+c：成员数(1, 2, 3 ...)
+d：字符码(b/i/f/...)
+e：字节数(1/2/4/8/...)
+..., dtype='>(2,3)4i4'
+B.(变长类型, 长度)
+..., dtype=(numpy.str_, 14)
+C.(定长类型, 维度)
+..., dtype=(numpy.float32, 3)
+D.'类型字符码1,类型字符码2,...'
+..., dtype='U14,3f4,(2,3)u8'
+E.[(字段名, 字段类型, 字段维度), (...), ...]
+..., dtype=[('st',str_,14),('vt',float32,3),
+                   ('mt',uint64,(2,3))]
+F.(原始类型, 访问类型)
+用"访问类型"的形式操作"原始类型"的数据元素。
+代码：dtype.py
+字符码：
+? - bool_
+b - byte/int8
+B - unsigned byte/uint8
+i - int8
+i2 - int16
+i4 - int32
+i8 - int64
+u - uint8
+u2 - uint16
+u4 - uint32
+u8 - uint64
+f4 - float32
+f8 - float64
+U - Unicode字符串
+3.数组切片
+[起始:终止:步长, ...]
+代码：slice.py
+4.变维
+1)视图变维
+reshape()：将n维变为m维，数据共享
+ravel()：将n维变为1维，数据共享
+2)复制变维
+flatten()：将n维变为1维，数据拷贝
+3)就地变维
+A.直接修改shape属性
+B.resize()
+4)视图转置
+transpose()
+T
+代码：reshape.py
+5.组合
+1)垂直组合：numpy.vstack((上,下))
+2)水平组合：numpy.hstack((左,右))
+3)深度组合：numpy.dstack((左,右))
+4)行组合：numpy.row_stack((上,下))
+5)列组合：numpy.column_stack((左,右))
+6.拆分
+1)垂直拆分：numpy.vsplit(数组, 拆分数)
+2)水平拆分：numpy.hsplit(数组, 拆分数)
+代码：stack.py
+7.数组的属性
+dtype: 元素类型
+shape: 数组维度
+T: 转置视图
+ndim: 数组的维数
+size: 元素的个数(只有一维数组与len()相等)
+itemsize: 一个元素的字节数
+nbytes: 数组的总字节数(size * itemsize)
+real: 实部数组
+imag: 虚部数组
+flat: 扁平迭代器
+8.类型转换
+1)元素类型的转换：数组对象.astype(目标类型)返回按照目标类型定义的新的数组对象，原来的数组不变。
+2)numpy.ndarray->python.list: tolist()方法
+   python.list->numpy.ndarray: array()函数
+代码：attr.py
+

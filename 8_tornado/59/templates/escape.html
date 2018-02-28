@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <!--整个body关闭转义 {%autoescape None%}-->
+    {%autoescape None%}
+    <form method="post" action="/">
+        <textarea name="text" cols="25" rows="5"></textarea>
+        <input type="submit" value="提交">
+    </form>
+
+    {{text}}
+
+    {#  转义的命令 #}
+    {#  {{escape(text)}} #}
+
+    {#  让text变量关闭转义：{{raw text}} #}
+    {#  {{raw text}} #}
+
+    {#  出于安全考虑，给text传的变量中的一些字符tornado会自动转义，例如'<'转为&lt; #}
+
+</body>
+</html>

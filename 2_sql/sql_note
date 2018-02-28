@@ -1,0 +1,16 @@
+1.当使用group by，select 的列不能是分组依据(group by后的列)以外的列①，可以是聚合函数或分组依据的列
+  有些聚合函数，当没有group by时，select里是不能用的
+2.算数运算(加减乘除)可以在select后或where后
+3.(select ...)语句可以在select里或where里
+4.聚合函数不能直接在where里用
+5.select database() 查看当前使用的数据库
+6.show create table customers
+
+
+
+
+
+
+
+注
+①：因为聚合函数和分组依据一定是一行数据，而非聚合的其他列是多行数据，多行数据一定不能与一行数据出现在一行

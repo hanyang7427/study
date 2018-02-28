@@ -1,0 +1,93 @@
+单词
+redact：编辑；编写
+condition：条件
+intersection：交集
+aggregate：聚集
+mapreduce：映射化简
+shuffle：洗牌；侧滑
+DESCEND：下降
+PRUNE：剪枝[计算机科学技术]
+
+常用的聚合命令：操作于单一文档
+# 列出集合中一共有多少文档
+db.orders.count()
+# 列出集合中不重复的哪个属性
+db.orders.distinct('cust_id')
+
+$lookup 相当与SQL中的join连接
+# 数据准备
+db.country.insert({_id:1,name:'India'})
+db.country.insert({_id:2,name:'US'})
+db.country.insert({_id:3,name:'UK'})
+db.country.insert({_id:4,name:'CN'})
+db.city.insert({_id:1,name:'Delhi',countryID:1})
+db.city.insert({_id:2,name:'Beijing',countryID:4})
+db.city.insert({_id:3,name:'NewYork',countryID:2})
+db.city.insert({_id:4,name:'LA',countryID:2})
+db.city.insert({_id:5,name:'London',countryID:3})
+db.city.insert({_id:6,name:'Shanghai',countryID:4})
+db.city.insert({_id:7,name:'Bristol',countryID:3})
+db.city.insert({_id:8,name:'Hangzhou',countryID:4})
+# 查找city的文档，本地的countryID列以country表信息展开，叫as:'Country'
+db.city.aggregate({$lookup:{from:'country',localField:'countryID',foreignField:'_id',as:'Country'}})
+
+$cond检查boolean expression不而表达式，根据结果返回表达式
+{$sond:{if:布尔表达式,then:true-case,else:false-case}}
+# Student集合中，Marks大于70good，小于70poor，只显示姓名和及格不及格
+db.Student.aggregate({$project:{StudentName:1,Result:{$cond:{if:{$gte:['$Marks',70]},then:'good',else:'poor'}}}})
+
+$setIntersection 返回两个数组中的相同部分
+# 数据准备
+db.Test.insert({Array1:[1,2,3],Array2:[2,3,4]})
+# 列出Array1和Array2共同有的元素
+db.Test.aggregate({$project:{Array1:1,Array2:1,commonToBoth:{$setIntersection:['$Array1','$Array2']},_id:0}})
+
+$size计算数组包含多少个元素
+# 数据准备
+db.Student.insert({_id:100,Array1:['English','Math','Chinese'],Array2:['Math','English','Python']})
+# _id为100的文档中Array1和Array2的长度
+db.Student.aggregate({$match:{_id:100}},{$project:{Array1_len:{$size:'$Array1'},Array2_len:{$size:'$Array2'}}})
+
+$redact 编排文档
+操作数组，使用此操作符，要求文档必须包含数组，且数组不为空
+# 查找Student集合中，含有Hindi或者Math的，并且section是A，将满足这些条件的文档继续传递给下一个阶段
+var SubjectAccess = ['Math','Hindi']
+db.Student.aggregate({$match:{'Section':'A'}},{$redact:{$cond:{if:{$gt:[{$size:{$setIntersection:['$Subject',SubjectAccess]}},0]},then:'$$DESCEND',else:'$$PRUNE'}}})
+
+$redact通常跟$cond一起用
+根据字段所处的文档结构的级别，对文档进行修剪，可选值有3个
+$$DESCEND包含当前文档级别的所有字段，当前级别字段的内嵌文档将会被继续检测
+$$PRUNE不包含当前文档或者内嵌文档的所有字段，不会继续检测此级别的其他字段
+$$KEEP包含当前或内嵌文档级别的所有字段，不再继续检测此级别的其他字段
+
+mapReduce函数
+1.表达任何复杂的逻辑，但是非常慢，不应该用在实时的数据分析中
+2.能够在多台服务器之间并行执行，将一个大问题拆分诚多个小问题，将各个小问题发送到不同的机器上，每台机器只完成一部分工作，所有机器都完成时，再将这些零碎的解决方案合并成为一个完整的解决方案
+3.步骤
+1)map映射：将操作映射到集合中的文档，通常产生一些列的键和值
+2)洗牌shuffle:按照键分组，并将产生的键值组成列表放到对应的键中
+3)化简reduce:把列表中的值化简为一个单值，这个值被返回，然后接着进行洗牌，直到每个键的列表有一个值为止，者个值就是最终结果
+db.orders.mapReduce(function(){emit(this.cust_id,this.amount);},function(key,values){return Array.sum(values)},{query:{status:'A'},out:'order_totals'})
+db.order_totals.find()
+第一步 执行query作为查找条件
+{ "cust_id" : "A123", "amount" : 500, "status" : "A" }
+{ "cust_id" : "A123", "amount" : 250, "status" : "A" }
+{ "cust_id" : "B212", "amount" : 200, "status" : "A" }
+第二步 map -> function(){emit(...);}
+emit(this.cust_id,this.amount)把this.cust_id传给function(key,values)中的key，把this.amount传给values
+key     values
+A123    [500,250]
+B212    [200]
+第三步 reduce
+A123    750
+B212    200
+注：out执行结果输出到哪个集合
+# Student集合中，选出Section为A,B,C的文档，用mapReduce求出各个Section的总Marks
+db.Section.mapReduce(function(){emit(this.Section,this.Marks);},function(key,values){return Array.sum(values)},{query:{Section:{$in:['A','B','C']}},out:'marks_totals'})
+
+# 打印Array1和Array2数组中相同的元素
+for i in client.test.Test.aggregate([{'$project':{'abc':{'$setIntersection':['$Array1','$Array2']}}}]):
+    print(i)
+注意：
+    pipeline must be a list
+    在mongodb中aggregate()可以没有[]，pymongo中aggregate()要求参数是一个列表需要[]

@@ -1,0 +1,145 @@
+DOM事件对象 event
+  1.event对象
+    任何一个事件在触发后，都会产生一个event对象，使用event对象需要先为函数设定event形参
+    event对象中封装了一些有关当前事件的信息：如鼠标的位置，按下的键盘键位，事件触发元素等
+  2.获取event对象
+    1)html元素绑定事件
+      <ANY onclick='btn_click(event)'>        // 函数形参名字最好是event
+    2)使用js动态绑定事件
+      <script>
+        var myDiv = $('d1')
+        myDiv.onclick=function(event){...}    // 函数形参名字最好是event
+      </script>
+    3)事件对象常用属性
+      a.事件件源对象
+        event.target                  当前触发事件的元素是谁
+      b.针对鼠标事件的属性
+        event.offsetX event.offsetY   获取鼠标在元素上的坐标点，以元素的左上角为(0,0)计算的
+        event.clientX event.clientY   获取鼠标在网页上的坐标点，以文档的坐上角为(0,0)计算的   body有8px外边距
+        event.screenX event.screenY   获取鼠标在显示器上的坐标点,以显示器的左上角(0,0)计算的
+        ex:
+          <div id='d1' style='width=200;height=200px'></div>
+          <script>
+              window.onload = function(){
+                  var d1=document.getElementById('d1')
+                  d1.onmousemove=function(event){
+                      console.log('x:y'+event.offsetX+':'+event.offsetY)
+                      console.log('x:y'+event.clientX+':'+event.clientY)    // body有8px外边距
+                  }}
+      c.键盘事件 & 键盘事件的属性
+        keypress
+        keydown
+        keyup
+        键盘事件的属性
+          event.which   表示按下键位的ASCII码(等于event.code)
+          ex:文本框中是输入小写字母才显示
+            <input type='text' id='t1'>
+            <script>
+                document.getElementById('t1').onkeydown=function(event){
+                    if(event.which>=97 && event.which<=122){
+                        return true
+                        }else{return false}}
+            </script>
+        注意：在keypress事件中，which表示每个字符的ASCII码(大小写，数字，符号，都各不相同)a:97,A:65
+             在keydown事件中，which表示键盘的键位码，大小写英文一致，数字和一些标点也是一致的1=!,2=@
+      d.事件冒泡
+        什么是事件冒泡：
+          在层级关系结构中，祖先元素与祖先下的某个元素设置了相同的事件时，这个元素的事件发生了祖先的事件也会发生
+        阻止事件冒泡
+          在祖先元素下的某个元素中加入event.stopPropagation()
+-------------------------------------------------------------------------------------------------------
+JQuery
+  1.JQuery简介
+    是一个轻量级的JS库，一个被封装好的JS文件，提供了更为简便的页面元素操作方式
+    封装了JS，CSS，DOM的操作
+    核心理念Write Less Do More
+      最高版本：JQuery 2.x 不兼容IE6,7,8
+      1.x的最高版本1.11.x
+  2.使用jQuery
+    <script src='jquery-1.11.3.js'></script>    引入jquery文件
+  3.$()
+    1)onload事件
+      $( function(){
+          网页加载时要执行的内容
+          })
+      特点：在渲染之后
+      window.onload = function(){}在渲染完成之后才开始执行
+  4.jQuery对象
+    1)什么是jQuery对象
+      jQuery对象是由jQuery对页面元素进行封装后的中体现
+      JQuery中所提供所的所有操作只针对jQuery对象，并不针对其他对象，jQuery大多返回jQuery对象
+    2)工厂函数
+      想要获取jQuery对象，就要使用工厂函数 - $()
+      给$()传递一个选择器，则返回一个选择器对应的jQuery对象
+    3)DOM对象和jQuery对象之间的相互转换
+      DOM对象是以DOM的方式获取出来的节点对象，只能访问DOM所提供的标准方法和属性，不能访问jQuery的函数和属性
+      jQuery对象是由jQuery来封装的对象，只能访问jQuery所提供的属性和方法，不能访问DOM的属性和方法
+      a.将DOM对象转换为jQuery对象
+        语法var jQuery对象 = $(DOM对象);
+        注意：所有的jQuery对象，最好在变量名前加$
+      b.将jQuery对象转换为DOM对象
+        var DOM对象=jQuery对象.get(0)
+        var DOM对象=jQuery对象[0]
+  5.jQuery选择器
+    获取页面上的元素(可能是多个)，并返回jQuery对象
+    语法：$(选择器)
+    1)基础选择器
+      a.id选择器
+        用法：$('#ID值')
+        说明：返回HTML页面中指定ID值的元素
+      b.类选择器
+        用法：$('.className')
+        说明：返回HTML页面中所有class为className的元素
+      c.元素选择器
+        用法：$('元素名称')
+        说明：返回HTML页面中所有执行元素名称的元素
+      d.通用选择器/通配符选择器
+        用法：$('*')
+        说明：返回HTML页面中所有的元素
+      e.群组选择器/复合选择器
+        用法：$('select1,select2,...')
+        说明：返回满足函数内所有选择器的元素
+    2)层次选择器
+      $('select1 select2')      后代选择器
+      $('select1>select2')      子代选择器
+      $('select1+select2')      获取紧紧接在select1后的select2(可以是子元素也可以是同级元素)
+      $('select1~select2')      获取select1后面所有的select2的元素
+    3)过滤选择器
+      在JQuery中是以:开始的
+      :first            只匹配到第一个元素
+      :last             只匹配到最后一个元素
+      :not(selector)    将满足selector选择器的元素排除在外(否定选择器)
+    4)数字相关
+      :odd              下标为奇数行元素
+      :even             下标为偶数行元素
+      :eq(index)        下标等于index的元素
+      :gt(index)        下标大于index的元素
+      :lt(index)        下标小于index的元素
+    5)内容过滤选择器
+      :contains('text')  包含指定文本的元素
+      :empty             空元素(不包含任何子元素和文本的)
+      :has(selector)     含有选择器所匹配的元素
+      :parent            判断本事父元素的元素(包含子元素或文本)
+    6)可见性过滤选择器
+      :hidden            所有不可见元素
+      :visible           所有可见元素
+    7)状态过滤选择器(主要用在表达元素中)
+      :enabled           所有可能元素
+      :disabled          所有禁用元素
+      :checked           所有被选中的元素(radio和checkbox用)
+      :selected          所有被选中的元素(select和option用)
+    8)表单过滤选择器
+      ul li:nth-child(n) 子代中的第几个元素
+      ul li:last-child   子代中的最后一个
+    9)属性选择器
+      允许使用元素所附带的属性及其值来匹配页面元素
+      [attr]        具有attr属性的元素
+        ex:匹配页面中所有具有id属性的元素
+          $('[id]')
+      [attr=value]  属性值为value的元素
+      [attr!=value] 属性值不等value的元素
+      [attr^=value] attr属性值以value字符串开始的元素
+      [attr$=value] attr属性值以value字符串结束的元素
+      [attr*=value] attr属性值中包含value的元素
+  6.配合选择器设置css
+    $('#d1').css({"background-color:"red","font-size:"24-px"})

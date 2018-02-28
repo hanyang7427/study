@@ -1,0 +1,93 @@
+1.查询城市是 香港或台北市的 用户名和用户id
+select user_name,user_id from tb_user where user_city in ('香港','台北市');
+select user_name,user_id from tb_user where user_city = '香港' or user_city='台北市';
+
+2.查询注册时间
+select user_name,user_id from tb_user where user_create_date between '2017-12-21 16:43:35' and '2017-12-21 16:43:37';
+
+3.查询最晚注册用户的时间
+select max(user_create_date) '最晚注册时间' from tb_user;
+select max(user_create_date) as '最晚注册时间' from tb_user;
+
+4.查询每个城市最晚注册用户的时间
+select user_city,max(user_create_date) as '最晚注册时间' from tb_user group by user_city
+
+5.查询最晚注册用户的时间，城市名，和用户名
+select user_name,user_city,user_create_date from tb_user where user_create_date = (select max(user_create_date) from tb_user);
+
+6.查询每个城市的最晚注册时间的用户名，注册时间，城市名
+select user_name,user_createdat,tuser.user_city,t.late,t.user_city
+from tb_user tuser join
+(select user_city,max(user_createdat) late from tb_user group by user_city) t
+on tuser.user_createdat = t.late and tuser.user_city = t.user_city
+
+vs
+
+select user_name,user_createdat,tuser.user_city,t.late,t.user_city
+from tb_user tuser join
+(select user_city,max(user_createdat) late from tb_user group by user_city) t
+where tuser.user_createdat = t.late and tuser.user_city = t.user_city
+
+7.查询所有blog作者的信息(username,city,id)
+select user_id,user_name,blog_title
+from tb_user right join tb_blog
+on user_id = blog_user_id
+
+因为所有的blog都有作者，所以即使不用右联接
+也可以得到结果
+select user_id,user_name,blog_title
+from tb_user join tb_blog
+on user_id = blog_user_id
+
+8.查询写过blog的作者信息(username,city,id）
+select distinct user_name
+from tb_user join tb_blog
+on user_id = blog_user_id
+
+9.查询所有用户及其写的blog信息(blogname)
+因为有些用户没有写过blog
+select user_name,blog_title
+from tb_user left join tb_blog
+on user_id = blog_user_id
+
+10.查询某一个blog的标题和它所有的标签
+例如：查询blog_id为8的blog_name和它的标签信息
+#step1　从tb_blog_tag开始，查询所有的blog_id及该blog对应的所有tag_id
+
+select rel_blog_id,rel_tag_id from tb_blog_tag
+
+#step2 去tb_tag表中找blog所对应的具体的标签内容
+
+select tag_name,t1.rel_blog_id
+from tb_tag join
+(select rel_blog_id,rel_tag_id from tb_blog_tag) t1
+on tag_id = t1.rel_tag_id
+
+#step3 blog的标题内容和标签内容
+select blog_id,blog_title,t2.tag_name
+from tb_blog left join
+(select tag_name,t1.rel_blog_id bid
+from tb_tag join
+(select rel_blog_id,rel_tag_id from tb_blog_tag) t1
+on tag_id = t1.rel_tag_id) t2
+on blog_id = t2.bid
+
+#step4 某一个blog的标题内容和标签内容
+select blog_id,blog_title,t2.tag_name
+from tb_blog left join
+(select tag_name,t1.rel_blog_id bid
+from tb_tag join
+(select rel_blog_id,rel_tag_id from tb_blog_tag) t1
+on tag_id = t1.rel_tag_id) t2
+on blog_id = t2.bid
+where blog_id = 8
+
+11 查询某一个blog的标题和它所有的标签及作者信息
+思路：在10的基础上联合tb_user表查询
+
+12 查询某一个blog的标题和它所有的标签和评论数量及作者信息
+#每一个blog被评论的数量
+select comment_blog_id,count(*)
+from tb_comment
+group by comment_blog_id
+与第11题的表做联合查询，联合查询以blog的id作为联接点

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        div {
+            background: red;
+            transform:translateX(200px) rotate(45deg)
+        }
+    </style>
+    <script src="jquery-1.11.3.js"></script>
+</head>
+<body>
+<select id="s1" onchange="f(this.value)">
+    <option>==请选择==</option>
+</select>
+<script>
+    function $(id) {
+        return document.getElementById(id)
+    }
+    var province = ['黑龙江','吉林','辽宁'];
+    var city = [
+        ['哈尔滨','齐齐哈尔','牡丹江'],
+        ['长春','吉林','四平'],
+        ['沈阳','大连','鞍山']
+    ];
+    var s1=$('s1');
+    for (var i in province) {
+        var elem = document.createElement('option');
+        elem.innerText=province[i];
+        elem.setAttribute('value',i);
+        s1.appendChild(elem)
+        }
+
+    function f(v) {
+        var newSel =$('newSel')
+        if (newSel!=null){document.body.removeChild(newSel)}
+        var newSel = document.createElement('select');
+        newSel.setAttribute('id','newSel');
+        switch (v){
+            case '0':
+            for(var i in city[0]) {
+                var newOpt = document.createElement('option');
+                newOpt.innerText = city[0][i];
+                newSel.appendChild(newOpt)
+            }
+            document.body.appendChild(newSel);break;
+            case '1':
+            for(var i in city[1]) {
+                var newOpt = document.createElement('option');
+                newOpt.innerText = city[1][i];
+                newSel.appendChild(newOpt)
+            }
+            document.body.appendChild(newSel);break;
+            case '2':
+            for(var i in city[2]) {
+                var newOpt = document.createElement('option');
+                newOpt.innerText = city[2][i];
+                newSel.appendChild(newOpt)
+            }
+            document.body.appendChild(newSel);break
+        }
+    }
+</script>
+
+</body>
+</html>

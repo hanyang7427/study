@@ -1,0 +1,207 @@
+程序:存储在电子设备上0与1的有序组合
+进程:程序在操作系统中运行的一个抽象
+
+程序和进程的关系
+一对一，一对多，多对一，多对多
+
+os操作系统: 公司
+CPU/IO:     公司的资源
+进程:       公司的部门()
+线程:       干活的人(使用资源干活)
+锁:         管理资源的方式(有资源竞争就要有锁)
+
+进程:OS对程序执行的一次的抽象
+A:进程的组成
+数据段;
+代码段;
+进程控制块(PCB);
+  a.进程的标识符pid,name
+  b.进程的调度信息(
+      进程的状态,
+      进程的优先级(-20~19),
+      进程的关系)
+  c.进程控制信息(
+      信号量,
+      互斥量,
+      锁的信息,
+      虚拟的地址,资源清单)
+  d.处理机的信息(通用寄存器,指令计数器等);
+
+B:几类特殊的进程:
+  孤儿进程: 父进程创建了子进程,自己不存在了
+  僵尸进程: 进程已经死了,但是没有上报给操作系统(操作系不能将pid分配出去)
+############################################
+# 孤儿进程 demo
+# import os
+# import time
+# print("Process(%s) start..." % os.getpid())
+# pid = os.fork()
+# if pid == 0:
+#     time.sleep(1)
+#     print('I am child process(%s) and my parent is %s.' % (os.getpid(),os.getppid()))
+# else:
+#     print('I(%s) just created a child process(%s).' % (os.getpid(),pid))
+############################################
+# 僵尸进程 demo
+# import os
+# import time
+# from multiprocessing import Process
+# p = Process(target=lambda :os._exit(1))       # 子进程exit
+# p.start()
+# # 或者使用p.terminate()
+# time.sleep(1000)
+C:进程的状态:
+  五态: 新建 就绪，执行，等待 终止
+  三态: 就绪，执行，等待(阻塞)
+    不能从等待状态直接转到执行，要先转到就绪状态才能执行
+D:并发和并行
+  并发: 多个任务交替使用1个cpu，一个cpu在一个时刻只能运行一个任务
+  并行: 多个cpu同时干事情
+E:名词解释
+  多任务，并发，并行
+  异步与同步
+  阻塞与非阻塞:一直等就是阻塞，先干其他事情就是非阻塞
+F.进程调度
+###############################################
+#多进程和多线程执行顺序有不确定性，需要看系统调度 demo
+#from multiprocessing import Process
+#def f():
+#    print('abc')
+#def n():
+#    print("aaaaaaa")
+#for i in range(100):
+#    p1 = Process(target=f)
+#    p2 = Process(target=n)
+#    p1.start()
+#    p2.start()
+  时间片:就绪等待执行等待的东西
+  优先级:两个优先级相同的看谁的时间片早，同一时间来的看谁的优先级高
+    队列:FIFO(First In First Out) 先进先出
+    栈:  LIFO(Last In First Out)  先进后出
+
+低级语言: 
+    机器语言(0101)/汇编语言  优点执行快，开发效率低，不能移植其他cpu架构
+高级语言:
+    C,C++,...编译型语言  直接编译成机器码(0101)优点开发效率高
+先编译成字节码(解释器能够解释的):
+    Java编译成class文件，再通过jvm解释执行class
+    Python编译成pyc文件，在通过cpython解释执行
+脚本语言:
+    JS，VB， 解释型语言
+轻量级粘合语言:
+    shell ,powershell, .bat
+
+a和b都同时需要R1和R2才能工作，某一刻a拿到了R1，b拿到了R2，a和b都不放，a和b都等待对方释放资源无法工作
+死锁的解决
+当死锁发生了怎么处理
+1.请求与保持条件timeout,调度算法去处理,该放手就放手
+  缺点 确定谁放手
+以下为防患于未然
+2.避免互斥，避免资源被一个进程使用，
+  缺点 和资源本身的性质有关系
+3.获取资源的原子性，保证所有的资源都拿到，否则都不要
+  缺点 资源使用效率不高
+4.让资源有序，先拿R1才能拿R2
+  缺点 那资源的效率不高
+5.银行家算法
+
+multiprocessing包
+multiprocessing.Process
+***API
+import multiprocessing
+multiprocessing.Process(group=None, target=None, name=None, args=(), kwargs={}, *, daemon=None)
+# 新建进程(五态中的新建)
+p = multiprocessing.Process(target = t1,args=(5,))
+#
+p.daemon = Ture
+# 让进程就绪(五态中的就绪)
+p.start()
+# p.join()会让父进程等待子进程（p.join处会等待子进程执行完，才会执行p.join下的语句(此时主进程变为阻塞状态)），会让p.daemon()失效
+p.join()
+# 在p.start()时，如果p的target没有指定，会运行p.__class__().run(p)
+run()
+***例子：
+    def t1(x):
+        print(x)
+    multiprocessing.Process(target = t1,args(5,))
+    p.start()
+    p.join()
+***注：daemon进程含义:
+    1.主进程一结束，子进程就跟着结束
+    2.可以随时被杀死(需要保存数据的进程不能设置成daemon)
+    3.后台进程;
+    语法:
+      p.daemon = True
+    注意:
+      要设置在p.start()之前
+***是否等待关系总结：
+fork        子进程，父进程，父进程不会等子进程
+Process     默认父进程会等子进程，父子进程都要做事
+
+queue包
+queue.PriorityQueue
+***特性：
+    PriorityQueue在get时会先比较(>或<等，可以给自定义类__lt__)队列中的对象，优先级高的先get
+***API
+from queue import PriorityQueue
+# 创建优先优先队列
+q = PriorityQueue()
+# 从队列中获取
+q.get_nowait()
+q.get()
+    注：
+      get()会调用__repr__
+
+########################################
+# PriorityQueue demo
+#########################################
+# from queue import PriorityQueue
+# import random
+#
+# q = PriorityQueue()
+#
+# # We will manage the four task
+#
+# class Item(object):
+#     def __init__(self,name,level):
+#         self.name = name
+#         self.level = level
+#     def __repr__(self):
+#         return(str(self.name)+ ':' + str(self.level))
+#     def __lt__(self,other):
+#         return self.level > other.level
+#
+# if __name__ == "__main__":
+#     q = PriorityQueue()
+#     # input 4 tasks
+#     q.put(Item("watch tv",random.randint(1,20)))
+#     q.put(Item("listen to music", random.randint(1, 20)))
+#     q.put(Item("print doc", 4))
+#     q.put(Item("write doc", 4))
+#     # output
+#     while not q.empty():
+#         print(q.get())
+
+####################################
+# 全局变量在多个进程中不共享demo
+####################################
+g_num = 100
+def getTime(interval):
+    global g_num
+    while True:
+        g_num += 100
+        time.sleep(interval)
+        print("in child num is %d"%g_num)
+
+if __name__ == '__main__':
+    p = Process(target=getTime, args=(2,))
+    p.start()
+
+    while True:
+        g_num += 1
+        print("Current num is %d"%g_num)
+        time.sleep(1)
+注：
+    此处的g_num是一个全局变量，两个进程会复制两份(两个python解释器)，并且分别写自己的变量，互不干扰，三个python解释器中变量的id是一样，修改了任意一个进程中的变量，不会影响其他进程当中的变量
+    当变量为一个Queue,Pipe,Event,Lock,Array,Value,Socket这些特殊类型时，多进程不会复制它们两份，而是多个进程用一份
+    新建的进程(新的解释器)中执行的代码是从一开始到start之间的代码

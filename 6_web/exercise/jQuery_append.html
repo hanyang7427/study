@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>codeboy</title>
+    <script src="jquery-1.11.3.js"></script>
+
+</head>
+<body>
+    <span>用户名称</span><input id='i1' style="word-wrap: break-word" type="text">
+    <div id='d1' style="width: 500px;height: 100px;background-color: yellowgreen;overflow: auto;word-wrap: break-word"></div>
+    <button onclick="showValue()" id="b1">显示</button>
+<script>
+        function showValue(){
+            var valueOnDiv = document.createElement('span')
+            valueOnDiv.innerText=$('#i1').val();
+            $('#d1').append($(valueOnDiv))
+        }
+    </script>
+</body>
+</html>

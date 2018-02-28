@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #b1,#b2{
+            display:block;
+            position: relative;
+            left:10px;
+            top:10px
+        }
+    </style>
+    <script>
+    function $(id){
+        return document.getElementById(id)
+    }
+    </script>
+</head>
+<body>
+
+<form id='f1' action="a.jsp">
+    用户名：&nbsp;&nbsp;&nbsp;&nbsp;<input id='uname' type="text"><span id="unames"></span><br/>
+    密码：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id='upwd' type="password"><span id="upwds"></span><br/>
+    确认密码：<input id='confpwd' type="password"><span id="confpwds"></span>
+    <br/>
+    <input type="submit" value="提交">
+</form>
+<script>
+    $('f1').onsubmit=function () {
+        if($('uname').value==''){
+            $('unames').innerText='用户名不能为空'
+            return false
+        }else{
+            $('unames').innerText='通过'
+        }
+        if($('upwd').value==''){
+            $('upwds').innerText='密码不能为空'
+            return false
+        }else if($('upwd').value.length<6||$('upwd').value.length>12){
+            $('upwds').innerText='密码在6-12位'
+            return false
+        }else{
+            $('upwds').innerText='通过'
+        }
+        if($('confpwd').value!=$('upwd').value) {
+            $('confpwds').innerText = '密码必须相同'
+            return false
+        }else{
+            $('confpwds').innerText = '通过'
+        }
+    }
+</script>
+</body>
+</html>

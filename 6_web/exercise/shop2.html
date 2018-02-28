@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+	<script src="jquery-1.11.3.js"></script>
+	<style>
+		.t{
+		width:100px;
+		height:24px;
+		border:1px solid #ccc;
+		}
+	</style>
+ </head>
+ <body>
+ <div style='width:680px'>
+	<input class="t" style='width:100px' type='text' id="sname">
+	<input class="t" type='text' id="sprice">
+	<input class="t" type='text' id="snum">
+	<input style="height:24px" type='button' value="添加" onclick="addTo()">
+ </div>
+ <table id="shopcar" style="border:1px solid;cellspacing:0px;">
+	<thead>
+		<td style="width:140px;">商品名称</td>
+		<td style="width:80px;">单价</td>
+		<td style="width:80px;">数量</td>
+		<td style="width:80px;">操作</td>
+	</thead>
+	
+ </table>
+	<script>
+		function get_elem(id){
+			return document.getElementById(id);
+		}
+		var currentTr = 1
+		function addTo(){
+			var goods=[]
+			goods[0] = get_elem("sname").value;
+			goods[1] = get_elem("sprice").value;
+			goods[2] = get_elem("snum").value;
+			var pnode = get_elem("shopcar");
+			var old_tr = get_elem("tr"+currentTr);
+			var new_tr = document.createElement("tr");
+
+			currentTr++;
+			new_tr.setAttribute("id","tr"+currentTr);
+			pnode.append(new_tr);
+
+			var new_td = document.createElement("td");
+			new_td.setAttribute("id","tr"+currentTr+"td0")
+			new_tr.appendChild(new_td);
+			new_td.innerHTML=goods["0"];
+
+			var new_td = document.createElement("td");
+			new_td.setAttribute("id","tr"+currentTr+"td1")
+			new_tr.appendChild(new_td);
+			new_td.innerHTML=goods["1"];
+
+			var new_td = document.createElement("td");
+			new_td.setAttribute("id","tr"+currentTr+"td2")
+			new_tr.appendChild(new_td);
+			new_td.innerHTML=goods["2"];
+
+			var new_td = document.createElement("td");
+			new_td.setAttribute("id","tr"+currentTr+"td2")
+			var new_a = document.createElement("a");
+			new_td.setAttribute("id","tr"+currentTr+"action");
+			new_tr.appendChild(new_td);
+			new_a.innerHTML='删除';
+			new_td = get_elem("tr"+currentTr+"action");
+			new_a.setAttribute("href","javascript:del("+"'"+"tr"+currentTr+"'"+")");
+			console.log("javascript:del("+"'"+"tr"+currentTr+"'"+")")
+			new_td.appendChild(new_a);
+			$("#shopcar tr:odd").css("background-color","#ccc");
+		}
+		function del(para){
+			var pnode = get_elem("shopcar");
+			var elem = get_elem(para);
+			if(window.confirm("确定要删除这个商品吗？")){
+				pnode.removeChild(elem);
+			}
+		}
+	</script>
+ </body>
+</html>

@@ -1,0 +1,130 @@
+1.DOM树 DOM中所有东西都可以叫做节点
+
+  1)读取节点名称的信息
+    节点名称
+      属性：nodeName
+        元素节点和属性节点  ： 标签或属性名
+        文本节点          ： 永远都是 #text
+        文档节点          ： 永远都是 #document
+          ex：<span id='span1'>aaa</span>
+            elem = document.getElementById('span1')
+            console.log(elem.nodeName)  // 输出 div
+    节点类型
+      属性：nodeType
+        返回1：元素节点
+        返回2：属性节点
+        返回3：文本节点
+        返回8：注释节点
+        返回9：文档节点
+  2)设置或获取元素节点的属性
+    方法：
+      getAttribute(attrName)            获取元素属性的值
+        attrName是要获取的属性的名称
+      setAttribute(attrName,attrValue)  修改/设置指定属性的值
+        attrName    要修改/设置的属性名称
+        attrvalue   设置的属性的值
+        注：直接给元素节点对象的属性赋值也可以实现设置属性的效果，这种方式不能改class属性，但是可以改className属性
+      removeAttribute(attrName)         将 attrName属性从当前节点中移除出去
+  3)元素节点的样式修改
+    a.使用setAttribute() 设置class属性的值
+      elem.setAttr('class','class属性的值')
+    b.使用className属性修改class属性的值
+      elem.className='class属性的值'
+    c.自定义元素样式
+      elem.style.css属性名 = 值     // 改变内连的样式
+        注意：如果css属性名有连字符(-)的话，(-)后的首字符要首字符变大写，连字符(-)要取消
+        ex:
+          elem.style.fontSize='18pt'            // font-size 变为 fontSize
+          elem.style.borderRightColor='green'   // border-right-color 变为 borderRightColor
+  4)查询节点
+    a.通过id查询
+      var elem=document.getElementById('id')
+    b.根据层次查询节点
+      parentNode        根据当前文档的上下层结构，返回父元素节点
+      childNodes        根据当前文档的上下层结构，返回子元素节点，数组
+        注意：使用childNodes时，能获取文本节点，元素节点，注释节点，如果需要某一种节点的话，需要使用nodeType进行判断
+          ex：
+            <p id='p1'>
+              <span>span 1</span>
+            </p>
+            children=document.getElementById('p1').childNodes    // 返回长度为3的数组(有两个回车被解析为文本节点+一个span节点)
+    c.通过标签名查询节点
+      document.getElementsByTagName('tagName')
+      elem.getElementsByTagName('tagName')
+        返回值：包含指定标记的数组
+    d.通过元素的name属性查询节点(单选按钮和复选框)
+      document.getElementsByName('name')
+      elem.getElementsByName('name')
+        返回值：包含指定name属性值的元素的数组
+    e.通过元素的class值查询节点
+      document.getElementsByClassName('className')
+      elem.getElementsByClassName('className')
+        返回值：包含指定class属性值的元素的数组
+  5)增加节点
+    a.创建元素节点
+      var elem = document.createElement('元素名称')
+    b.创建文本节点
+      var content = document.createTextNode("This is new.");
+      document.getElementById(paragraph1).appendChild(content)
+    c.增加节点
+      document.body.appendChild(elem)   向body的最后一个子元素的位置处增加elem元素
+      parentNode.appendChild(elem)      向指定元素最后一个子元素的位置处增加elem元素
+        parentNode指页面上任何一个节点元素
+    d.插入元素
+      parentNode.insertBefore(elem,oldElem)  将elem元素增加到parentNode元素中oldElem元素之前
+      ex：
+        elem =document.createElement('a')   //创建元素
+        elem.innerHTML = '百度'
+        elem.setAttribute('herf','http://baidu.com')
+        elem.style.color='red'
+        document.body.appendChild(ele)      //将创建的元素追加到body最后
+        d1=document.getElementById('d1')
+        d1.appendChild(elem)                //在id为d1的元素追加elem
+  6)删除节点 - 只能由父元素发起
+    a.删除body的子元素的话
+      document.body.removeChild(elem)   在body中删除elem元素节点
+    b.删除其他元素的子元素
+      parentNode.removeChild(elem)      在parentNode中删除elem元素节点
+  注意：只有body元素可以使用document.body的方式调用，body的子孙元素不能使用document.body.xxx调用
+2.DOM事件
+  什么是事件：通过用户的行为来激发的操作
+  1)触发事件的行为
+    a.鼠标事件
+      click     鼠标单击事件
+      dbclick   鼠标双击事件
+      mouseover 鼠标划过事件
+      mouseout  鼠标移除事件
+      mousedown 鼠标按下事件
+      mouseup   鼠标抬起事件
+      注意：在事件前加on表示触发事件时eg. onclick
+    b.键盘事件
+      keydown   键盘按下时事件
+      keypress  键盘按下时事件(html中的onkeypress是当键盘被按下后又松开时)
+      key       键盘抬起时事件
+    c.窗口事件 (Window Events)
+      仅在 body 和 frameset 元素中有效
+      load    当文档被载入时，页面初始化
+        <body onload='bodyLoad()'>...</body>
+        window.onload=function(){...}       // 注意此处设置window.onload 不是body.onload
+        注意：load事件是在整个网页加载完成时再调用的(此时DOM树已经是一个完成的结构了)
+      unload  当文档被卸下时
+    d.表单元素事件 (Form Element Events)
+      仅在表单元素中有效
+      change  当元素改变时 常用于下拉选择框
+      submit  当表单被提交时
+        <input id=i1 type='button' onsubmit='return f()'>
+        document.getElementById('i1').onsubmit=function(){判断 返回true或false}
+        注意：返回true相当与事件发生了，返回false相当于不让事件发生
+      select  当元素被选取时
+      blur    当元素失去焦点时  eg. 当光标移除文本框里
+      focus   当元素获得焦点时  eg. 当光标点进文本框里
+  2)绑定事件的方式
+    a.在元素中绑定事件
+      <ANY on事件名=''>
+    b.在js中动态的为元素绑定事件
+      <script>
+        var div = document.getElementById('d1')
+        div.on事件名 = function(){...}    // 注意值是匿名函数 此方法不等于 <div onclick='function(){...}'>
+      </script>
+
+

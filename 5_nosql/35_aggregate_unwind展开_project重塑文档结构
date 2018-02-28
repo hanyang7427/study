@@ -1,0 +1,106 @@
+SQL和MongoDB操作符对比
+SQL         MongoDB
+select      $project
+select      $match
+limit       $limit
+group by    $group
+order by    $sort
+sum,min..   $sum,$min..
+jion        $lookup
+
+使用[]情况有三种
+  1.and or
+  2.批量insert
+  3.aggregate
+
+聚类
+aggregate()
+aggregate([1,2,3])    # 将1的结果交给2,2的结果交给3
+
+# 数据准备
+db.orders.insert({cust_id:'A123',amount:500,status:'A'})
+db.orders.insert({cust_id:'A123',amount:250,status:'A'})
+db.orders.insert({cust_id:'B212',amount:200,status:'A'})
+db.orders.insert({cust_id:'A123',amount:300,status:'D'})
+db.orders.find().pretty()
+# 只有条件的aggregate意思是查找
+db.orders.aggregate([{$match:{status:'A'}}])
+管道操作：把符合条件数据进交给后边的命令进行处理，叫做管道
+有条件和$group的aggregate表示把符合条件文档交给group处理
+# 按照$group:{_id:'v',k:'v',...}按照$group中的_id的值分组
+db.orders.aggregate({$group:{_id:'$cust_id',total:{$sum:'$amount'}}})
+# 例：将orders集合中的文档，对各个status对应的结果进行分组，把status和相应的amount的平均值打印出来
+db.orders.aggregate([{$group:{_id :'$status',avg:{$avg:'$amount'}}}])
+# 例：计算orders所有文档的amount的平均值(_id:null)
+db.orders.aggregate([{$group:{_id :null,avg:{$avg:'$amount'}}}])
+# amount小与400且status是A，以cust_id分组的 amount的总和和amount的平均值
+db.orders.aggregate([{$match:{$and:[{amount:{$lt:400}},{status:'A'}]}},{$group:{_id :'cust_id',sum:{$sum:'$amount'},avg:{$avg:'$amount'}}}])
+
+# 准备数据
+db.Student.insert({StudentName:'Ann',Section:'A',Marks:70,Subject:["Hindi",'English','Math']})
+db.Student.insert({StudentName:'Bob',Section:'A',Marks:90,Subject:["Hindi"]})
+db.Student.insert({StudentName:'Emily',Section:'A',Marks:70,Subject:["Math"]})
+db.Student.insert({StudentName:'Herry',Section:'B',Marks:10,Subject:["Hindi"]})
+db.Student.insert({StudentName:'Jimmy',Section:'B',Marks:70,Subject:["Math"]})
+db.Student.insert({StudentName:'Kate',Section:'C',Marks:80,Subject:["Hindi","English"]})
+db.Student.insert({StudentName:'Mike',Section:'C',Marks:50,Subject:["English"]})
+db.Student.insert({StudentName:'Lily',Section:'D',Marks:40,Subject:["Math"]})
+db.Student.insert({StudentName:'Peter',Section:'D',Marks:20,Subject:["English","Math"]})
+
+$project
+重塑文档结构，增加删除重命名，进入管道中的下一个阶段
+1 or true : 显示
+0 or false : 隐藏
+只选Student集合中，Student,Section,Marks三列
+db.Student.aggregate([{$project:{_id:0,Student:1,Section:1,Marks:1}}])
+注：除_id外，其他filed默认不显示
+# 查找学生集合中Section是A的学生的StudentName,Section和Marks
+db.Student.aggregate([{$match:{Section:'A'}},{$project:{_id:0,StudentName:1,Marks:1}}])
+# 查找Marks大于80且Section是A的，只显示StudentName和Marks
+db.Student.aggregate([{$match:{$and:[{Marks:{$gt:80}},{Section:'A'}]}},{$project:{_id:0,StudentName:1,Marks:1}}])
+# Section是或C，以Section分组，Marks的总和最小值平均值，只显示_id和sum
+db.Student.aggregate([{$match:{Section:{$in:['A','C']}}},{$group:{_id:'$Section',sum:{$sum:'$Marks'},min:{$min:'$Marks'},average:{$avg:'$Marks'}}},{$project:{_id:0,sum:1}}])
+# group命名 + $project重命名
+db.Student.aggregate([{$group:{_id:{Section:'$Section'},TotalMarks:{$sum:'$Marks'},count:{$sum:1}}},{$project:{SectionName:'$_id.Section',Total:'$TotalMarks',_id:0,count:1}}])
+
+$unwind 把一个文档展开为多个文档，ID号是相同的
+db.Student.aggregate([{$match:{'StudentName':'Ann'}},{$unwind:'$Subject'}])
+# 把Student集合中，按照$Subject展开成多个文档，再按照各个Subject分组求平均值
+db.Student.aggregate([{$unwind:'$Subject'},{$group:{_id:'$Subject',avg:{$avg:'$Marks'}}}])
+
+练习：
+针对Peter和Ann两个学生，按照$Subject展开诚多个文档，在按照各个Subject分组求最低成绩Marks和最佳成绩Marks，只显示最佳成绩Marks
+> db.Student.aggregate([{$match:{StudentName:{$in:['Peter','Ann']}}},{$unwind:'$Subject'},{$group:{_id:{Subject:'$Subject'},min:{$min:'$Marks'},max:{$max:'$Marks'}}},{$project:{_id:1,max:1}}])
+{ "_id" : { "Subject" : "Math" }, "max" : 70 }
+{ "_id" : { "Subject" : "English" }, "max" : 70 }
+{ "_id" : { "Subject" : "Hindi" }, "max" : 70 }
+> db.Student.aggregate([{$match:{StudentName:{$in:['Peter','Ann']}}},{$unwind:'$Subject'},{$group:{_id:'$Subject',min:{$min:'$Marks'},max:{$max:'$Marks'}}},{$project:{_id:1,max:1}}])
+{ "_id" : "Math", "max" : 70 }
+{ "_id" : "English", "max" : 70 }
+{ "_id" : "Hindi", "max" : 70 }
+
+$sort
+对文档进行排序
+1：升序
+-1：降序
+# 按照StudentName降序排列
+db.Student.aggregate([{$sort:{StudentName:1}}])
+
+特别注意的地方
+注意：$符加filed名字，代表的意思是解开filed的值 例如'$Subject'代表将Subject的值解开
+注意：$group:{_id:{Subject:'$Subject'},...}中_id指定了以什么来分组，_id的值可以是{_id:'$Subject'}也可以是{_id:{Subject:'$Subject'}}(自定义)
+注意：$group的值中的第一个k:v的key必须是_id
+注意：aggregate({条件},{$group:{_id:'',...}}) 其中的条件必须是$match{...}，不可以像find那样直接写条件
+
+练习：
+按照各个Section的平均值的升序排列，只显示Section和平均值
+提示$group,$avg,$sort,$project
+db.Student.aggregate([{$group:{_id:{Section:'$Section'},avgr:{$avg:'$Marks'}}},{$project:{Section:'$_id.Section',avgrddd:'$avgr',_id:0}},{$sort:{avgr:1}}])
+
+$limit 限制传递到下一阶段的文档数量
+# Marks降序排列，只显示前三行
+db.Student.aggregate([{$sort:{Marks:-1}},{$limit:3}])
+
+$skip 跳过某几行文档
+# Marks降序排列，跳过前三行，显示后边的行
+db.Student.aggregate([{$sort:{Marks:-1}},{$skip:3}])

@@ -1,0 +1,56 @@
+select作用 监控IO
+posix(portable operation system interface,可移植操作系统接口)标准下网络通信也是文件IO操作
+socket建立一次连接是一次IO，连接的数据抵达是一次IO
+select只支持监控1024个文件描述符
+
+poll解决了select个数限制
+
+epoll事件通知机制(异步IO)，没有1024限制
+EPOLLIN    读
+EPOLLOUT   写
+两种模式
+EPOLLET    这次没有处理，下次不会再通知
+EPOLLLT    这次没有处理，以后会继续通知
+
+>>> select.EPOLLPRI
+2   -->010
+>>> select.EPOLLIN
+1   -->001
+>>> select.EPOLLOUT
+4   -->100
+三种mask取并集每一位一个含义
+
+poll翻译：投票，轮询
+
+API
+socket.fileno()               # 返回socket的文件fd(非负)
+epoll = select.epoll()        # 创建epoll对象
+epoll.register(sock.fileno(),EPOLLIN|EPOLLET)   # 将socket的fd注册到epoll
+epoll.poll()                  # 扫描注册到epoll中的文件的改动
+epoll.unregeister(fd)         # 注销文件描述符
+
+select 和 epoll都是非阻塞的
+
+进程是cpu分配资源的单位
+线程是cpu调度的单位
+
+协程(微线程)Coroutine
+def fibo(x):
+    a, b = 1, 1
+    yield a
+    yield b
+    for i in range(x - 2):
+        a, b = b, a + b
+        yield b
+for i in fibo(10):
+    print(i)
+
+yield是协程的源头
+协程的本质是在不同函数之间来回切换
+协程的好处：
+  在IO密集型的程序中由于IO操作远远比cpu慢，所以需要CPU去等IO操作，同步IO系统需要切换线程，让操作系统可以在IO过程中执行其他东西，造成性能浪费
+  所以使用异步IO，减少切换带来的的成本，主要坏处是导致了很多操作被分片了。协程解决了这个问题，把一个IO写成一个协程，协程通过这种异步IO的封装，
+  既保留了性能，也保留了代码的易写性和可读性
+
+  IO密集时使用线程和协程
+  CPU密集时使用进程

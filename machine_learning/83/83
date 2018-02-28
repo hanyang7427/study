@@ -1,0 +1,26 @@
+四十一、自然语言处理
+1.分词
+代码：token.py
+2.词干提取
+代码：stem.py
+3.分块划分
+代码：split.py
+4.词袋模型
+abc def hijk
+def, dec ...
+代码：bow.py
+5.文本分类器
+代码：tfidf.c
+                          I am a student this is apple
+I am a stduent  1 1    1 1            0    0 0
+this is a apple   0 0    1 0            1    1 1
+6.性别识别
+代码：gender.py
+7.情感分析
+代码：sentiment.py
+8.主题建模
+寻找关键词
+代码：topic.py
+四十二、时间序列
+代码：ts.py
+

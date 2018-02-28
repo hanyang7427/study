@@ -1,0 +1,14 @@
+{%extends base.html%}
+{%block title%}login page{%end%}
+{%block head%}
+<script type="text/javascript" src={{static_url('js/jquery-3.2.1.js')}}></script>
+<script type="text/javascript">
+
+ $(function () {
+     $('#btn_regist').click(function () {
+         window.location.href='/register';
+     });
+ });
+</script>
+{%end%}
+{%block body%}{%module loginmod()%}{%end%}

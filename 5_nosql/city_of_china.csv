@@ -1,0 +1,348 @@
+Name,Province,Type,Population (2010),Area (km²),Prefecture Seat
+Hefei*,Anhui,City,7457027,11323,Shushan District
+Anqing,Anhui,City,5311000,15398,Daguan District
+Bengbu,Anhui,City,3164000,5952,Bengshan District
+Bozhou,Anhui,City,4851000,8394,Qiaocheng District
+Chizhou,Anhui,City,1403000,9423,Guichi District
+Chuzhou,Anhui,City,3938000,13398,Langya District
+Fuyang,Anhui,City,7600000,13300,Yingzhou District
+Huaibei,Anhui,City,2114000,2725,Xiangshan District
+Huainan,Anhui,City,3342000,5533,Tianjia'an District
+Huangshan,Anhui,City,1359000,9807,Tunxi District
+Lu'an,Anhui,City,4610000,15447,Jin'an District
+Ma'anshan,Anhui,City,1366000,1686,Yushan District
+Suzhou Anhui,Anhui,City,5353000,9939,Yongqiao District
+Tongling,Anhui,City,724000,1113,Tongguanshan District
+Wuhu,Anhui,City,2263000,3317,Jiujiang District
+Xuancheng,Anhui,City,2533000,12340,Xuanzhou District
+Fuzhou Fujian*,Fujian,City,7115370,12000,Gulou District
+Xiamen,Fujian,City,3531347,1573,Siming District
+Longyan,Fujian,City,2559545,19069,Xinluo District
+Nanping,Fujian,City,2645549,26300,Yanping District
+Ningde,Fujian,City,2821996,13452,Jiaocheng District
+Putian,Fujian,City,2778508,4200,Chengxiang District
+Quanzhou,Fujian,City,8128530,11015,Fengze District
+Sanming,Fujian,City,2503388,22929,Meilie District
+Zhangzhou,Fujian,City,4809983,12607,Xiangcheng District
+Jiuquan,Gansu,City,1095947,191342,Suzhou District
+Jiayuguan,Gansu,City,231853,1133,Xiongguan District
+Zhangye,Gansu,City,1199515,16216,Ganzhou District
+Jinchang,Gansu,City,464050,8896,Jinchuan District
+Wuwei,Gansu,City,1815054,33000,Liangzhou District
+Baiyin,Gansu,City,1708751,8185,Baiyin District
+Lanzhou*,Gansu,City,3616163,13100,Chengguan District
+Gannan,Gansu,Autonomous prefecture (Tibetan),689132,40898,Hezuo City
+Dingxi,Gansu,City,2698622,7837,Anding District
+Linxia,Gansu,Autonomous prefecture (Hui),1946677,8169,Linxia City
+Longnan,Gansu,City,2567718,27000,Wudu District
+Tianshui,Gansu,City,3262548,14300,Qinzhou District
+Pingliang,Gansu,City,2068033,11325,Kongtong District
+Qingyang,Gansu,City,2211191,10470,Xifeng District
+Qingyuan,Guangdong,City,3698394,19000,Qingcheng District
+Shaoguan,Guangdong,City,2826612,18645,Zhenjiang District
+Heyuan,Guangdong,City,2953019,15478,Yuancheng District
+Meizhou,Guangdong,City,4240139,15836,Meijiang District
+Chaozhou,Guangdong,City,2669844,3614,Xiangqiao District
+Zhaoqing,Guangdong,City,3918085,22322,Duanzhou District
+Yunfu,Guangdong,City,2360128,7813,Yuncheng District
+Foshan,Guangdong,City,7194311,3813,Chancheng District
+Guangzhou*,Guangdong,City,12700800,7434,Yuexiu District
+Dongguan,Guangdong,City,8220237,2465,Nancheng District
+Huizhou,Guangdong,City,4597002,11158,Huicheng District
+Shanwei,Guangdong,City,2935717,5271,Cheng District
+Jieyang,Guangdong,City,5877025,5240,Rongcheng District
+Shantou,Guangdong,City,5391028,2064,Jinping District
+Zhanjiang,Guangdong,City,6993304,12490,Chikan District
+Maoming,Guangdong,City,5817753,11458,Maonan District
+Yangjiang,Guangdong,City,2421812,7813,Jiangcheng District
+Jiangmen,Guangdong,City,4448871,9443,Pengjiang District
+Zhongshan,Guangdong,City,3120884,1800,Dong District
+Zhuhai,Guangdong,City,1560229,1653,Xiangzhou District
+Shenzhen,Guangdong,City,10357938,2050,Futian District
+Baise,Guangxi,City,3466800,36252,Youjiang District
+Hechi,Guangxi,City,3369200,13706,Jinchengjiang District
+Liuzhou,Guangxi,City,3758700,16877,Liubei District
+Guilin,Guangxi,City,4748000,27809,Lingui District
+Hezhou,Guangxi,City,1954100,11854,Babu District
+Chongzuo,Guangxi,City,1994300,17345,Jiangzhou District
+Nanning*,Guangxi,City,6661600,22293,Qingxiu District
+Laibin,Guangxi,City,2099700,13400,Xingbin District
+Guigang,Guangxi,City,4118800,10595,Gangbei District
+Wuzhou,Guangxi,City,2882200,12588,Changzhou District
+Fangchenggang,Guangxi,City,866900,2386,Gangkou District
+Qinzhou,Guangxi,City,3079700,5250,Qinbei District
+Beihai,Guangxi,City,1539300,1288,Haicheng District
+Yulin Guangxi,Guangxi,City,5487400,12839,Yuzhou District
+Bijie,Guizhou,City,6536370,26853,Qixingguan District
+Zunyi,Guizhou,City,6127009,11877,Huichuan District
+Tongren,Guizhou,City,3092365,18006,Bijiang District
+Liupanshui,Guizhou,City,2851180,9926,Zhongshan District
+Anshun,Guizhou,City,2297339,9269,Xixiu District
+Guiyang*,Guizhou,City,4324561,8034,Guanshanhu District
+Qianxinan,Guizhou,Autonomous prefecture (Buyei & Miao),2805857,16804,Xingyi City
+Qiannan,Guizhou,Autonomous prefecture (Buyei & Miao),3231161,26207,Duyun City
+Qiandongnan,Guizhou,Autonomous prefecture (Miao & Dong),3480626,30339,Kaili City
+Danzhou,Hainan,City,932362,3400,Nada Town
+Haikou*,Hainan,City,2046189,2304,Longhua District
+Sanya,Hainan,City,685408,1919,Jiyang District
+Sansha,Hainan,City,444,13,Xisha District (Xisha Islands)
+Shijiazhuang*,Hebei,City,9547869,14771,Chang'an District
+Baoding,Hebei,City,10029197,20911,Xinshi District
+Cangzhou,Hebei,City,7134053,14383,Yunhe District
+Chengde,Hebei,City,3473197,39519,Shuangqiao District
+Handan,Hebei,City,9174679,12068,Congtai District
+Hengshui,Hebei,City,4340773,8815,Taocheng District
+Langfang,Hebei,City,4358839,6417,Guangyang District
+Qinhuangdao,Hebei,City,2987605,7812,Haigang District
+Tangshan,Hebei,City,7577284,17040,Lubei District
+Xingtai,Hebei,City,7104114,12486,Qiaodong District
+Zhangjiakou,Hebei,City,4345491,36947,Qiaoxi District
+Harbin*,Heilongjiang,City,10635971,53068,Songbei District
+Daqing,Heilongjiang,City,2904532,8556,Sartu District
+Hegang,Heilongjiang,City,1058665,14784,Xiangyang District
+Heihe,Heilongjiang,City,1673898,54390,Aihui District
+Jiamusi,Heilongjiang,City,2552097,12173,Qianjin District
+Jixi,Heilongjiang,City,1862161,22351,Jiguan District
+Mudanjiang,Heilongjiang,City,2798723,40435,Dong'an District
+Qiqihar,Heilongjiang,City,5367003,42469,Jianhua District
+Qitaihe,Heilongjiang,City,920419,6221,Taoshan District
+Shuangyashan,Heilongjiang,City,1462626,10225,Jianshan District
+Suihua,Heilongjiang,City,5416439,13595,Beilin District
+Yichun Heilongjiang,Heilongjiang,City,1148126,15064,Yichun District
+Daxing'anling,Heilongjiang,Prefecture,511564,46755,Jiagedaqi District
+Zhengzhou*,Henan,City,8626505,7446,Zhongyuan District
+Jiyuan,Henan,Sub-prefecture-level city,660000,1931,Qinyuan Subdistrict
+Anyang,Henan,City,5172834,7355,Wenfeng District
+Hebi,Henan,City,1569100,2182,Qibin District
+Jiaozuo,Henan,City,3539860,4071,Jiefang District
+Kaifeng,Henan,City,4676159,6444,Gulou District
+Luohe,Henan,City,2544103,2617,Yancheng District
+Luoyang,Henan,City,6549486,15208,Luolong District
+Nanyang,Henan,City,10263006,26600,Wolong District
+Pingdingshan,Henan,City,4904367,7882,Xinhua District
+Puyang,Henan,City,3598494,4188,Hualong District
+Sanmenxia,Henan,City,2233872,10496,Hubin District
+Shangqiu,Henan,City,7362472,10704,Liangyuan District
+Xinxiang,Henan,City,5707801,8169,Weibin District
+Xinyang,Henan,City,6108683,18819,Shihe District
+Xuchang,Henan,City,4307199,4996,Weidu District
+Zhoukou,Henan,City,8953172,11959,Chuanhui District
+Zhumadian,Henan,City,7230744,15083,Yicheng District
+Wuhan*,Hubei,City,9785392,8494,Jiang'an District
+Xiantao,Hubei,Sub-prefecture-level city,1175085,2538,Shazui Subdistrict
+Qianjiang Hubei,Hubei,Sub-prefecture-level city,998525,774,Yunlin Subdistrict
+Tianmen,Hubei,Sub-prefecture-level city,1731482,2622,Jingling Subdistrict
+Shennongjia,Hubei,Forest district,76140,3253,Songbai Town
+Ezhou,Hubei,City,1048672,1504,Echeng District
+Huanggang,Hubei,City,6162072,17446,Huangzhou District
+Huangshi,Hubei,City,2429318,4630,Xialu District
+Jingmen,Hubei,City,2873687,12404,Dongbao District
+Jingzhou,Hubei,City,5691707,14067,Shashi District
+Shiyan,Hubei,City,3340843,23600,Maojian District
+Suizhou,Hubei,City,2162222,9636,Zengdu District
+Xiangyang,Hubei,City,5500307,19700,Xiangcheng District
+Xianning,Hubei,City,2462583,9861,Xian'an District
+Xiaogan,Hubei,City,4814542,8910,Xiaonan District
+Yichang,Hubei,City,4059686,21227,Xiling District
+Enshi,Hubei,Autonomous prefecture (Tujia & Miao),3290294,9266,Enshi City
+Changsha*,Hunan,City,7044118,11820,Yuelu District
+Changde,Hunan,City,5747218,18189,Wuling District
+Chenzhou,Hunan,City,4581778,19317,Beihu District
+Hengyang,Hunan,City,7141462,15310,Zhengxiang District
+Huaihua,Hunan,City,4741948,27600,Hecheng District
+Loudi,Hunan,City,3785627,8107,Louxing District
+Shaoyang,Hunan,City,7071826,20829,Daxiang District
+Xiangtan,Hunan,City,2748552,5015,Yuetang District
+Yiyang,Hunan,City,4313084,12144,Heshan District
+Yongzhou,Hunan,City,5180235,22255,Lengshuitan District
+Yueyang,Hunan,City,5477911,5799,Yueyanglou District
+Zhangjiajie,Hunan,City,1476521,9516,Yongding District
+Zhuzhou,Hunan,City,3855609,11262,Tianyuan District
+Xiangxi,Hunan,Autonomous Prefecture (Tujia & Miao),2547833,15486,Jishou City
+Alxa,Inner Mongolia,League,231334,267574,Bayanhot Elute Subdistrict Alxa Left Banner
+Bayannur,Inner Mongolia,City,1669915,65788,Linhe District
+Wuhai,Inner Mongolia,City,532902,1754,Haibowan District
+Ordos,Inner Mongolia,City,1940653,87000,Dongsheng District
+Baotou,Inner Mongolia,City,2650364,27768,Hondlon District
+Hohhot*,Inner Mongolia,City,2866615,17224,Xincheng District
+Ulanqab,Inner Mongolia,City,2143590,54491,Jining District
+Xilingol,Inner Mongolia,League,1028022,202580,Xilinhot City
+Chifeng,Inner Mongolia,City,4341245,90275,Hongshan District
+Tongliao,Inner Mongolia,City,3139153,59535,Horqin District
+Hinggan,Inner Mongolia,League,1613250,59806,Ulanhot City
+Hulunbuir,Inner Mongolia,City,2549278,263953,Hailar District
+Nanjing*,Jiangsu,City,8004680,6598,Xuanwu District
+Changzhou,Jiangsu,City,4591972,4385,Xinbei District
+Huai'an,Jiangsu,City,4799889,10072,Qinghe District
+Lianyungang,Jiangsu,City,4393914,7444,Xinpu District
+Nantong,Jiangsu,City,7282835,8001,Chongchuan District
+Suqian,Jiangsu,City,4715553,8555,Sucheng District
+Suzhou Jiangsu,Jiangsu,City,10465994,8488,Gusu District
+Taizhou Jiangsu,Jiangsu,City,4618558,5790,Hailing District
+Wuxi,Jiangsu,City,6372624,4787,Binhu District
+Xuzhou,Jiangsu,City,8580500,11258,Yunlong District
+Yancheng,Jiangsu,City,7260240,16920,Tinghu District
+Yangzhou,Jiangsu,City,4459760,6658,Guangling District
+Zhenjiang,Jiangsu,City,3113384,3847,Runzhou District
+Nanchang*,Jiangxi,City,5042565,7402,Donghu District
+Fuzhou Jiangxi,Jiangxi,City,3912312,7258,Linchuan District
+Ganzhou,Jiangxi,City,8368440,39400,Zhanggong District
+Ji'an,Jiangxi,City,4810340,25300,Jizhou District
+Jingdezhen,Jiangxi,City,1587477,5256,Changjiang District
+Jiujiang,Jiangxi,City,4728763,18823,Xunyang District
+Pingxiang,Jiangxi,City,1854510,1477,Anyuan District
+Shangrao,Jiangxi,City,6579714,22791,Xinzhou District
+Xinyu,Jiangxi,City,1138873,1227,Yushui District
+Yichun Jiangxi,Jiangxi,City,5419575,7208,Yuanzhou District
+Yingtan,Jiangxi,City,1124906,7208,Yuehu District
+Changchun*,Jilin,City,7677089,20532,Chaoyang District
+Baicheng,Jilin,City,2033058,25683,Taobei District
+Baishan,Jilin,City,1295750,17485,Hunjiang District
+Jilin,Jilin,City,4414681,27700,Chuanying District
+Liaoyuan,Jilin,City,1176645,5125,Longshan District
+Siping,Jilin,City,3386325,14323,Tiexi District
+Songyuan,Jilin,City,2881082,22000,Ningjiang District
+Tonghua,Jilin,City,2325242,15195,Dongchang District
+Yanbian,Jilin,Autonomous Prefecture (Korean),2271600,43509,Yanji City
+Shenyang*,Liaoning,City,8106171,12924,Shenhe District
+Dalian,Liaoning,City,6690432,13237,Xigang District
+Anshan,Liaoning,City,3645884,9252,Tiedong District
+Benxi,Liaoning,City,1709538,8411,Pingshan District
+Chaoyang,Liaoning,City,3044641,19698,Shuangta District
+Dandong,Liaoning,City,2444697,14981,Zhenxing District
+Fushun,Liaoning,City,2138090,10816,Shuncheng District
+Fuxin,Liaoning,City,1819339,10445,Xihe District
+Huludao,Liaoning,City,2623541,10415,Longgang District
+Jinzhou,Liaoning,City,3126463,10111,Taihe District
+Liaoyang,Liaoning,City,1858768,4731,Baita District
+Panjin,Liaoning,City,1392493,4071,Xinglongtai District
+Tieling,Liaoning,City,2717732,13000,Yinzhou District
+Yingkou,Liaoning,City,2428534,5402,Zhanqian District
+Yinchuan*,Ningxia,City,1993088,4467,Jinfeng District
+Shizuishan,Ningxia,City,725482,5209,Dawukou District
+Wuzhong,Ningxia,City,1273792,20733,Litong District
+Zhongwei,Ningxia,City,1080832,16986,Shapotou District
+Guyuan,Ningxia,City,1228156,14412,Yuanzhou District
+Haixi,Qinghai,Autonomous prefecture (Mongol & Tibetan),489338,325785,Delingha
+Haibei,Qinghai,Autonomous prefecture (Tibetan),273304,34700,Sanjiaocheng Town Haiyan County
+Xining*,Qinghai,City,2208708,7372,Chengzhong District
+Haidong,Qinghai,City,1396846,12810,Ledu District
+Hainan,Qinghai,Autonomous prefecture (Tibetan),441689,46000,Qabqa Town Gonghe County
+Huangnan,Qinghai,Autonomous prefecture (Tibetan),256716,17921,Rongwo Town Tongren County
+Yushu,Qinghai,Autonomous prefecture (Tibetan),378439,188794,Yushu City
+Golog,Qinghai,Autonomous prefecture (Tibetan),181682,76312,Dawu Town Maqên County
+Xi'an*,Shaanxi,City,8467837,9983,Weiyang District
+Ankang,Shaanxi,City,2629906,23529,Hanbin District
+Baoji,Shaanxi,City,3716731,18712,Jintai District
+Hanzhong,Shaanxi,City,3416196,27246,Hantai District
+Shangluo,Shaanxi,City,2341742,19292,Shangzhou District
+Tongchuan,Shaanxi,City,834437,3882,Yaozhou District
+Weinan,Shaanxi,City,5286077,13000,Linwei District
+Xianyang,Shaanxi,City,4894834,10196,Qindu District
+Yan'an,Shaanxi,City,2187009,37000,Baota District
+Yulin Shaanxi,Shaanxi,City,3351437,43578,Yuyang District
+Jinan*,Shandong,City,6814000,8177,Lixia District
+Qingdao,Shandong,City,8715100,10654,Shinan District
+Binzhou,Shandong,City,3748500,9444,Bincheng District
+Dezhou,Shandong,City,5568200,10356,Decheng District
+Dongying,Shandong,City,2035300,7923,Dongying District
+Heze,Shandong,City,8287800,12238,Mudan District
+Jining,Shandong,City,8081900,10685,Shizhong District
+Laiwu,Shandong,City,1298500,2246,Laicheng District
+Liaocheng,Shandong,City,5789900,8715,Dongchangfu District
+Linyi,Shandong,City,10039400,17251,Lanshan District
+Rizhao,Shandong,City,2801100,5310,Donggang District
+Tai'an,Shandong,City,5494200,7762,Taishan District
+Weifang,Shandong,City,9086200,15800,Kuiwen District
+Weihai,Shandong,City,2804800,5436,Huancui District
+Yantai,Shandong,City,6968200,13739,Laishan District
+Zaozhuang,Shandong,City,3729300,4550,Shizhong District
+Zibo,Shandong,City,4530600,5938,Zhangdian District
+Taiyuan*,Shanxi,City,4201591,6956,Xinghualing District
+Changzhi,Shanxi,City,3334564,13864,Cheng District
+Datong,Shanxi,City,3318057,14176,Cheng District
+Jincheng,Shanxi,City,2279151,9484,Cheng District
+Jinzhong,Shanxi,City,3249425,16408,Yuci District
+Linfen,Shanxi,City,4316612,20275,Yaodu District
+Lüliang,Shanxi,City,3727057,21000,Lishi District
+Shuozhou,Shanxi,City,1714857,5737,Shuocheng District
+Xinzhou,Shanxi,City,3067501,25180,Xinfu District
+Yangquan,Shanxi,City,1368502,4452,Cheng District
+Yuncheng,Shanxi,City,5134794,14106,Yanhu District
+Garzê,Sichuan,Autonomous prefecture (Tibetan),1091872,151078,Kangding City
+Ngawa,Sichuan,Autonomous prefecture (Tibetan & Qiang),898713,83201,Barkam Town Barkam County
+Mianyang,Sichuan,City,4613862,20249,Fucheng District
+Guangyuan,Sichuan,City,2484123,16313,Lizhou District
+Nanchong,Sichuan,City,6278622,12479,Shunqing District
+Bazhong,Sichuan,City,3283771,12301,Bazhou District
+Dazhou,Sichuan,City,5468092,16591,Tongchuan District
+Ya'an,Sichuan,City,1507264,15300,Yucheng District
+Chengdu*,Sichuan,City,14047625,12390,Qingyang District
+Deyang,Sichuan,City,3615759,5818,Jingyang District
+Suining,Sichuan,City,3252551,5326,Chuanshan District
+Guang'an,Sichuan,City,3205476,6344,Guang'an District
+Meishan,Sichuan,City,2950548,7186,Dongpo District
+Ziyang,Sichuan,City,3665064,7962,Yanjiang District
+Leshan,Sichuan,City,3235756,12826,Shizhong District
+Neijiang,Sichuan,City,3702847,5386,Shizhong District
+Zigong,Sichuan,City,2678898,4372,Ziliujing District
+Yibin,Sichuan,City,4472001,13283,Cuiping District
+Luzhou,Sichuan,City,4218426,12247,Jiangyang District
+Liangshan,Sichuan,Autonomous prefecture (Yi),4532809,60423,Xichang City
+Panzhihua,Sichuan,City,1214121,7440,Dong District
+Ngari,Tibet,Prefecture,95465,304683,Sênggêzangbo Town Gar County
+Nagqu,Tibet,Prefecture,462382,450537,Nagqu Town Nagqu County
+Qamdo,Tibet,City,657505,110154,Karub District
+Xigazê,Tibet,City,703292,182000,Samzhubzê District
+Lhasa*,Tibet,City,559423,31662,Chingoin District
+Lhoka,Tibet,Prefecture,328990,79699,Zêtang Town Nêdong County
+Nyingchi,Tibet,City,195109,116175,Bayi District
+Altay[4],Xinjiang,Prefecture,603280,117988,Altay City
+Shihezi[5],Xinjiang,County-level city (XPCC),640000,460,Xincheng Subdistrict
+Beitun[5],Xinjiang,County-level city (XPCC),76300,910,Beitun Town
+Tiemenguan[5],Xinjiang,County-level city (XPCC),50000,590,Boguqi Town
+Tumxuk[5],Xinjiang,County-level city (XPCC),110000,1927,Qiganquelei Subdistrict
+Aral[5],Xinjiang,County-level city (XPCC),166205,5258,Jinyinchuanlu Subdistrict
+Wujiaqu[5],Xinjiang,County-level city (XPCC),72782,710,Junkenlu Subdistrict
+Shuanghe[5],Xinjiang,County-level city (XPCC),53800,742.18,Hongxingerlu Subdistrict
+Kokdala[5],Xinjiang,County-level city (XPCC),75000,979.71,Xingfulu Subdistrict
+Bortala,Xinjiang,Autonomous prefecture (Mongol),443680,24896,Bole (Börtala) City
+Tarbaĝatay[4],Xinjiang,Prefecture,1219212,94891,Tacheng (Qoqek) City
+Karamay,Xinjiang,City,391008,7734,Karamay District
+Changji,Xinjiang,Autonomous prefecture (Hui),1428592,73659,Changji (Sanji) City
+Ürümqi*Ürümqi*,Xinjiang,City,3110280,14217,Tianshan District
+Turpan,Xinjiang,City,622679,69620,Gaochang District
+Kumul,Xinjiang,Prefecture,572400,138919,Kumul City
+Ili[4],Xinjiang,Autonomous prefecture (Kazakh),2482627,269502,Yining (Ĝulja) City
+Kizilsu,Xinjiang,Autonomous prefecture (Kirgiz),525599,70916,Atux City
+Kaxgar,Xinjiang,Prefecture,3979362,112058,Kashi (Kaxgar) City
+Aksu,Xinjiang,Prefecture,2370887,128099,Aksu City
+Hotan,Xinjiang,Prefecture,2014365,248946,Hotan City
+Bayingolin,Xinjiang,Autonomous prefecture (Mongol),1278492,472472,Korla City
+Kunming*,Yunnan,City,6432000,21473,Chenggong District
+Qujing,Yunnan,City,5855000,28904,Qilin District
+Yuxi,Yunnan,City,2304000,15285,Hongta District
+Baoshan,Yunnan,City,2506000,19040,Longyang District
+Zhaotong,Yunnan,City,5213000,23192,Zhaoyang District
+Lijiang,Yunnan,City,1245000,21219,Gucheng District
+Pu'er,Yunnan,City,2543000,45385,Simao District
+Lincang,Yunnan,City,2430000,24469,Linxiang District
+Dehong,Yunnan,Autonomous prefecture (Dai & Jingpo),1211000,11526,Mang City
+Nujiang,Yunnan,Autonomous prefecture (Lisu),534000,14703,Liuku Town Lushui County
+Dêqên,Yunnan,Autonomous prefecture (Tibetan),400000,23870,Shangri-La City
+Dali,Yunnan,Autonomous prefecture (Bai),3456000,29459,Dali City
+Chuxiong,Yunnan,Autonomous prefecture (Yi),2684000,29256,Chuxiong City
+Honghe,Yunnan,Autonomous prefecture (Hani & Yi),4501000,32929,Mengzi City
+Wenshan,Yunnan,Autonomous prefecture (Zhuang & Miao),3518000,32239,Wenshan City
+Xishuangbanna,Yunnan,Autonomous prefecture (Dai),1134000,19700,Jinghong City
+Hangzhou*,Zhejiang,City,8700400,16847,Jianggan District
+Ningbo,Zhejiang,City,7605700,9365,Yinzhou District
+Huzhou,Zhejiang,City,2893500,5818,Wuxing District
+Jiaxing,Zhejiang,City,4501700,3915,Nanhu District
+Jinhua,Zhejiang,City,5361600,10918,Wucheng District
+Lishui,Zhejiang,City,2117000,17298,Liandu District
+Quzhou,Zhejiang,City,2122700,8846,Kecheng District
+Shaoxing,Zhejiang,City,4912200,8256,Yuecheng District
+Taizhou Zhejiang,Zhejiang,City,5968800,9411,Jiaojiang District
+Wenzhou,Zhejiang,City,9122100,11784,Lucheng District
+Zhoushan,Zhejiang,City,1121300,1440,Dinghai District

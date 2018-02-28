@@ -1,0 +1,128 @@
+mysql> select * from customers;
++------+-------+------+----------+----------+
+| id   | name  | age  | address  | salary   |
++------+-------+------+----------+----------+
+|    2 | Kate  |   25 | Shanghai |  1500.00 |
+|    3 | Jimmy |   23 | Shenzhen |  3000.00 |
+|    4 | Bob   |   25 | Beijing  |  6500.00 |
+|    5 | Susan |   27 | Shanghai |  8500.00 |
+|    7 | Marry |   24 | Hangzhou | 10000.00 |
+|    1 | Ann   |   30 | Beijing  |  2000.00 |
+|    6 | David |   24 | Shenzhen |  4500.00 |
++------+-------+------+----------+----------+
+7 rows in set (0.00 sec)
+
+20171031-数据库编程-DAY2
+1.逻辑运算符补充
+    between的用法
+      select colunm1,colunm2,...columnN from 表名 where columnX between 第一个值 and 第二个值
+      例子:
+        select name,age from customers where age between 26 and 30
+      SQL中逻辑运算符的优先级列表:
+        级别   操作符
+         1       ~(Bitwise NOT)
+         2       *(乘) /(除) %(取模)
+         3       +, -, &(bitwise AND), ^(bitwise Excluseive OR), |(bitwise OR)
+         4       =, >, <, <=, >=, <>, !=, !<, !> 比较操作符
+         5       NOT 
+         6       AND
+         7       ALL, ANY, BETWEEN, IN, LIKE, OR, SOME
+         8       =赋值操作符
+       注意:sql中可以使用圆括号()来控制优先级
+      练习:
+        从customers表中，选取年龄大于24，工资在大于4000元，列出这些人的姓名，年龄，工资
+        select name, age, salary from customers where age > 24 or salary > 4000;
+        selert name, age, salary from cusromers where nor(age > 24)
+2.update更新记录
+    语法:
+      update 表明 set column1=value1,column2=value2,...colunmN=valueN where 条件
+      例:
+        update customers set age = 29 where name = 'David'
+    注意:
+      update customers set age = 29;
+      没有where条件,意味着将表中所有行的age改为29
+    思考:
+      把customers表中年龄大于25岁，并且地址是北京或者上海没这样的人的工资上调15%
+      update customers set salary = salary * 1.15 where address = 'Beijing' or address = 'Shanghai';
+3.delete删除记录
+    语法:
+      delete from 表名 where 条件
+    例子:
+      delete from customers where id = 1;
+    注意:
+      delete from customers
+      不写where 条件语句，结果是表中所有记录删除
+4.like模糊匹配
+    通配符% : 0,1,或更多字符
+    通配符_ : 单一数字或者单一字符
+    语法:
+      select * from 表名 where 列名 like 'XXX%' ;
+      select * from 表名 where 列名 like '_XX_' ;
+    例:
+      select * from customers where salary like '____.00'	# 表示工资是四位数
+      select * from customers where address like '%jing'	# 匹配北京
+5.limit返回前n条记录
+    语法:
+      select * from 表名 limit n;	# 其中，n指返回表中前n条记录
+      select × from 表名 limit m,n;	
+      其中，m指记录的开始索引号，第一条记录的代码是0，n指从第m条记录开始，取n条
+    注:
+      limit字句永远放在最后写
+    例:
+      select * from customers limit 1,2		# 取第一条和包含第一条后边的两条
+6.order by排序
+    ASC升序
+    DESC降序
+    语法:
+      select 列名 from 表名 where 条件 order by 列名 [asc|desc];
+    注:
+      默认是asc(生序)
+      order by 后面出现的列名不必出现在select语句中
+      当order by后以多个字段排序，先排序第一个字段，第一个字段相同的排序第二个字段
+    练习:
+      把customers表中，城市为北京的顾客，按照年纪升序，工资降序排列，并且只返回结果中的第一条记录
+      提示:
+7.group by分组
+    group by 
+      用来聚合函数(count总数,sum求和,avg平均值,min最小值,max最大值)联合使用，得到一个或多个列的结果集
+    语法:
+      select column1,column2,...columnN,聚合函数(表达式) from 表名 [where 条件]
+      group by column1,column2...columnN
+      order by column1,column2...columnN;
+    注意:
+      select的列必须不能是order by后的列以为的列,若果是用聚合函数处理
+      group by 语句必须在where语句之后，order语句之前
+    例:
+      select address,max(salary) from customers group by address order by max(salary)
+    注意:      
+      1.select的列名必须出现在group by里,错误示例:
+        select address,max(salary),name from customers group by address		# name不在group里
+      2.where语句后不能直接跟聚合函数,错误示例:
+        select address,avg(salary) from customers where avg(salary) > 4000 group by address
+      3.having
+        作用:
+          having语句通常与group by 语句联合使用,用来过滤由group by语句返回的记录集
+          having语句的存在弥补了where关键字不能与聚合函数联合使用的不足
+        例:以address分组,显示平均值大于4000的分组以及分组的平均工资
+          select address,avg(salary) from customers group by address having avg(salary) > 4000;
+        例:以address分组,显示分组中最小值大于4000的分组,以及分组的平均工资
+          select address,avg(salary) from customers group by address having min(salary) > 4000;
+        例:以address分组,显示分组中有3个人的分组
+          select address from customers group by address having count(*) = 3
+        例:在customers表中大于30的人中选择，以address分组，显示分组中平均工资大于4000的分组和分组平均工资
+          select address,avg(salary) where age > 30 group by address having agv(salary) > 4000
+        例:以address分组，显示年龄大于30的分组
+          错误:having 又不能加列名，可以加聚合函数
+          select address from customers group by address having age > 30
+          正确:age > 30加到where 不能加到having
+          select address from customers where age > 30 group by address
+        例:以address和age分组(address和age都相同才会分到一组),显示分组的平均工资
+          select address,age,avg(salary) from customers group by address,age;
+8.distinct不同的
+    distinct 与select一起使用,出去重复项,提取唯一的记录项目
+    select distince column1,column2,...columnN from 表名 where 条件;
+    例:
+      select distinct age from customers;
+    例:age和salary都相同才会去重
+      select distinct age,salary from customers;
+

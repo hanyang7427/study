@@ -1,0 +1,245 @@
+面向的对象编程
+    面向对象是一种思想：
+      c语言和汇编语言不是面向对象的语言，但是可以用向对象的思想编程(比较复杂)，
+      例如：linux内核是用c写的c++程序(指c语言实现面向思想语言所做的事情)
+      对面向对象思想支持的好的语言：
+        C++/Java/Python/Swift/C#
+    两个概念：
+      类(class)
+      a=int(100)        # int为class
+      对象(object)/实例(instance)
+    类：
+      可以用来创建多个长得差不多的实例
+      创建语法：
+        class 类名(继承列表):
+            '类文档字符串'
+            实例方法(类内的函数method) 定义
+            类变量(class variable)   定义
+            类方法(@classmethod)     定义
+            静态方法(@staticmethod)   定义
+      作用：
+        可以用类来创建对象(实例)
+        类内定义的变量和方法能被此类所创建的所有实例共同拥有
+        类通常用来创建具有共同属性的对象(实例)
+    实例：
+      创建语法：
+        类名([创建传参])
+      作用：
+        创建一个类的实例对象，并返回此实例
+      实例说明：
+        实例有自己的作用域和名字空间，可以为实例添加变量(属性)
+        实例可以调用类中的方法
+        实例可以访问类中的类变量
+      1、实例变量：
+        调用方法：
+          实例.变量名
+        在模块中调用：
+          模块名.实例.变量名
+      2、实例方法：
+        语法：
+          class 类名(继承列表):
+              def 实例方法名(self,形式参数1,形式参数2,...):
+                  "文档字符串"
+                  语句...
+        说明：
+          实例方法的实质是函数，是定义在类内的函数
+          实例方法属于类的属性
+          实例方法的第一个参数代表调用这个实例方法的对象(即实例本身)，一般命名为"self"
+          实例方法如果没有return语句，则返回None
+          self代表实例本身
+        实例方法的调用语法：
+          实例.实例方法名(调用参数)
+          或
+          类名.实例方法名(实例,调用参数)
+        实例方法例：
+          class Dog:
+              """
+              这是一种犬科动物的定义
+              """
+              def say(self):
+                  print("汪")
+              def eat(self,that):
+                  "吃饭，food属性记录吃什么"
+                  print("吃吃吃！",that)
+                  self.food = that
+              def food_info(self):
+                  """显示小狗的进食信息"""
+                  print("小狗刚吃过的是："self.food)
+              def run(self,speed):
+                  print("狗以"+speed+"的速度奔跑")
+          dog1 = Dog()          # Dog()初始化一个实例
+          dog1.say()            # 用实例调用方法，等同于下一句
+          Dog.say(dog1)         # 用类调用方法，等同于上一句
+
+          dog1.eat("骨头")
+          print(dog1.food)
+
+          dog1.food_info
+
+          dog1.run(20)
+          dog2.run(25)
+练习：
+    子集定义一个类Human(人类)
+    有两个属性：
+      姓名(name)
+      年龄(age)
+    三个方法：
+      设置姓名(setName)     # 添加和修改姓名
+      设置年龄(setAge)      # 设置年龄
+      显示信息(infos)       # 显示人的信息
+    用此类创建两个对象：
+      张三,21岁
+      李四,22岁
+    调用方法设置和显示信息
+构造方法：
+    作用：
+      创建对象，初始化实例变量
+    语法：
+      def __init__(self[,形式参数列表]):
+          语句...
+    说明：
+      构造方法名必须为__init__
+      在一个类中，只能有__init__构造方法(有多个时最后一个起作用)
+      构造方法会在实例创建时自动调用，且将实例自身通过第一个参数self传入__init__方法
+      构造方法如果没有return语句，则返回self自身(return self)
+析构方法：
+    语法：
+      class 类名:
+          __del__(self):
+              pass
+    说明：
+      析构方法会在示例对象销毁时自动调用
+      python语句不建议在对象销毁做任何事情，因为此方法的调用时间难以确定
+    注：当一个对象没有变量绑定它时，这个对象有可能会被自动销毁
+预置的实例属性：
+    __dict__属性：
+      每一个对象(实例)都有一个__dict__属性
+      __dict__属性绑定一个存储此实例自身属性的字典
+    __doc__属性：
+      保存类的文档字符串，用于help()中显示
+      实例和类公用一套文档字符串
+    __class__属性：
+      绑定创建此对象(实例)的类对象
+      作用：
+        1、借助于此属性来创建同类的实例
+        2、可以借助于此属性来访问类变量
+    __module__属性：
+      绑定此实例所属的模块
+      在主模块当中，此值为"__main__"
+      不在主模块中，此值为模块名
+类变量：
+    在class内定义的变量，此变量属于类，不属于此类的对象(实例)
+    类变量，可以通过该类值直接使用
+    类变量可以通过类的实例直接访问
+    类变量可以通过此类的对象的__class__属性间接访问
+    例：
+      class human:
+          home = "地球"
+          def __init__(self,name):
+              self.name = name
+      print(human.home)
+      h1 = human("张三")
+      print(h1.home)
+类的__SLOTS__属性：
+    作用：
+      限定一个类创建的实例只能有固定的实例属性，不允许对象添加列表以外的实例属性
+      防止用户因写错属性名称而发生程序错误
+    说明：
+      __SLOTS__属性是一个列表，列表的值是字符串
+      含有__SLOTS__属性的类所创建的实例对象没有__dict__属性，即此实例不用字典来存储属性
+对象的属性管理：
+    函数
+    getattr(obj, name [,default])
+      从一个对象得到对象的属性，getattr(x,'y')等同于x.y，当属性不存在时，如果给出default参数，
+      则返回default，如果没有给出default则产生一个AttributeError错误
+    hasattr(obj,name)用给定的name返回对象obj是否有此属性，此做法可以避免getattr()函数引发错误
+    setattr(obj,name,value)给对象obj的名为name的属性设置相应的值，set(x,'y',v)等于x.y=v
+    delattr(obj,name)删除对象obj的name属性，delete(x,'y')等于del x.y
+    例：
+      class Student:
+          pass
+      stu1 = Student()
+      stu1.a1 = 100
+      setattr(stu1,"a2",200)
+      hasattr(stu1,"a1")
+用于类的函数：
+    isinstance(obj,类或类的元组)返回这个对象obj是否为某个(或某些)类的对象，是返回True否则返回False
+    type(obj)   返回对象的类型
+    示例:
+      class A:
+          pass
+      a = A()
+      isinstance(a,A)               # True
+      isinstance(a,(A,int,str))     # True
+      type(a)   # A
+类方法 @classmethod：
+    类方法是只能访问类变量的方法
+    类方法需要时用@classmethod装饰器定义
+    类方法的第一个参数是类本身，约定写为cls
+    说明：
+      类实例和对象实例都可以调用类方法
+      类方法不能访问实例变量
+    示例：
+      class ICBC:
+          money = 10000000  # 一千万
+          @classmethod                              # 类方法使用@classmethod
+          def total_money(cls):                     # 方法的第一个参数是cls
+              print("工商银行总资金数",cls.money)
+          def __init__(self):
+              self.branch = b
+              self.money = 5000000
+              self.__class__.money -= 5000000
+
+类方法和实例方法对比：
+    1、类方法能够访问类变量，不能访问实例变量
+       实例方法能够访问类变量，也能访问实例变量
+    2、类方法可以用实例来调用，也可以用类来调用
+       实例方法在调用时必须传入实例
+静态方法 @staticmethod
+  静态方法是普通的函数
+  静态方法定义在类的内部，只能凭借该类和实例调用
+  静态方法需要使用@staticmethod装饰器定义
+  静态方法与普通函数定义相同，不需要传入self实例参数和cls类参数
+  说明：
+    类实例和对象实例都可以调用静态方法
+    静态方法不能访问实例变量
+  示例：
+    class A:
+        @staticmethod
+        def myadd(a,b):
+            return a+b
+    print(A.method(100,200))
+    a = A()
+    print(a.myadd(300,400))
+实例方法，类方法，静态方法总结：
+    不想访问类变量和实例变量，用静态方法
+    只想访问类内变量，不想访问实例变量用类方法
+    既想访问类内变量，也想访问实例变量用实例方法
+特性属性@property：
+    用来模拟一个属性
+    通过@property装饰器可以对模拟属性赋值和取值加以控制，实现其他语言所拥有的getter和setter功能
+    示例：
+      import math
+      class circle:     # 圆类
+          def __init__(self,r):
+              self.radius = r       # 半径
+          @property                 # area伪装成一个属性
+          def area❌(self):           # 面积
+              return math.pi * self.radius ** 2
+          @area❌.setter
+          def area❌(self, a):        # a代表面积
+              self.radius = math.sqrt(a/math.pi)
+      c1 = circle(10)
+      print(c1.area)                # 注意area后没有括号
+      c1.area = 10000
+      print(c1.r)                   # 通过面积自动计算出了
+      注意⚠️：
+        ❌标记位置必须相同
+注：
+    class A():
+    ...
+        def outer(self):
+            def inner():
+                pass
+    # 不能如下调用，因为outer不是一个类，
+    A.outer.inner()

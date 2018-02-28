@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>下一张图</title>
+<script src="jquery-1.11.3.js"></script>
+    <script>
+
+    </script>
+</head>
+<body>
+<div id="d1"><img src='pic/IT权限.svg' id="img1"></div>
+<button onclick="prevPic()">上一张</button><button onclick="nextPic()">下一张</button>
+<script>
+    var a = ['pic/IT权限.svg','pic/加班申请.svg','pic/工牌.svg']
+    i = 0
+    function nextPic(){
+        if(i==(a.length-1)){i=0}else{++i}
+        $('#img1').attr('src',a[i])
+        }
+    function prevPic() {
+        if(i==0){i=a.length-1}else{--i}
+        $('#img1').attr('src',a[i])
+    }
+
+</script>
+</body>
+</html>

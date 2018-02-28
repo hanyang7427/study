@@ -1,0 +1,112 @@
+注意使用pymongo键和值都要引号
+# 导入pymongo
+# import pymongo
+from pymongo import MongoClient
+
+# 连接
+client = MongoClient()
+client = MongoClient('localhost',27017)
+# 也可以使用MongoDB URI格式
+client = MongoClient('mongodb://localhost:27017/')
+
+# 创建或使用数据库(属性风格)
+db=client.test_db
+创建或使用数据库(字典风格)
+db=client['test_db']
+
+# 集合(属性风格)
+col = db.col_name
+# 集合(字典风格)
+clo = db['col_name']
+
+# document文档
+# MongoDB中的数据是JSON风格的文档，在pymongo中，数据存在字典里
+data = {'author':'Mike','text':'My first blog post','tags':['mongodb','python','pymongo'],'likes':10}
+
+# 插入文档(插入字典)
+db.posts.insert_one(data)
+
+# 同时插入多条文档(列表里有多个字典)
+new_data =[{'author': 'Mike','likes': 10, 'tags': ['mongodb', 'python', 'pymongo']},{'author': 'Emily','likes': 20, 'tags': ['mysql', 'python', 'pymysql']]
+db.posts.insert_many(new_data)
+
+# 查找文档
+# find_one()查看单一文档，返回满足查找条件的一个文档，如果不存在则返回None
+db.posts.find_one()
+
+# 按条件查找
+document = db.posts.find_one({'author':'Mike'})
+pprint.pprint(document)
+print(document)
+# in条件查找
+for post in col.find({'likes':{'$in':[10]}}):
+    print(post)
+# 查找多个文档
+for post in db.posts.find():
+    print(post)
+# 查找加投影
+for post in db.post.find({},{'author':1,'text':1,'_id':0}):
+    print(post)
+
+# pprint 格式化输出
+import pprint
+pprint.pprint(db.posts.find_one())*
+
+# 准备数据
+data =[{'author': 'Mike','likes': 10, 'tags': ['mongodb', 'python', 'pymongo'],'text':'not bad'},
+       {'author': 'Emily','likes': 20, 'tags': ['mysql', 'python', 'pymysql'],'text':'good'},
+       {'author': 'Jimmy','likes': 30, 'tags': ['linux'],'text':'great'}]
+# 修改文档
+db.posts.update_one({'author':'Jimmy'},{'$set':{'text':'nice'}})
+# 修改多条
+db.posts.update_many({'likes':'20'},{'$inc':{'age':1}})
+# 删除文档
+db.posts.delete_one({'author':'Emily'})
+# 删除多条(删除所有author是Mike的)
+result = db.posts.delete_many({'author':'Mike'})
+# 查看删除命令的执行结果
+print(result.raw_result)
+# 计数
+db.posts.count()
+db.posts.find({'author':'Mike'}).count()
+# 范围查询
+for post in db.posts.find({'likes':{'$lt':15}}).sort('author'):
+    print(post)
+注：db.posts.find()返回一个pymongo.cursor.Cursor对象，所以有sort方法
+>>> db.posts.find({'likes':{'$lt':15}})
+<pymongo.cursor.Cursor object at 0x7ff40e699208>
+
+注意：
+    MongoDB按照BSON格式存储数据，BSON字符串是UTF-8编码的，所以PyMongo也要保证任何字符串都是UTF-8格式
+
+
+CSV(comma-separated values)
+逗号分隔
+
+import csv
+with open('csv_file.csv','w') as csv_file:
+    writer = csv.writer(csv_file)   # 生成一个writer
+    L = [1,2,3]
+    L2 = []
+    writer.writerow(L)          # writer.writerow写入
+    writer.writerow(L2)         # 返回2，空列表插入空行
+
+API 返回值总结：
+urlopen()       返回 <class 'http.client.HTTPResponse'> file-like object
+BeautifulSoup(html.read(),'lxml')   返回 <class 'bs4.BeautifulSoup'>
+
+bsobj.find()    返回 <class 'bs4.element.Tag'>            # 有find和findAll等方法
+bsobj.findAll() 返回 <class 'bs4.element.ResultSet'>      # 该对象是list的实例，可以用下标提取元素
+bsobj.get_text()    返回 <class 'str'>
+
+re.match()      返回 <class '_sre.SRE_Match'>
+re.search()     返回 <class '_sre.SRE_Match'>
+re.compile()    返回 <class '_sre.SRE_Pattern'>           # 编译完的正则表达式
+
+bsobj.body.table.prettify()     返回 <class 'str'>
+
+bsobj.find('table').children    返回 <list_iterator object at 0x7feee3d4e940>
+bsobj.find('table').descendants 返回 <generator object descendants at 0x7feee26f2fc0>
+bsobj.find('table').tr.next_siblings 返回 <generator object next_siblings at 0x7feee26f2f10>
+
+writer.writerow(L) 返回 <class 'int'>

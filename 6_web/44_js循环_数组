@@ -1,0 +1,183 @@
+1.循环结构
+  重复的执行相同或相似的操作
+  循环二要素
+    循环条件
+    循环操作
+  1)while循环
+    while(条件){
+        循环的操作;
+    }
+    ex:打印1-100之间所有的数字
+      var i=1;
+      while(i <= 100){
+          console.log(i);
+          i++
+      }
+  2)do...while循环
+    do{
+        循环的操作;
+    }while(循环条件);
+    特点：先执行循环操作，再判断循环条件
+    ex:要求用户从弹框中循环的录入数据并打印输出，知道输入exit为止
+      do{
+        var input=window.prompt("输入：")
+        console.log(input);
+      }while(input != "exit")
+  3)while和do..while比较
+    while:先判断循环条件，在执行循环操作，在条件不满足时，循环操作有可能一次都不走
+      场合：有条件来决定循环操作的场合
+    do...while:先执行循环操作，在判断循环条件，即便在条件不满足时，也至少要走一次循环操作
+      场合：由循环操作来决定循环条件的场合
+  4)for循环
+    for(表达式1;表达式2;表达式3){
+        循环操作
+    }
+    表达式1：循环条件的声明
+    表达式2：循环条件的判断
+    表达式2：更新循环条件
+    ex:打印1-100之间的数字
+      for(var i=1;i<=100;i++){
+        console.log(i)
+      }
+  5)for 与 while 之间的异同
+    相同：都是先判断循环条件，再执行循环操作的循环结果
+    不同：
+      while优先使用在不确定循环次数的场合下使用
+      for优先使用在确定循环次数时使用
+  6)循环的嵌套
+    允许在一个循环中，再出现一个循环
+  7)for in循环用来遍历数组
+      for(var i in names){
+          console.log(i+':'+names[i]);
+          }
+2.数组
+  程序=数据结构+算法
+  算法：解决问题的思路和思想，通过顺序结构，分支结构，循环结构解决的
+  数据结构：将数据与数据之间的关系利用特殊的结构给保存起来
+  数组(Array)是一个用于保存批量数据的数据结构
+    数组是使用一个变量来保存多个数据的
+    数组是按照线性结构来进行保存数据的
+    在线性结构中，允许使用下标来访问该结构中的数据
+    下标是从0，长度-1结束
+    1)创建一个空数组
+      var 数组名=[];                       创建一个空数组
+      var 数组名=[元素1,元素2,...];         创建数组并初始化元素
+      var 数组名=new Array();              创建一个空数组
+      var 数组名=new Array(元素1,元素2,...) 创建数组并初始化元素
+      ex:
+        var names = ['sz','ls','ww']
+    2)数组的使用
+      获取或设置数组中的元素，一律都使用下标
+      name[0] = 'sszz'         将names数组中的第一个元素改为sszz
+      console.log(names[1])    获取names数组中的第二个元素，打印在控制台上
+      获取数组的长度
+        属性：length
+        用法：数组名.length
+        使用场合：
+          a.循环遍历数字中的每个元素
+            for(var i=0;i<names.length;i++){
+                console.log(names[i]);
+                }
+          b.能够找到数组中最新要插入元素的位置(即向数组的尾部再增加新元素时)
+            names[names.length]=value    # names.length永远是最后一个元素
+    3)关联数组
+      数组分成索引数组和关联数组
+      索引数组：由数字坐下标的数组是索引数组
+      关联数组：由字符串做下标的数据都是关联数组
+      语法：
+        先声明一个数组
+        var names = []
+        names['key'] = 'value'
+      注意：关联数组不占数组长度
+      遍历关联数组使用for in循环
+        for(var i in names){
+            console.log(i+':'+names[i]);
+            }
+    4)数组常用的API
+      toString()        将数组转换为字符串，并返回，各个数组以逗号相连的字符串
+      join(seperator)   返回一个指定分隔连接的字符串(如果数组中的元素不是string类型，会自动先转换为string类型)
+      concat()          拼接两个或更多的数组，并返回结果
+        语法：arr1.concat(arr2,arr3,...)
+        注意：该函数不会改变现有数组，而是返回一个拼接后的副本，arr1+arr2+arr3
+      reverse()         实现数组的翻转，即颠倒顺序
+        语法：arr1.reverse()
+        注意：该函数会改变原来的数组
+      sort()
+        对数组中的元素有小到大进行排序(默认情况下按照元素的Unicode码进行排序的)
+        注意：该函数直接改变现有数组的内容
+        排序方式：
+          通过自定义排序函数指定数字数组的排序方式
+            a.使用排序函数
+              //指定升序的排序函数
+              function sortAsc(a,b){
+                return a-b;
+                }
+              var nums = [1,11,12];
+              nums.sort(sortAsc);
+            b.使用匿名函数
+              //降序排序
+              var nums = [1,11,12];
+              nums.sort(function(a,b){return b-a;})
+      进出栈操作
+        栈式操作：提供快速操作数组头部元素和尾部元素的方法
+          push()        入栈，向数组的尾部添加新元素，并返回新数组的长度
+            nums[nums.length] = 35      尾部添加元素，无返回
+            vs
+            nums.push(35)               尾部添加元素，返回数组长度
+          pop()         出栈，删除并返回数组尾部的元素
+          unshift()     向数组的头部添加新元素，并返回数组的长度
+          shift()       删除并返回数组的头部元素
+3.二维数组
+  在一个数组中的每个元素又是一个数组
+  声明二维数组
+    var name=[
+        [1,2,3],
+        [4,5,6]
+    ]
+  去除数组中所有的值
+    for(i=0;i<a.length;i++){
+        for(j=0;j<a[i].length;j++){
+            console.log(a[i][j])
+            }
+        }
+4.字符串
+  字符串是不可变的，字符串的所有函数处理结果都是返回值
+  1)声明字符串
+    var str1='字符串'
+    var str2=String('字符串2')
+    var str3=new String('字符串3')
+  2)length属性
+    返回当前字符串的字符的个数
+  3)常用函数
+    toLowerCase()   返回字符串的完全小写形式
+    toUpperCase()   返回字符串的完全大写形式
+    charAt(index)   返回下标位置处的字符
+    charCodeAt(index)   返回指定下标位置处的字符的Unicode码(十进制)
+      var msg = '123'
+      msg.charCodeAt(0) //返回1的Unicode的码
+  4)检索子字符串
+    查找子字符串在指定字符串中的位置
+    indexOf(value,fromIndex)
+      value ：要查找的子字符串
+      fromIndex ：从哪个位置处开始查找，如果省略不写的话，返回第一次出现子字符串的下标，如果没查询到返回-1
+    lastIndexOf(value,fromIndex)
+  5)截取子字符串
+    函数：substring(start,end)
+    作用：返回从start到end-1之间的子字符串，若果省略end，则截取到结束
+  6)分割字符串
+    函数：split(seperator)
+    作用：使用seperator对字符串进行拆分，并返回拆分后的数组
+      console.log('a,b'.split(','))  //[a,b]
+  7)模式匹配(正则表达式)
+    函数
+      replace(substr,replacement) 和 replace(/pattern/flags,replacement)
+        替换字符串中的字符
+      match(substr) 和 match(/pattern/flags)
+        按照指定的格式匹配字符串，并将满足格式的字符串进行返回(返回数组)
+      search(substr) 和 search(/pattern/flags)
+        只能返回第一个匹配上的内容的下标，如果没有找任何匹配内容则返回-1
+        search函数不支持全局匹配，将自动忽略g修饰符
+      flags - 修饰符：
+          i ： 忽略大小写
+          g ： 全局匹配
+          m ： 允许多行匹配

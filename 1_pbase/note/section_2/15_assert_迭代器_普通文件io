@@ -1,0 +1,116 @@
+assert 语句(断言语句)：
+    语法：
+      assert 真值表达式，错误数据(通常是字符串)
+    作用：
+      当真值表达式为False时，用错误数据创建一个AssertionError类型的错误，抛出后进入异常状态
+    等同于：
+      if 真值表达式 == False:
+          raise AssertionError(错误数据)
+    例：
+      assert None,"宣布None的bool测试值为False"
+      等同于
+      if bool(None) == False:
+        rasie Assertion("宣布None的bool测试值为False")
+    try和assert配合：
+      try:
+          assert None,"宣布None的bool测试值为False"
+      except Assertion as err:
+          print(err)
+
+迭代器(iterator)：
+    迭代器：
+      能用next()取值的对象(实例)是迭代器
+      说明：
+        用iter()函数返回一个迭代器(将一个可迭代对象)
+        迭代器是访问可迭代对象的一种方式
+        迭代器只能往前，不能往后
+      例：
+        L = [1，2，3]
+        it = iter(L)
+        next(it)    # 1
+        next(it)    # 2
+        next(it)    # 3
+        next(it)    # StopIteration
+    iter()和next():
+      iter(iterable)  从iteralbe中返回一个iterator
+      next(iterator)  从迭代器获取下一个元素，取完了出现异常StopIteration
+
+生成器(Generator，>V2.5才有)：
+    生成器是能够提供迭代器的对象(实例)
+    生成器永远是迭代器，也永远是可迭代对象
+    生成器函数：
+      含有yield语句的函数式生成器函数
+      yield语句：
+        语法：
+          yield 表达式
+        说明：
+          yield 只能用于def函数中，目的是将此函数作为生成器函数使用
+          yield 用来生成数据，供迭代器next(it)函数使用
+        例：
+          def f():
+              yield 1
+              yield 2
+          it = f()
+          next(it)          # next(f())永远是第一个元素
+        注意：lazy produce
+          next(gengerator_function())，顺序执行，返回yield给next，下一次next返回下一个yield
+          enumerate(range(10000)) 优于 [x for x in range(10000)]
+      说明：
+        生成器函数的调用将返回一个生成器对象，生成器对象是可迭代对象
+        在生成器函数内遇到return就会抛出StopIteration("return后边的对象")，相当于raise StopIteration("")
+    生成器表达式：
+      语法：
+        (表达式 for 表达式 in iterable [if 真值表达式])
+      注意：不是元组推导式，元组不存在推导式
+迭代工具函数：
+    生成一个个性化的可迭代对象
+    zip语法：
+      zip(iter1[,iter2,iter3[,...]])
+      作用：
+        返回一个zip对象，此对象用于生成一个元组，次元组的个数有最小的可迭代对象决定
+      例：生成字典
+        d = dict(zip([1,2,3],["one","two","three"]))
+    enumerate语法：
+      enumerate(iterable[,start])
+      作用：
+        枚举，生成带索引的迭代器，返回的迭代器类型为索引-值对(index-value)，默认索引从0开始
+      例：
+        for index,name in enumerate(["张飞","关羽"]):
+            print("第",index,"号人物是：",name)
+文件：
+    在*nix下文件可分为普通文件和设备文件
+    普通文件是由文件名和文件当中的数据两部分组成的
+    注意：
+      文件为块设备，块大小为4KB时，文件如果小于4KB，占用空间仍未4KB
+    文件的打开和关闭：
+      文件需要在使用时先打才能读写
+      在不需要读写文件时，应及时关闭文件以及释放系统资源
+      任何操作系统，打开的文件数有最大限制
+    打开文件的函数：
+      open(file,mode='r',encoding="UTF-8")
+      用于打开一个文件，返回此文件的操作对象，如果打开失败则会触发错误，抛出异常
+      mode模式字符串的含义：
+        "r"     以只读方式打开文件(默认)，write和writelines不能使用
+        "w"     以只写方式打开文件，删除原有文件内容(如果文件不存在，创建该文件并以只写方式打开文件)
+        "x"     创建一个新文件，并以写模式打开文件，如果文件存在则会产生FileExistsError错误
+        "a"     以追加方式打开一个文件，如果文件存在则追加的源文件末尾
+        "b"     用二进制模式打开
+        "t"     用文本文件模式打开(默认)
+        "+"     为更新内容打开一个磁盘文件(可读可写)
+      注意：缺省模式是"rt"
+        "w+b"   可以实现二进制的随机读写
+        "r+b"   以二进制只读形式打开文件，打开文件时不会清空文件的内容
+        "r+"    以文档模式打开文件，打开文件时不清空文件内容，可以对文件进行操作
+    关闭文件的方法：
+      F.close()     # 关闭文件释放系统资源
+      注️：
+        打开的文件不要忘记关闭
+        程序退出会自动关闭
+        长时间运行的程序(不关闭)，程序中如果有打开的文件没有close，会出问题
+    文本文件常用方法：
+      F.read(n)              读取n个字符
+      F.readline()           读取一行数据(包含\n)，如果到达文件尾则返回空行
+      F.readlines([n])       返回第n个字符所在行以及前边每一行，n为字符数，读到最后返回空列表
+      F.writelines(lst)      把列表写入，覆盖原来的
+      F.flush()              把写入文件对象的缓存内容写入到磁盘
+      F.write(字符/字节)      将数据(字符/字节)写入到文件中，返回写入的字节数(B)

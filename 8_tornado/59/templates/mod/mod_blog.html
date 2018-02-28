@@ -1,0 +1,57 @@
+    <ul style="width: 80%;margin:0px auto;list-style-type: none">
+
+        {%for blog in blogs%}
+
+        <li>
+            <table width="100%">
+                <tr>
+                    <td rowspan="4" valign="top" style="width: 30%;">
+
+                        <table cellspacing="10px">
+                            <tr>
+                                <td><img width="128px" height="128px"
+                                         src={{static_url('images/a.jpg')}}
+{#注释开始 —————————————————————————————————————————————————————————————————————————————————————————————————————— 注释结束#}
+                                    {#注释开始 static_url 和static都 代表Application中的static_path指定的路径，对外url均为static 注释结束#}
+
+                                    {#注释开始 src="static/images/a.jpg" 注释结束#}
+
+                                    {#注释开始 如果有头像显示，没有就显示默认头像 注释结束#}
+                                    {#注释开始 {%if blog['avatar']%} 注释结束#}
+                                         {#注释开始 src={{static_url('images/'+blog['avatar'])}} 注释结束#}
+                                         {#注释开始 {%else%} 注释结束#}
+                                         {#注释开始 src={{static_url('images/default_avatar.png')}} 注释结束#}
+                                         {#注释开始 {%end%} 注释结束#}
+                                        {#注释开始 style="border-radius: 50%;"></td> 注释结束#}
+{#注释开始 —————————————————————————————————————————————————————————————————————————————————————————————————————— 注释结束#}
+                            </tr>
+                            <tr>
+                                <td align="center">
+                                    <p style="margin: 0px auto;width:100px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{blog['author']}}</p>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </td>
+                    <td width="70%">{{blog['title']}}</td>
+                </tr>
+                <tr>
+                    <td>{{' '.join(blog['tag'])}}</td>
+                </tr>
+                <tr>
+                    <td><p style="min-height: 180px;margin: 0px">{{blog['content']}}</p></td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        {%if blog['count']>0%}
+                            评论数量：{{blog['count']}}
+                        {%else%}
+                            {#注释开始  评论数量：{{p1+p2+myrand()}}  注释结束#}
+                            没有评论
+                        {%end%}
+                    </td>
+                </tr>
+            </table>
+        </li>
+        {%end%}
+    </ul>

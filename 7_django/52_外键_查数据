@@ -1,0 +1,294 @@
+—————————————————————————————————— select ——————————————————————————————————
+from django.http import HttpRseponse
+from myapp.models import *
+def select(request)
+    # a为一个列表，存放Author的实例(一个实例是一条记录)
+    # select * from myapp_author
+    a = Author.objects.all()
+
+    # b为一个列表，b的元素是字典
+    # select email from myapp_author
+    b = Author.objects.all().values('email')
+
+    # c为一个列表，c的元素是元组
+    # select name,email from myapp_author
+    c = Author.objects.all().values_list('name','email')
+
+    # d是一个对象，get 方法只能取出一条数据
+    # select * from myapp_author where 'id' = 1
+    d = Author.objects.get(id=1)
+
+    # e为一个列表，e的元素是对象，fliter可以查多条数据
+    # select * from myapp_author where name='老舍' and 'id'=2
+    e = Author.objects.filter(name='老舍',id=2)
+    # select * from myapp_author where id >=3
+    e = Author.objects.filter(id__gte = 3)
+
+    # f为一个列表，e的元素是对象
+    # select * from myapp_author where not id > 4
+    f = Author.objects.exclude(id__gt = 4)
+
+    # g是一个列表，g的元素是对象
+    # select * from Book order by id
+    g = Book.objects.order_by('id')
+    g = Book.objects.order_by('-id')     # 倒序
+    return render(request,'data.html',locals())
+
+vi show.html
+  {%for i in a%}
+  <p>{{i.name}}</p>     # i代表一个实例，name是这个实例的属性
+  {%endfor%}
+
+  {%for i in b%}
+  <p>{{i}}</p>
+  {%endfor%}
+
+  {%for i in c%}
+  <p>{{i}}</p>
+  {%endfor%}
+
+  {%for i in c%}
+  <p>{{i}}</p>
+  {%endfor%}
+
+  <p>{{d.name}}:{{d.email}}</p>
+
+  <p>{{f}}</p>
+—————————————————————————————————— update ——————————————————————————————————
+from django.http import HttpRseponse
+from myapp.models import *
+def update_data(request):
+    obj = Author.object.get(id = 1)
+    obj.name = '冰心'
+    obj.save()
+
+    Author.objects.filter(id = 2).update(name='鲁迅')
+    Author.objects.fliter(id__dte = 4).update(name='老舍',age=99)
+    return HttpResponse('update done')
+—————————————————————————————————— delete ——————————————————————————————————
+from django.http import HttpRseponse
+from myapp.models import *
+def delete(request):
+    obj=Author.objects.get(id=6)
+    obj.delete()
+
+    Author.objects.filter(id=5).delete()
+
+    Author.objects.all().delete()
+    return HttpResponse('delete done')
+
+—————————————————————————————————— 外键关联 ——————————————————————————————————
+vi models.py
+from django.db import models
+class Publisher(models.Model):
+    name = models.CharField(max_length = 30)
+    address = models.CharField(max_length = 50)
+    city = models.CharField(max_length = 60)
+
+class Author(models.Model):
+    name = models.CharField(max_length = 30)
+    age = models.IntegerField()
+    email = models.EmailField()
+################################## 1:1 START #####################################
+    # 假设一个出版社和作者一一对应 AUTHOR:PUBLISHER = 1:1
+    # Author.publisher --> models.OneToOneField <-- Publisher.id
+    publisher = models.OneToOneField(Publisher,null = Ture)
+################################## 1:1 END #######################################
+
+class Book(models.Model):
+    title = models.CharField(max_length = 100)
+    publication_date = models.DateField()
+################################## 1:N START ##################################
+    # 一本书一个出版社(在Book表添加外键，自动关联到Publisher的主键)，一个出版社发行很多书
+    # Book.publisher -->models.ForeignKey <-- Publisher.id
+    publisher = models.ForeignKey(Publisher,null=True)
+################################## 1:N END ####################################
+################################ N:N START ####################################
+    # 一本书由多个作者写，一个作者写多本书
+    # Book.author --> models.ManyToManyField <-- Author.id
+    author = models.ManyToManyField(Author)
+################################ N:N END #######################################
+CREATE TABLE `myapp_author` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `publisher_id` int(11),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `publisher_id` (`publisher_id`),
+  CONSTRAINT `xxx` FOREIGN KEY (`publisher_id`) REFERENCES `myapp_publisher` (`id`)
+)
+CREATE TABLE `myapp_publisher` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) NOT NULL,
+  `address` varchar(50) NOT NULL,
+  `city` varchar(60) NOT NULL,
+  PRIMARY KEY (`id`)
+)
+CREATE TABLE `myapp_book` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `publisher_id` int(11),
+  PRIMARY KEY (`id`),
+  KEY `xxx` (`publisher_id`),
+  CONSTRAINT `xxx` FOREIGN KEY (`publisher_id`) REFERENCES `myapp_publisher` (`id`)
+)
+CREATE TABLE `myapp_book_author` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `book_id` int(11) NOT NULL,
+  `author_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `book_id` (`book_id`,`author_id`),
+  KEY `xxx` (`author_id`),
+  CONSTRAINT `xxx` FOREIGN KEY (`author_id`) REFERENCES `myapp_author` (`id`),
+  CONSTRAINT `xxx` FOREIGN KEY (`book_id`) REFERENCES `myapp_book` (`id`)
+)
+
+
+—————————————————————————————————— 多表联合查询 ——————————————————————————————————
+myapp_author;   # 1:1 whth publisher
++----+--------------+-----+----------------+--------------+
+| id | name         | age | email          | publisher_id |
++----+--------------+-----+----------------+--------------+
+|  1 | 赛亚人       | 500 | none@none.none |            1 |
+|  2 | 老舍         |  80 | 111@111.com    |            2 |
+|  3 | 贝克汉姆     |  70 | 111@111.com    |            3 |
++----+--------------+-----+----------------+--------------+
+myapp_book;     # 1:N with pubisher  N:N with author
++----+--------------------------+------------------+--------------+
+| id | title                    | publication_date | publisher_id |
++----+--------------------------+------------------+--------------+
+|  1 | 如何踢好足球             | 2017-12-17       |            3 |
+|  2 | 写作从入门到放弃         | 2017-12-17       |            2 |
++----+--------------------------+------------------+--------------+
+myapp_publisher;
++----+-----------------+---------+--------+
+| id | name            | address | city   |
++----+-----------------+---------+--------+
+|  1 | 宇宙出版社      | 月球    | none   |
+|  2 | 人民出版社      | 北京    | 北京   |
+|  3 | 足球出版社      | 上海    | 上海   |
++----+-----------------+---------+--------+
+myapp_book_author;
++----+---------+-----------+
+| id | book_id | author_id |
++----+---------+-----------+
+|  1 |       1 |         1 |
+|  2 |       1 |         3 |
+|  3 |       2 |         1 |
+|  4 |       2 |         2 |
++----+---------+-----------+
+1:1
+  正向 Author.objects.get(name='老舍').publisher
+  反向 Publisher.objects.get(name='人民出版社').author
+1:N
+  正向 Book.objects.get(title='如何踢好足球').publisher
+  反向 Publisher.objects.get(name='人民出版社').book_set.all()
+N:N
+  正向 Book.objects.get(title='写作从入门到放弃').author.all()
+  反向 Author.objects.get(name='赛亚人').book_set.all()
+
+—————————————————————————————————— F操作和Q操作 ——————————————————————————————————
+vi views.py
+from django.shortcuts import render
+from django.http import HttpResponse
+from myapp.models import *
+from django.db.models import F,Q
+def do_F(request):
+    obj = Author.objects.all()
+    obj.update(age = F('age') - 10)
+    return HttpResponse("F ok")
+def do_Q(request):
+    q = Q()
+    q.connector = 'AND'
+    q.children.append(('id',3))
+    q.children.append(('age',46))
+    f = Author.objects.filter(q)
+    return HttpResponse(f)
+
+—————————————————————————————————— 使用sql查询 ——————————————————————————————————
+# raw
+from django.db import connection        # connect.cursor()需要使用
+def select(request):
+    sql = '''select * from myapp_author'''
+    author_list = Author.objects.raw(sql)[0]       # raw 只能执行查询
+    return render(request,'select.html',locals())
+
+# 原生的sql
+from django.db import connection
+def sql(request):
+    with connect.cursor() as cursor:
+        sql = '''update publisher set name='中国机械出版社'　where id=1'''
+        cursor.execute(sql)
+    return HttpResponse('do sql OK')
+
+———————————————————————————————— 自定义字段类型 继承自models.Field ————————————————————————————————
+vi models.py
+from django.db import models connection
+class BetterCharField(models.Field):
+    def db_type(self,connection):       # 重写models.Field的db_type，固定写法
+        return 'char(25)'
+class MyModel(models.Model):
+    my_field = BetterCharField()        # MyModel表的my_field字段的数据类型是char(25)
+———————————————————————————————— 自定义查询 ————————————————————————————————
+vi models.py
+from django.db import models
+# 自定义queryset
+class BookQuerySet(models.QuerySet):       # 继承自models.QuerySet
+    def litter(self):
+        return self.filter(id__lt=3)
+# 添加objects查询方法
+class BookManager(models.Manager):         # 继承自models.Manager
+    def get_queryset(self):                # 重写models.Manager中的get_queryset，固定写法
+        return BookQuerySet(self.model, using=self._db)
+    def title_count(self, keyword):
+        return self.filter(title__icontains=keyword).count()
+# objects绑定到BookManager()
+class Book(models.Model):
+    ...
+    objects = BookManager()
+    ...
+# 使用
+vi views.py
+def myfunc(request):
+    num = Book.objects.title_count('Python')
+    book_list = Book.objects.all().litter()
+    return HttpResponse(book_list)
+
+—————————————————————————————————— 使用admin后台操作数据 ——————————————————————————————————
+1.创建超级用户
+./manage.py createsuperuser
+2.将数据库在应用的admin.py中注册
+vi myapp/admin.py
+from myapp.models import *
+admin.site.register(Publisher)
+admin.site.register(Author)
+admin.site.register(Book)
+
+—————————————————————————————————— 自定义admin后台展示 继承自admin.ModelAdmin ——————————————————————————————————
+vi myapp/admin.py
+class AuthorAdmin(admin.ModelAdmin):
+    list_display = ('name','age','email')   # 在相应的界面展示哪个字段
+    search_fields = ('name','email')        # 添加搜索栏
+    class Media:                            # 当进入改表的管理界面就加载js或css修饰
+        js = {
+            '/static/js/a.js'               # BASE_DIR/static/js/a.js
+        }
+class BookAdmin(admin.ModelAdmin):
+    list_filter=('publication_date',)       # 在页面右侧添加过滤器
+    date_hierarchy = ('publication_date',)  # 添加顶部数据分类
+    ordering = ('publication_date',)        # 排序
+    fields = ('title','author','publisher','publication_date')  # 具体页面显示哪一项，按照什么顺序显示
+
+class PubisherAdmin(admin.ModelAdmin):
+    fieldsets = (
+        ('基本设置',{'fields':('name','address','city','country')}),
+        ('高级设置',{'classes':('collapse',),
+                    'fields':('website',),
+            }),
+    )
+    list_display = ('name','website')
+    list_display_links = ('name',)
+    list_editable = ('website',)
+
+vi myapp/admin.py
+from myapp.models import *
+admin.site.register(Publisher,PubisherAdmin)
+admin.site.register(Author,AuthorAdmin)
+admin.site.register(Book,BookAdmin)

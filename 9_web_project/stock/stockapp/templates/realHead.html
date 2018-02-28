@@ -1,0 +1,138 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>个股行情</title>
+<!-- canvas resources -->
+<link rel="stylesheet" href="http://s.thsi.cn/cb?/css/stockpage/s2015/;index.css;home.css;personkzd.css;nav_v2.css;append.css&20150620" type="text/css">
+
+
+</head>
+<body style="line-height: 1.5; font-family: Tahoma;background:#fafafa;" class="stockpick_mainbody all_height">
+<div class="new_detail fl">
+	      <div class="price_box fl" id="hexm_curPrice_wrap">
+				<div class="minute_price clearfix" id="quote_header">
+					<span class="price" id="hexm_curPrice">{{price}}</span>
+					<div class="price_details">
+						<span class="plus_rate" id="hexm_float_price">{{change}}</span>
+						<span class="price_plus" id="hexm_float_rate">{{perce}}%</span>
+					</div> 
+				</div>
+				<div class="minute_price ting clearfix" id="quote_header2" style="display:none">
+					<span class="price"><a href="###">停牌</a></span>					
+				</div>
+		     <div class="minute_price_ztdt fl">
+		            <p>涨停：<span class="red" id="tmaxprice">0</span>跌停：<span class="green" id="tminprice">0</span></p>
+		            <p id="timeshow" style="font-family: tahoma">timeshow</p>
+		        </div>
+	      </div>
+		<ul class="new_trading fl">
+	
+			<li>
+				<span class="jk">今开：<strong class="minus" id="topenprice">{{open_price}}</strong></span>
+				<span class="trading_w contract_amount">&nbsp;&nbsp;&nbsp;成交量：<strong id="tamount" class="plus">{{volume}}亿</strong></span>
+				<span class="trading_w zf">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;振幅：<strong id="trange" >--</strong></span>
+			</li>
+			<li>
+				<span class="zg">最高：<strong id="thighprice">{{high}}</strong></span>
+				<span class="trading_w trading_volume">&nbsp;&nbsp;&nbsp;成交额：<strong id="tamounttotal">{{amount}}亿</strong></span>
+				<span class="trading_w hs">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;换手：<strong id="tchange">--</strong></span>
+			</li>
+			<li>
+				<span class="zd">最低：<strong id="tlowprice">{{low}}</strong></span>
+				<span class="trading_w trading_volume">&nbsp;&nbsp;&nbsp;总市值：<strong id="tvalue">--</strong>亿</span>
+				<span class="trading_w sjl">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;市净率：<strong id="tvaluep">--</strong></span>
+			</li>
+			<li>
+				<span class="zs">昨收：<strong id="pprice">{{pre_close}}</strong></span>
+				<span class="trading_w trading_volume">流通市值：<strong id="flowvalue">--</strong>亿</span>
+				<span class="trading_w syl">市盈率(动)：<strong id="fvaluep">--</strong></span>
+			</li>
+		</ul>
+	</div>
+        
+    <!-- resources -->
+    <script src="http://s.thsi.cn/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript">
+    document.domain = "10jqka.com.cn";
+    $(document).ready(function(){
+		showtime();
+     //   fetchPendinfo();
+    });
+      $(function() {
+          var timer = setInterval(function() {
+              if (window.hx_hq_canvas) {
+                  clearInterval(timer);
+                  var code = window.location.href.split('#')[1];
+                  window.hx_hq_canvas.initShow(code);
+              }
+          }, 0)
+      })
+      function showtime(){
+	      var now=new Date();
+	      var year=now.getFullYear();
+	      var month=now.getMonth()+1;
+	      var day=now.getDate();
+	      var hours=now.getHours();
+	      var minutes=now.getMinutes();
+	      var seconds=now.getSeconds();
+	      if(hours<10){hours="0"+hours;}
+	      if(minutes<10){minutes="0"+minutes;}
+	      if(seconds<10){seconds="0"+seconds;}
+	    
+	      if(hours >=15){
+	    	  hours = '15';
+	    	  minutes ='00';
+	    	  seconds ='00';
+	      }
+	      document.all.timeshow.innerHTML=""+year+"年"+month+"月"+day+"日 "+hours+":"+minutes+":"+seconds+"";
+	      //一秒刷新一次显示时间
+	      var timeID=setTimeout(showtime,1000);
+      }
+    
+      function writeObj(obj){ 
+  	    var description = ""; 
+  	    for(var i in obj){   
+  	        var property=obj[i];   
+  	        description+=i+" = "+property+"\n";  
+  	    }   
+  	    alert(description); 
+  	} 
+	function fetchPendinfo() {
+	   if(this.parent == this){
+	
+	   }else{
+		   var stockcode = window.location.href.split('hs_')[1];
+		   $.ajax({
+				type: 'get',
+				async:true,
+				timeout : 5000, 
+				url: '/spService/'+stockcode+'/Header/realHeader',
+				dataType: 'json',
+				success: function(data) {
+					//基本行情
+					var basic = $(window.parent.document).find("#indexBasicData").text();
+					var ary = basic.split("|");	
+					if(data.kp==0){
+						var zsz = (parseFloat(ary[0]) * data.zs).toFixed(2);     //总市值
+						var ltsz = (parseFloat(ary[1]) * data.zs).toFixed(2);    //流通市值
+						var sjl = (parseFloat(data.zs / ary[2]) ).toFixed(2);     //市净率			
+						$("#fvaluep").text('--');				//市盈率
+						$("#tvalue").text(zsz);						//总市值
+						$("#flowvalue").text(ltsz); 				//流通市值
+						$("#tvaluep").text(sjl);					//市净率
+					}else{
+						var zsz = (parseFloat(ary[0]) * data.xj).toFixed(2);     //总市值
+						var ltsz = (parseFloat(ary[1]) * data.xj).toFixed(2);    //流通市值
+						var sjl = (parseFloat(data.xj / ary[2]) ).toFixed(2);     //市净率			
+						$("#fvaluep").text(data.syl);				//市盈率
+						$("#tvalue").text(zsz);						//总市值
+						$("#flowvalue").text(ltsz); 				//流通市值
+						$("#tvaluep").text(sjl);					//市净率
+					}						
+				}
+			}); 
+	   }
+	}
+</script>
+</body></html>

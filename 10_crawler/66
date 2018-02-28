@@ -1,0 +1,90 @@
+fildder
+
+
+robots.txt
+robots君子协议
+
+http://www.mafengwo.cn/robots.txt
+查看robots协议和Sitemap
+
+Sitemap: http://www.mafengwo.cn/sitemapIndex.xml        # 网站地图，网站希望被推广，又希望自己的数据不要泄露
+
+让你的行为更像一个普通的用户
+
+—————————————————— 了解一个网站 ————————————————
+1、查看robots和sitemap
+
+2、估算网站的体量
+site:www.zhihu.com
+3、google可以搜这种形式
+site:maoyan.com/board
+有多少页面被搜索引擎收录
+
+3、识别网站应用的技术
+pip install builtwith
+import builtwith
+builtwith.parse('http://www.sina.com.cn')
+
+4、网站的所有者
+pip install python-whois
+
+爬取一个网站有很多种方法，而选用哪种方法更加合适，则取决于目标网站的结构
+网站地图
+遍历每个网页的数据库id
+跟踪网页链接
+
+浏览器中的XHR XML Http Request
+
+
+树
+树状图是一种数据结构，它是由n（n>=1）个有限节点组成一个具有层次关系的集合它具有以下的特点：
+每个节点有零个或多个子节点；
+没有父节点的节点称为根节点；
+每一个非根节点有且只有一个父节点；
+除了根节点外，每个子节点可以分为多个不相交的子树；
+
+完全二叉树：
+叶节点只能出现在最下层和次下层，并且最下面一层的结点都集中在该层最左边的若干位置的二叉树
+叶节点：没有子节点的节点
+
+深度优先算法(可以使用队列模拟)
+DFS:Depth first search
+广度优先算法(可以使用栈模拟(递归))
+BFS:Breadth first search
+
+爬虫优先考虑使用广度优先
+  一方面，好控制爬取得热点
+  另一方面，可以实现多线程的并行
+可以把深度和广度结合
+
+—————————————————— 以下为python2中的代码 ————————————————
+最简单的http访问
+
+方式1，使用urllib(使用它的urlopen和urlencode)
+# from urllib.request import urlopen    # python3使用urllib.request
+from urllib import urlopen
+html=urlopen('http://www.baidu.com')
+html = html.read()
+str(html).find('百度一下')
+
+方式2，使用urllib2(可以修改header)
+import urllib2
+ua_headers = {'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0'}
+# 伪造请求头中的user agent，默认的User-Agent: python-urllib/3.6
+request = urllib2.Request('http://www.baidu.com',headers=ua_headers)
+response = urllib2.urlopen(request)
+html = response.read()
+print(html)
+
+response的方法：
+response.getcode()
+response.geturl()
+response.info()
+
+
+
+正则技巧：知道结束点怎么找：
+# 结束点是@
+[\s\S]*?@
+
+

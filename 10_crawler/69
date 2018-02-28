@@ -1,0 +1,210 @@
+OCR（Optical Character Recognition，光学字符识别）
+是指电子设备（例如扫描仪或数码相机）检查纸上打印的字符，
+通过检测暗、亮的模式确定其形状，然后用字符识别方法
+将形状翻译成计算机文字的过程;
+Tesseract-OCR:
+   训练与测试：https://www.cnblogs.com/cnlian/p/5765871.html
+Ubuntu安装：
+	sudo apt-get install tesseract-ocr
+Ubuntu中python安装使用：
+  pip install pytesseract
+
+在Python2如何定制handler:
+###########
+####定制化的Handler
+#http_hander = urllib2.HTTPHandler()
+#urllib2.build_opener(http_hander)
+#request = urllib2.Request("http://www.baidu.com")
+###########
+
+
+代理服务器的handler:
+proxy_handler
+免费的代理服务器：
+	https://www.kuaidaili.com/free/
+
+订单号	独享代理IP地址	端口号	位置	状态	到期时间	操作
+961497095256755	114.67.143.11	16816	北京市	有效	2018-01-04 17:16:05	续费|查看订单
+共1台
+
+您的任意2台机器可通过密码使用独享代理
+用户名：394996257密码：a1jnn6er
+
+高等数学的级数：
+	1+1/2+1/4+1/8+1/16+...+1/2^n+... -> 2
+	1+1/2+1/3+1/4+1/5+...+1/n+...    -> 无穷大
+
+有一个整数，
+	被2除余1，被3除余2，被4除余3，
+	被5除余4，被6除余5，被7除余6，
+	被8除余7，被9除余8
+
+AlphGO，棋道
+  3^361
+
+pi = 3.1415926
+Sc = pi*r^2
+Ss = 2r*2r = 4*r^2
+从正方形内随机取一个点，
+这个点在正方形中均匀分布；
+这个点落在圆里面的概率是多大；
+ pi*r^2/4*r^2 = pi/4
+
+
+Selenium:
+   是一个Web自动化测试工具，最初是为了网站自动化测试而开发的；
+我们玩游戏有按键精灵；Selenium也可以做类似的事情，但是
+它是在浏览器中做这样的事情。
+安装：
+	sudo pip install selenium
+#ipython中from selenium import webdriver测试是否装好；
+
+例子见：testSelenium.py
+
+
+phantomjs:
+   一个js解释器
+   是一个基于webkit无界面(headless)的浏览器,它可以把
+网站加载到内存中并执行页面上的JS，但它没有图形用户界面，
+所以耗费的资源比较少；
+	sudo apt install phantomjs
+完全安装的方法：
+	http://phantomjs.org/download.html
+ cd 下载
+ tar -xvf phantomjs-2.1.1-linux-x86_64.tar.bz2
+ cd phantomjs-2.1.1-linux-x86_64/
+ cd bin/
+ sudo cp phantomjs /usr/bin
+
+
+# phantimjs  hello world
+$ vi helloworld.js
+console.log('hello world')
+phantom.exit()
+# 执行
+$ phantimjs helloworld.js
+
+# phantimjs 模拟模拟浏览器生成截图
+$ vi pageload.js
+var page = require('webpage').create();
+page.open('http://www.bing.com',function(status){
+    console.log('Status:'+status);
+    if(status == 'success'){
+        // 将网页截图保存为图片
+        page.render('bing.png');
+        }
+    phantom.exit();
+});
+# 执行
+$ phantimjs pageload.js
+
+python -启动-> 浏览器进程phantomjs，
+****有可能造成资源泄漏；为了避免这种事的发生，
+需要有个策略适当的时候去kill phantomjs进程；
+
+
+
+一个爬虫的流程：
+ 1）有一个url的起始抓起点；
+ 2）从待爬取的队列提取一个url网页信息，
+考虑广度和深度的问题；
+首先考虑广度（可以并行，并且好控制）；
+ 3）把这个url中真正需要的信息存入后台数据库，
+把需要进一步抓取的URL丢入中间的队列中，判断当前的URL
+是否需要放入待爬取的队列；
+ 4）不断进行2),3)操作；直到待爬取的队列为空；
+
+Scrapy：
+  是纯Python实现的一个为了爬取网站数据，提取结构性数据而
+编写的应用框架。框架本身把一些重复性的工作给你做好了；
+你就可以轻轻松松的按照其框架本身写几个简单的模块
+或者简单的扩展一些模块就可以你个性化的功能；
+但是带来的问题是首先你要学习了解框架；
+想突破框架本身的限制，比较困难；
+Scrapy是基于Twisted(竞争对手Tornado)异步网络框架；
+ Scrapy的组件：
+   Scrapy Engine(引擎): 负责Spider、ItemPipeline、
+Downloader、Scheduler中间的通讯，信号、数据传递等。
+   Scheduler(调度器): 它负责接受引擎发送过来
+Request请求，并按照一定的方式进行整理排列，入队，
+当引擎需要时，交还给引擎。
+   Downloader（下载器）：负责下载Scrapy Engine(引擎)发送
+的所有Requests请求，并将其获取到的Responses交还给
+Scrapy Engine(引擎)，由引擎交给Spider来处理，
+   Spider（爬虫）：它负责处理所有Responses,从中分析
+提取数据，获取Item字段需要的数据，
+并将需要跟进的URL提交给引擎，再次进入Scheduler(调度器)，
+   Item Pipeline(管道)：它负责处理Spider中获取到的Item，
+并进行进行后期处理（详细分析、过滤、存储等）的地方.
+   Downloader Middlewares（下载中间件）：
+你可以当作是一个可以自定义扩展下载功能的组件。
+   Spider Middlewares（Spider中间件）：
+你可以理解为是一个可以自定扩展和操作引擎和
+Spider中间通信的功能组件（比如进入Spider的Responses;
+和从Spider出去的Requests）
+
+安装Scrapy：
+   sudo apt-get install python-dev python-pip libxml2-dev libxslt1-dev
+   sudo pip install scrapy
+
+制作一个Scrapy爬虫需要的四个步骤:
+    1)新建项目 (scrapy startproject spiderName)：新建一个新的爬虫项目;
+****	scrapy startproject tencentSpider
+tarena@tedu:~/Spider/tencentSpider$ tree
+.
+├── scrapy.cfg
+└── tencentSpider
+    ├── __init__.py
+    ├── items.py
+    ├── middlewares.py
+    ├── pipelines.py
+    ├── settings.py
+    └── spiders
+        └── __init__.py
+2 directories, 7 files
+    2)明确目标 (编写items.py)：明确你想要抓取的目标
+**** scrapy genspider tencent
+tarena@tedu:~/Spider/tencentSpider$ tree
+.
+├── scrapy.cfg
+├── tecentLog.txt
+└── tencentSpider
+    ├── __init__.py
+    ├── __init__.pyc
+    ├── items.py
+    ├── middlewares.py
+    ├── pipelines.py
+    ├── settings.py
+    ├── settings.pyc
+    └── spiders
+        ├── __init__.py
+        ├── __init__.pyc
+        └── tecent.py
+
+2 directories, 12 files
+
+****修改setttings.py 设置
+			pipelines.py 保存的逻辑
+			tecent.py,   抓取页面信息和继续跳转的逻辑
+			items.py     保存item的映射
+
+    3)制作爬虫 (spiders/spiderName.py)：制作爬虫开始爬取网页;
+    4)存储内容 (pipelines.py)：设计管道存储爬取内容;
+
+在Scrapy下启动爬虫：
+****scrapy crawl tencent
+
+爬虫反爬的策略：
+   1）User-Agent池；
+	 2）Proxy代理池；
+	 3）CookieJar；
+	 4）分布式多主机；
+	 5）爬慢一点；
+	 6）记得组合规则；
+	 7）如果可能的话，尽量遵从Robots协议；
+
+----作业----
+1)完善今日头条爬取图片爬虫；
+2)自己搭建Scrapy框架，实现hr数据抓取的爬虫；
+
+

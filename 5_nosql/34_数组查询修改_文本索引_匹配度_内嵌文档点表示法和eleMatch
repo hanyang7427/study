@@ -1,0 +1,133 @@
+mongodb中的函数
+
+ObjectID()
+默认_id的值是ObjectID()函数产生的
+# 插入指定ObjectID的文档
+db.mycol.insert({'_id':ObjectID(xxx),name:'yang',sex:'F'})
+# _id也可以是整形或字符串
+db.mycol.insert({'_id':1,name:'yang',sex:'F'})
+db.mycol.insert({'_id':'n1',name:'yang',sex:'F'})
+
+save()函数：与insert作用相同
+区别：  当save()插入的数据的_id已存在时，会修改原文档
+相同点：当文档不存在时，和insert一样都是插入文档
+
+# 选择文档中有用的数据，而不是所有的数据
+  find():限制所选择的键，1表示显示该键(默认是1)，0表示隐藏该键
+  语法：
+    db.集合名.find({条件},{key:1,key:0})
+  例：
+    不显示_id    db.mycol.find({},{'_id':0})
+    只显示_id    db.mycol.find({},{'_id':1})
+
+limit()接受一个数字参数，展示多少个文档
+db.mycol.find().limit(1)
+
+skip():跳过几行文档
+# 跳过第一行，显示两行结果，不显示_id
+db.mycol.find({},{_id:0}).skip(1).limit(2)
+注：limit()通常放在最后
+
+sort()排序记录
+1是升序，-1是降序
+db.mycol.find().sort({key1:1,key2:-1,...keyN})
+先按key1，key1相同，再按key2
+数字和字符串比？？？
+
+查询数组
+db.food.insert({'fruit':['apple','banana','peach']})
+db.food.insert({'fruit':['apple','peach','orange']})
+db.food.insert({'fruit':['cherry','banana']})
+db.food.insert({'fruit':['apple','banana']})
+# 查找既有apple有，又有banana的文档
+# 错误
+db.food.find({fruit:{$in:['apple','banana']}})
+# 正确
+db.food.find({fruit:{$all:['apple','banana']}})
+
+$size查询特定长度的数组
+db.food.find({fruit:{$size:3}})
+
+db.books.insert({
+        title:'MongoDB Overview',
+        by:'tp author',
+        tags:['python','database','it'],
+        likes:100,
+        comments:[{name:'yang',comment:'bad'},{name:'min',comment:'good'},{name:'zhang',comment:'nice'}]})
+$slice
+返回某个匹配的数组元素的一个子集
+{$slice:10} 返回前10条评论
+{$slice:-10} 返回最后10条评论
+{$slice:[0,2]} 返回第0条开始的，显示2条
+db.books.find({title:'MongoDB Overview'},{comments:{$slice:[0,2]}}).pretty()
+
+文本搜索,创建文本索引，找含有咖啡店信息的文本
+db.stores.insert([
+    {_id:1, name:'Java Hut',    description:'Coffee and cakes'},
+    {_id:2, name:'Burger Buns', description:'hamburgers'},
+    {_id:3, name:'Coffee shop', description:'Just Coffee'},
+    {_id:4, name:'Clithes',     description:'Discount clothing'},
+    {_id:5, name:'Java Shoping',description:'Indonesian goods'}
+])
+
+文本索引text index
+createIndex()函数
+包括任何含有字符串或者字符数组的元素
+你的集合中必须首先建立文本索引，一条集合只能有一条文本搜索索引，但是索引可以覆盖多个字段
+db.stores.createIndex({name:'text',description:'text'})
+
+$text完成文本搜索，它将把查询字符串用空格或分割符分段，各个词之间用逻辑连接or连接
+# 文本索引的field中包含java或coffee或shop的文档(忽略大小写)
+db.stores.find({$text:{$search:'Java coffee sHop'}})
+{ "_id" : 1, "name" : "Java Hut", "description" : "Coffee and cakes" }      # name或description包含java和coffee
+{ "_id" : 3, "name" : "Coffee shop", "description" : "Juse Coffee" }        # name或description包含shop和coffee
+使用$text的优点:可以同时在多个属性中查找文本，不区分大小写
+
+# 例
+使用文本搜索 {$text:{$search:'java coffee shop'}}
+匹配度      {$score:{$meta:'textScore'}}
+排序        sort({$score:{$meta:'textScore'}})
+# 显示文本索引中包含java或coffee或shop的文档(createIndex()和{$text:{$search:'v'}共同完成)，和匹配程度{$score:{$meta:'textScore'}})
+# 并按匹配程度排序
+db.stores.find({$text:{$search:'java coffee shop'}},{$score:{$meta:'textScore'}}).sort({$score:{$meta:'textScore'}})
+
+$text排除文字
+用'-'表示不包含
+查找包含java或者shop，且不包含coffee
+db.stores.find({$text:{$search:'Java -coffee shop'}})
+找出包含java或者包含 coffee shop的文档
+db.stores.find({$text:{$search:'Java \'coffee sHop\'}})
+
+查询内嵌文档
+{
+name:'yang',
+age:30,
+address:{city:'beijing',district:'chaoyang'}
+}
+
+查询内嵌文档
+# 内嵌文档
+{ key:[ {name:'a'},{name:'b'} ] }
+key.0.name = 'a'
+key.1.name = 'b'
+1.$elemMatch: element match
+db.books.find({key:{$elemMatch:{'name':'a'}}})
+2.点表示法
+# 显示key.name是b的文档
+db.books.find({'key.name':'b'})
+# 只显示key.b
+db.books.find({},{'key.b':1}).pretty()
+注：comments.name 必须要加引号
+
+$elemMatch和点表示发对比
+
+修改内嵌文档元素
+基于位置的数组修改器：若是数组有多个值，而我们只对其中的一部分进行操作，有两种方法
+1.通过位置数组下标是以0开头的，可以将下标直接作为键来选择元素
+db.books.update({title:'Network Overview'},{$set:{'comments.1.comment':'good'}},{multi:true})
+2.定位操作符$，统一修改
+# 错误
+db.books.update({'comments.name':'yang'},{$set:{"comments.$.comment":'ok'}})
+# 使用elemMatch 正确
+db.books.update({comments:{$elemMatch:{'name':'wei','comment':'ok'}}},{$set:{"comments.$.comment":'ok'}})
+

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="jquery-1.11.3.js"></script>
+</head>
+<body>
+<div id="d1" style="display: inline">
+    <input name="i" type="text" placeholder="商品名称">
+    <input name="i" type="text" placeholder="单价">
+    <input name="i" type="text" placeholder="购买数量">
+</div>
+<div style="display: inline">
+    <button onclick="addTr()">加入到购物车</button>
+</div>
+<table id="gouwuche"></table>
+<script>
+    var d1 = getElementById('d1');
+    var allInputIdArr = d1.childNodes;
+    console.log(allInputIdArr);
+    function getElementById(id) {
+        return document.getElementById(id)
+    }
+    function addTr() {
+        var newRow = document.createElement('tr');
+        var aButton = document.createElement('button');
+        aButton.innerText = '删除';
+        aButton.onclick=function () {
+            
+        }
+        for(var i=0;i<allInputIdArr.length;i++) {
+            if(allInputIdArr[i].nodeType===1) {
+                var newTd = document.createElement('td');
+                newTd.innerText = allInputIdArr[i].value;
+                newRow.appendChild(newTd)
+            }
+            }
+        newRow.appendChild(aButton);
+        getElementById('gouwuche').append(newRow)
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+三大技术
+    html
+    css
+    javascript - js
+
+1.WEB概述
+C/S    Client / Server
+B/S    Browser(浏览器) / Server
+由浏览器 服务器 通信协议组成
+浏览器：代替用户向服务器发送请求(User Agent)
+服务器：接收用户的请求并给出响应
+通信协议：规范了请求(request)和响应(response)的数据是如何打包和传递的 - HTTP
+2.WEB服务器
+  1)功能
+    存储WEB上的内容信息
+    接受用户的请求并给响应
+    具备安全功能
+  2)产品
+    apache
+    tomcat
+    DJANGO
+  3)技术
+    Python Web
+    JSP
+    PHP
+    ASP.NET
+  4)WEB浏览器
+    功能
+      代替用户向服务器提交请求
+      作为HTML的解释器和内嵌脚本的执行步骤
+    产品
+      Microsoft IE
+      Mozilla Firefox
+      Google Chrome
+      Apple Safari
+      Opera
+    技术
+      HTML5(version 5)
+      CSS3
+      JavaScript - JS
+
+HTML
+Hyper Text Markup Language
+超     文本   标记    语言
+  Hyper Text：具备特殊功能的文本
+    普通文本a：普通字符a
+    超文本a：超链接
+  Markup：超文本的组成形式
+    在网页中描述功能的标记/标签/元素
+    超文本标记a：<a></a>
+  Language：语法(不区分大小写)
+    1)所有的标记使用时要使用<>括起来
+      双标记<a></a>
+      单标记<br/>
+    2)标记嵌套
+      在某对标记中有出现了其他标记
+      <a><b>...</b></a>
+      注意格式：
+        <a>
+          <b>...</b>
+        </a>
+    3)属性和值
+      在标记中，属性是用来修饰标记的显示效果的
+        属性必须要声明在开始标记中
+        属性和标记间要用空格隔开
+        属性值和属性之间用=连接，属性值尽量使用""或''引起来
+          <标记 属性='值'>...</标记>
+        一个元素允许有多个属性，并且排名不分先后，多个属性用空格分开
+    4)注释
+      <!-- 注释内容 -->
+      注释不能出现在<>
+      注释不能嵌套
+    5)HTML5的文档类型声明
+      <!DOCTYPE html>
+    6)特殊字符
+      &nbsp;    一个空格 (一个汉字是四个&nbsp;)
+      &lt;      <
+      &gt;      >
+      &copy;    ©
+      &yen;     ¥
+    7)文本样式标记
+      修改文本在网页中的表现样式
+        <i>斜体</i>
+        <u>下划线</u>
+        <s>删除线</s>
+        <b>加粗</b>
+        <sub>下标</sub>
+        <sup>上标</sup>
+    8)标题标记
+      以不同的文字大小以及加粗的方式进行文字显示
+        <h#></h#>
+        # 1->6 大->小
+    9)段落元素
+      突出显示一段文本，文本的上下都会偶一小段的垂直空白距离
+      <p>段落</p>
+      属性
+        align : 文本的水平对齐方式
+        取值
+          left      # 左对齐
+          center    # 居中
+          reght     # 右对齐
+    10)换行
+      <br/>或<br>
+    11)分区元素
+      <div></div>   块分区元素，在网页中实现布局的效果
+      <span></span> 行内元素分区，设置同一行文字的不同格式
+    12)行内元素与快级元素
+      块级元素：网页中独占一行的元素基本上都是块级元素
+      如：<h#>,<p>,<div>
+      注：所有的块级元素都有align属性，控制居中，所有的块级元素都能改尺寸
+      行内元素：多个元素可以在一行内显示
+      如：<i>,<b>,<s>,<u>,<sub>,<sup>,<span>
+    13)列表
+      1.列表的类型
+        <ol></ol>     Order list
+          列表的属性
+          type：指定列表前面表示的类型
+          取值：
+            1:按数字方式排列
+            A:按大写英文字符方式排列
+            a:安小写英文字符凡是排列
+            I:按大写罗马数字方式排列
+            i:安小写罗马数字方式排列
+        <ul></ul>     Unorder list
+          列表的属性
+          type：指定列表前面表示的类型
+          取值：
+            disc:默认值，实心的圆点
+            circle:空心的小圆点
+            square:实心的方块
+            none:不显示任何标示
+      2.列表项
+        <li></li>     List item
+      3.列表的嵌套
+        列表中允许再出现列表
+        被嵌套的列表只能出现在<li></li>中
+    14)URL
+      Uniform Resource Locator
+      统一资源定位器/定位符，用于标识网络中资源的位置
+        1.绝对路径：从固定位置处查找资源
+          想获取网络资源时，要使用绝对路径
+          协议http/https
+          主机/ip/域名
+          路径名
+          文件名
+        2.相对路径：
+          从当前位置处开始查找资源文件所经过的路径
+      注：url不要出现中文，url最好严格区分大小写
+    15)图像
+      <img>或<img/>
+      属性
+        src     指定要显示的图片url
+        with    宽度
+        height  高度
+        alt     当图片无法显示时，显示的东西
+        注：如果只设定width和height中的一个属性的时候，那么另一个属性值，另一个属性也会等比缩放
+    16)超链接
+      用户可以通过点击的操作来完成页面的跳转行为
+      <a>...</a>
+      属性
+        href    hyper reference表示的是要链接到的文件的地址
+        target  指定打开新网页的方式
+        取值：
+           _self    在自身标签页中打开新网页
+           _blank   在新标签页中打开新网页
+        title   鼠标放到超链接时显示的提示
+      锚点：是在网页的某个位置处做一个记号,方便通过超链接转跳到锚点位置
+        1.定义锚点
+          <a name="锚点名称></a>
+        2.跳转到锚点
+          <a href="#锚点名称">跳转到锚点</a>
+        3.跳到网页顶部
+          <a href="#">转跳到顶部</a>
+    17)表格
+      按照一定的结构进行数据显示的标记
+      表格是按照从上到下，从左到右的结构来显示数据的
+      表格是由表格，表行，单元格(列)组成的
+        <table>
+          <th>talbe head</th>
+          <th>table head</th>
+          <tr>
+            <td>table data</td>
+            <td>table data</td>
+          </tr>
+          <tr>
+            <td>table data</td>
+            <td>table data</td>
+          </tr>
+        </table>
+      table属性
+        border  指定边框的宽度，以px为单位的数字
+        width
+        height
+        align   设置表格的水平对齐方式
+        cellpadding     表格内边距，单元格边框与内容之间的距离
+        cellspacing     表格外边距，单元格与单元格之间的距离
+      tr属性
+        align   控制当前行的内容的水平对齐方式
+          取值：left / center / right
+        valign  控制当前行的呢通的垂直对其方式
+          取值：top / middle / bottom
+      td属性
+        width
+        height
+        align       td内容横向位置(默认为left)
+        valign      td内容纵向位置(默认center)
+        colspan     跨列/合并列
+        rowspan     跨行/合并行
+          注：跨行跨列，先将所有的td写出来，再去掉多余的
+    18)单元格的跨行与跨列
+      跨列：从指定单元格处位置开始，横向向右合并几个单元格，被合并掉的单元格应该被删除
+        <td colspan='n'>
+      跨行：从指定单元格处位置开始，纵向向下合并几个单元格，被合并掉的单元格应该被删除
+        <td rowspan='n'>
+    19)行分组
+      允许将若干行划分为一组，方便统一管理
+      thead,tfoot,tbody都有bgcolor属性，用来设置行分组的背景颜色
+      1.表头行分组
+        允许将表格最上方的若干行划分到一起
+        <thead>
+          <tr></tr>
+        </thead>
+      2.表尾行分组
+        语序将表格最下方的若干行划分到一起
+        <tfoot>
+          <tr></tr>
+        </tfoot>
+      3.表主体行分组
+        <tbody>
+          <tr></tr>
+        </tbody>
+    20)表单form
+      用于接收用户的数据，并且提交给服务器
+      表单的两个元素
+        1)form元素
+        <form></form>
+        属性：
+          1.action    指定提交给服务器的处理程序的地址
+          2.method    提交方式
+            get：默认值
+              特点：
+                会将提交数据显示在地址栏上
+                安全性低
+                又提交数据的大小限制 2KB
+            post：
+              特点：
+                隐式提交，看不到提交的数据
+                安全性高
+                没有数据提交的大小限制
+          3.enctype    指定表单数据进行编码的方式，即允许将什么样的数据提交给服务器
+            值：
+              application/x-www-form-urlencoded 默认值，允许将所有的文本提交给服务器
+              multipart/form-data 允许将文件提交给服务器
+              text/plain 只允许将普通文本提交给服务器，特殊字符不可以
+        2)表单控件 - 用于与用户进行交互的元素
+          1.input元素
+            文本框 <input type="text">
+            密码框 <input type="password">
+              属性：
+                name  定义控件的名称
+                value 值
+                maxlength 限制用户输入的最大字符是数
+                readonly  只读(没有值)
+                placeholder   占位符提示
+            单选按钮 <input type="radio">
+            复选框 <input type="checkbox">
+              属性：
+                name  除定义名称之外，还有分组的作用，一组的单选按钮和复选框，name属性必须一致(最终形成数组传给服务端)
+                value 提前定义，但用户选择的时候会将该控件value值提交给服务器
+                checked   设置预选中(没有值)
+            提交按钮 <input type="submit">
+            重置按钮 <input type="reset">
+            普通按钮 <input type="button">
+              属性：
+                value 按钮上的文本
+            隐藏域
+              想提交给服务器但不想给用户看得数据要放在隐藏域中
+              <input type="hidden">
+                属性：
+                  name   控件名称
+                  value  控件的值
+            文件选择框
+              <input type="file">
+                属性：
+                  name  控件的名称
+                注意：
+                  表单的method的属性值必须为post
+                  表单的enctype的值必须为multipart/form-data
+            label for属性
+              规定 label 与哪个表单元素绑定作用是：在点击label时会自动将焦点移动到绑定的元素上
+              <form>
+                  <label for="male">Male</label>
+                  <input type="radio" name="sex" id="male">
+                  <br/>
+                  <label for="female">Female</label>
+                  <input type="radio" name="sex" id="female">
+              </form>
+
+          2.其他元素
+            多行文本域 <textarea></textarea>
+              属性：
+                name 文本域的名称
+                cols 指定文本域的列数(即一行中能显示多个英文字符，中文减半)
+                rows 指定文本域的默认行数
+            下拉选择框
+            <select name="">
+              <option value="0">...</option>
+              <option value="1">...</option>
+              <option value="2">...</option>
+            </select>
+            注意：option的value就是select的value,当option没有value，option的innerText就是option的value
+
+

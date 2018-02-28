@@ -1,0 +1,327 @@
+通用视图
+django已经完成了很多视图函数
+  通用视图定义了一些类，这些类中包含了一些视图方法
+  django的一些模块也会定义一些方法当做views函数
+
+—————————————————————————————— 常用的通用视图 ——————————————————————————————
+>>>>>>>>>>>>>> TemplateView，作用：可以快速使用模板
+>>>>>>>>>>>>>> RedirectView，作用：可以快速使用url
+vi urls.py
+from django.conf.urls import url
+from django.views.generic import TemplateView ,RedirectView
+urlpatterns = [
+    url(r'^about/$',TemplateView.as_view(template_name = 'about.html')),        # TemplateView.as_view(template_name='xxx'）固定写法
+    url(r'^goto/$',RedirectView.as_view(url = 'http://www.baidu.com')),         # RedirectView.as_view(url = 'http://xxx.xxx'）固定写法
+]
+cat about.html
+<h1>通用试图　TemplateView 展示</h1>
+
+>>>>>>>>>>>>>> 网站小图标
+vi settings.py
+STATICFILSE_DIRS = (BASE_DIR,'static')
+vi BASE_DIR/name_of_project/urls.py
+urlpatterns = [
+    url(r'^favicon\.ico/$',RedirectView.as_view(url = '/static/favicon.ico'),name = 'favicon')
+    ]
+存在BASE_DIR/static/favicon.ico
+
+—————————————————————————————— 三种展示通用视图 ——————————————————————————————
+vi views.py
+from django.shortcuts import render
+from myapp.models import *
+from django.views.generic.list import ListView          # for 1.ListView
+from django.views.generic.detail import DetailView      # for 2.DetailView
+from django.views import View                           # for 3.View
+
+class AuthorListView(ListView):                                                         # 1.ListView
+    model = Author
+    template_name = 'list_view.html'
+    # 数据展示
+    def get_queryset(self):                 # 重写ListView中的get_queryset
+        author_list = Author.objects.all()
+        return author_list
+    # 提供更多的附加信息
+    def get_context_data(self,**kwargs):    # 重写ListView中的get_queryset
+        kwargs['new_list'] = ['hi','haha','nihao']
+        return super(AuthorListView,self).get_context_data(**kwargs)
+
+class AuthorDetailView(DetailView):                                                     # 2.DetailView
+    model = Author
+    template_name = 'list_view.html'
+    context_object_name = 'author_obj'
+    pk_url_kwarg = 'id'
+    # 数据展示
+    def get_object(self,queryset = None):   # 重写DetailView的get_object
+        obj = super(AuthorDetailView,self).get_object()
+        obj.email = 'Python@126.com'
+        return obj
+
+class MyView(View):                                                                      # 3.View
+    def get(self,request):                  # 重写View的get
+        return HttpResponse("get result")
+
+vi list_view.html
+<body>
+    # for ListView
+        {%for author in author_list%}
+        {{forloop.counter}}:{{author}}
+        {%endfor%}
+    # for DetailView
+        {%for new in new_list%}
+        {{new}}<br>
+        {%endfor%}
+    # for View
+        {{author_obj.name}}<br>
+        {{author_obj.age}}<br>
+        {{author_obj.email}}<br>
+</body>
+
+vi urls.py
+from myapp.views import *
+urlpatterns = [
+    url(r'^list-view/$',AuthorListView.as_view()),
+    url(r'^detail-view/(?P<id>[\d]+)/$',AuthorDetailView.as_view(),name = "author_detail"),
+    url(r'^my-view/$',MyView.as_view()),
+]
+
+
+———————————————————————— cookie session 前提START ————————————————————————
+vi urls.py
+urlpatterns += [
+    url(r'^login/$',login),
+    url(r'^index/$',index),
+    url(r'^logout/$',logout),
+]
+vi index.html
+<body>
+   <h1>欢迎登录：{{corrent_user}}</h1>
+   <a href="/logout/">注销</a>
+</body>
+———————————————————————— cookie session 前提END ————————————————————————
+—————————————————————————— cookie ——————————————————————————
+cookie：
+http协议是无状态的，所以前端浏览器使用
+问提：不安全，容易被获取
+
+vi view.py
+from django.contrib import auth
+user_info = {
+    'pangzi':{'pwd':'pang123'},
+    'shouzi':{'pwd':'shou123'},
+}
+def login(request):
+    if request.method == 'GET':
+        return render(request,'login.html')
+    if request.method == 'POST':
+        u = request.POST.get('username')
+        p = request.POST.get('password')
+        dic = user_info.get(u)
+        if not dic:
+           return render(request,'login.html')
+        if dic['pwd'] == p:                 # 验证密码
+            response = redirect('/index/')
+            response.set_cookie('user',u,max_age = 15,path='/')     # 验证通过后，给response 设置cookie
+            return response
+        else:
+            return render(request,'login.html')
+def index(request):
+    v = request.COOKIES.get('user')         # 获取request中的cookie user的值
+    if not v:                               # cookie中没有user表示没登录，转跳到登录页
+        return redirect('/login/')
+    return render(request,'index.html',{'corrent_user':v})   # 否则表示在已登录，转到主页
+def logout(request):
+    auth.logout(request)
+    return redirect('/login/')
+
+
+HttpResponse.set_cookie(key, value='', max_age=None, expires=None, path='/', domain=None, secure=None, httponly=False)
+key         名称
+value       是值
+expires     有效时间(s)
+httponly=False  Use httponly=True if you want to prevent client-side JavaScript from having access to the cookie
+
+—————————————————————————— session ——————————————————————————
+session：
+也是用来存存储访问信息，但是在后端存储
+session的技术需要依赖于cookie
+
+vi view.py
+from django.shortcuts import render,redirect
+from django.contrib.sessions.models import Session
+def login(request):
+    if request.method == 'GET':
+        return render(request,'login.html')
+    if request.method == 'POST':
+        u = request.POST.get('username')
+        p = request.POST.get('password')
+        dic = user_info.get(u)
+        if not dic:
+           return render(request,'login.html')
+        if dic['pwd'] == p:
+            # 与cookie不同，session在request中设置
+            # request和response是一一对应的，wsgi知道给哪个request返回哪个response
+            request.session['username'] = u         # 写入数据库中的django_session表
+            request.session['is_login'] = True
+            request.session.set_expiry(20)
+            return redirect('/index/')              # return的response中有cookie信息(request.session设置的)
+        else:
+            return render(request,'login.html')
+def index(request):
+    if request.session.get('is_login',None):
+        obj = Session.objects.all()         # 查看session在数据库中的内容
+        print(obj)
+        return render(request,'index.html',{'corrent_user':request.session['username']})
+    else:
+        return redirect('/login/')
+def logout(request):
+    request.session.clear()
+    return redirect('/login/')
+
+
+以下为用户管理：
+—————————————————————————————— 自定义内建表表结构 ——————————————————————————
+自定义mysql数据库中的用户表
+# auth_user                   ->loginapp_user
+# auth_user_groups            ->loginapp_user_groups
+# auth_user_user_permissions  ->loginapp_user_user_permissions
+1.创建loginapp 应用，并在settings中注册
+2.在settings中设置要使用的user模型
+AUTH_USER_MODEL = 'loginapp.User'
+3.在相应的应用的models中写User类，该类应该继承AbstractUser
+vi loginapp.models.py
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+class User(AbstractUser):                # 自定义用户表的表结构 继承自django.contrib.auth.models的AbstractUser
+    mobile = models.CharField(max_length = 11,verbose_name = '电话')
+    weixin = models.CharField(max_length = 20,blank=True,null=True,verbose_name = '微信')
+    avatar = models.ImageField(upload_to = 'avatar/%Y/%m',default = 'static/default.png',max_length = 500,blank = True,null = True)
+    class Meta:
+        verbose_name = 'User'
+        ordering = ['-id']
+    def __str__(self):
+        return self.username
+
+—————————————————————————————— 登录注册登出 ——————————————————————————
+vi loginapp/models.py
+class User(AbstractUser):
+    mobile = models.CharField(max_length = 11,verbose_name = '电话')
+    weixin = models.CharField(max_length = 20,blank=True,null=True,verbose_name = '微信')
+    avatar = models.ImageField(upload_to = 'avatar/%Y/%m',default = 'static/default.png',max_length = 500,blank = True,null = True)
+    class Meta:
+        verbose_name = 'User'
+        ordering = ['-id']
+        permissions = (
+            ('can_vote','you can vote'),
+        )
+vi loginapp/urls.py
+from django.conf.urls import include, url
+from loginapp.views import *
+urlpatterns = [
+    url(r'login/$',login,name = 'login'),
+    url(r'register/$',reg,name = 'register'),
+    url(r'logout/$',logout,name = 'logout'),
+    url(r'login_test',login_test,name= 'login_test'),
+]
+vi loginapp/forms.py
+from django import forms
+class RegForm(forms.Form):
+    username = forms.CharField(widget = forms.TextInput(attrs={'placeholder':'Username','required':'required'}),max_length = 50)
+    password = forms.CharField(widget = forms.PasswordInput(attrs={'placeholder':'Password','required':'required'}),max_length = 20)
+    email = forms.EmailField(widget = forms.TextInput(attrs={'placeholder':'Email','required':'required'}),max_length=50)
+    tel = forms.CharField(widget = forms.TextInput(attrs={'placeholder':'telephone','required':'required'}),max_length = 13)
+    avatar = forms.ImageField(required = False)
+
+vi loginapp/views.py
+from django.shortcuts import render,redirect
+from loginapp.forms import *
+from django.contrib.auth.hashers import make_password
+from loginapp.models import *
+from django.http import HttpResponse
+from django.contrib import auth  # 提供了大多数和登录相关的验证
+# Create your views here.
+def login(request):
+    errors = []
+    if request.method == 'POST':
+        username = request.POST.get('username','')
+        password = request.POST.get('password','')
+        if not username:
+            errors.append('Enter a username')
+        if not password:
+            errors.append('Enter a password')
+        if not errors:
+            # 验证是否登录状态
+            user = auth.authenticate(username = username,password = password)  #登录验证
+            if user is not None and user.is_active:
+                if request.user.is_authenticated():
+                    return HttpResponse("You hava already login")
+                auth.login(request,user)     # 同时会写入session
+                # return redirect(request.POST.get('next','/'))    # for 访问需要授权的页面，跳到登录页，在跳回
+                return redirect(request.META.get('HTTP_REFERER','/'))
+            else:
+                return HttpResponse("user or password invalid")
+    return render(request,'user_login.html',{'errors':errors})
+def reg(request):
+    try:
+        if  request.method == 'POST':
+            reg_form = RegForm(request.POST)
+            if reg_form.is_valid():
+                cd = reg_form.cleaned_data
+                dic = {'username':cd['username'],'password':make_password(cd['password']),'email':cd['email'],'mobile':cd['tel'],'avatar':cd['avatar']}
+                User.objects.create(**dic)
+                return redirect('/loginapp/login/')
+            else:
+                return HttpResponse('register failed')
+        else:
+            reg_form = RegForm()
+    except Exception as e:
+        print(e)
+    return render(request,'reg.html',locals())
+def logout(request):
+    auth.logout(request)
+    return redirect('/loginapp/login/')
+vi reg.html
+<form action="/loginapp/register/" method="post">
+    {%csrf_token%}
+    <ul>
+        <h2>新用户</h2>
+        <li>{{reg_form.username}}</li>
+        <li>{{reg_form.password}}</li>
+        <li>{{reg_form.email}}   </li>
+        <li>{{reg_form.tel}}     </li>
+        <li>{{reg_form.avatar}}  </li>
+    </ul>
+    <p><input type="submit" value='注册'></p>
+</form>
+
+vi user_login.html
+<h1>用户登录</h1>
+    <ul>
+        {%for error in errors%}
+         <li>{{error}}</li>
+        {%endfor%}
+    </ul>
+    <form action="/loginapp/login/" method="post">
+    {%csrf_token%}
+        <h2>登录</h2>
+        <input type="hidden" name="next" value="{{request.GET.next}}">
+        <p>username:<input type="text" name = 'username' value="{{username}}"></p>
+        <p>password:<input type="text" name = 'password' value="{{password}}"></p>
+        <input type="submit" value="登录">
+    </form>
+——————————————————————————————— 访问需要授权的页面，跳到登录页，在跳回 ——————————————————————————
+如果不加参数和设置的话，那么默认如果没有登录状态则跳转到/accounts/login
+如果想自定义转跳地址的话，有两种方式
+1.在setting中设置LOGIN_URL
+LOGIN_URL = '/loginapp/login/'
+2.给装饰器提供参数，@login_required(login_url = '/loginapp/login/')参数覆盖LOGIN_URL
+vi views.py
+from django.contrib.auth.decorators import login_required,permission_required
+@login_required(login_url = '/loginapp/login/')
+def login_test(request):
+    return HttpResponse("Thank you for login")
+# @permission_required('add_User',login_url = '/loginapp/login/')           # add_User权限继承自
+@permission_required('loginapp.can_vote',login_url = '/loginapp/login/')
+def permission_test(request):
+    user  = User.objects.get(name = 'zhang')
+    user.user_permission.add('can_vote')
+    return HttpResponse("Your are VIP")

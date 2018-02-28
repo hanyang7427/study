@@ -1,0 +1,101 @@
+Socket类型:
+  流套接字(sock_stream)       tcp
+  数据报套接字(sock_dgram)     udp
+  原始套接字(sock_raw)        底层的通信例如icmp
+
+
+TCP三次握手
+客户端 -->  SYN     +seq=J              --> 服务器
+客户端 <--  SYN,ACK +ack=J+1 seq=K      <-- 服务器
+客户端 -->  ACK     +seq=J+1 ack=K+1    --> 服务器
+
+TCP四次挥手
+------
+客户端 -->  FIN      +seq=J             --> 服务器
+客户端 <--  ACK      +ack=J+1 seq=K     <-- 服务器
+客户端 <--  FIN,ACK  +ack=J+1 seq=W     <-- 服务器
+客户端 -->  ACK      +seq=J+1 ack=W+1   --> 服务器
+
+长连接
+短连接
+
+UDP
+
+TCP UDP区别
+1.基于连接和无连接
+2.tcp要求系统资源多，udp少
+3.UDP程序结构简单
+4.流模式(TCP)与数据报模式
+5.TCP保证数据正确性，UDP可能丢包
+6.TCP保证数据顺序，UDP不保证
+
++---------------------------------+
+|socket编程                        |
+|服务端的流程          客户端的流程   |
+|socket()            socket()     |
+|bind()              connect()三握 |
+|listen()                         |
+|accept()阻塞                      |
++---------------------------------+
+|recv()      <--     send()       |
+|send()      -->     recv()       |
+|close()     <--     close()四挥   |
++---------------------------------|
+******服务端实现*******
+server_tcpSocket = socket(AF_INET,SOCK_STREAM) # 固定写法
+# server_tcpSocket.setblocking(false)          # 设置阻塞接受数据是否超时
+# server_tcpSocket.settimeout(seconds)         # 设置阻塞接受数据超时时间
+server_tcpSocket.bind(('localhost',8080))      # bind的参数是tuple
+server_tcpSocket.listen(5)                     # 此处才可以用netstat看到监听
+while True:                      # 进入死循环，不断提供服务
+    client,addr = server_tcpSocket.accept()    # 阻塞等待连接，accept得到的结果(一个元组)绑定到变量(socket object,客户端地址)
+    print("Got a connection form %s" % str(addr))
+    timestr = time.ctime(time.time())+"\r\n"
+    client.recv(1024)                       # 阻塞等待接受数据
+    client.send(timestr.encode('ascii'))    # 向客户端发送信息(先encode)
+    client.close()                          # 关闭客户端连接
+server_tcpSocket.close()
+***注：在tcp socket中，listen之后，如果有人来连接，此时监听socket将改变，通过select对它的监控，可以知道是否有人来建立连接
+       由于listen执行后已经可以接受连接了，假如在listen之后accept之前发起了连接，再遇到accept时会先接收这些连接(一次accept返回一个连接)
+       由于listen之后可以接收连接了，且客户可以发送数据，accept->connection->connection.recv() 此过程中的recv()会一次取出所有数据
+       server_tcpSocket.setblocking(False)后，accept将不阻塞，没有资源将抛出异常Resource temporarily unavailable
+       client.setblocking(False)后，recv将不阻塞,没有资源将抛出异常Resource temporarily unavailable
+***注：
+      tcp 有两个socket，一个是监听socket(用来接受tcp连接)，一个是服务socket(用来收发数据)
+
+# 注：client对象是socket对象代表a new socket representing the connection
+*******客户端实现*******
+client_tcpSocket = socket(AF_INET,SOCK_STREAM)
+client_tcpSocket.connect(('loalhost',8080))     # 链接服务端，三握
+tm = client_tcpSocket.revc(1024)                # 接收数据
+client_tcpSocket.close()                        # 关闭socket
+print("The time is %s" % tm.decode('ascii'))
+
++------------------------------+
+|UDP客户端            UDP服务端  |
+|                    socket()  |
+|                    bind()    |
+|socket()                      |
+|sendto()     -->    recvfrom()|
+|close()             close()   |
++------------------------------+
+*******服务端实现********
+bufferLen = 1024
+server_udpSocket = socket(AF_INET,SOCK_DGRAM)
+server_udpSocket.bind(('localhost',8080))         # 此处就能在netstat看到端口监听了(开放了)
+recvData = server_udpSocket.recvfrom(bufferLen)   # 阻塞
+print(recvData)
+server_udpSocket.close()
+*******客户端实现*******
+client_udpSocket = socket(AF_INET,SOCK_DGRAM)
+client_udpSocket.sendto('hello world'.encode('utf-8') , ('localhost',8080))
+client_udpSocket.close()
+
+注：
+  相同号码的tcp和udp可以同时监听
+  需要注意编码
+  socket需要close，tcp的服务端要close两个socket
+
+
+作业：
+  服务端的两个socket close方法 ，服务端接受到特定值，来关闭连接
