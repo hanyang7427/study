@@ -1,0 +1,10 @@
+GET /u/1842709022 HTTP/1.1
+Host: weibo.com
+Connection: close
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q=0.9
+Cookie: SINAGLOBAL=6517556261169.977.1517648888802; wvr=6; ALF=1551749637; SCF=ArVzvJjFToLTFHtojcfXg4A3UJ8GaWgTxmzIxFRZQg_npX6gfsKzWMFsZx0amyJP1fjZqjMXRmZJ_UfggPDjntw.; SUHB=0id63ROk50ompI; UOR=www.51testing.com,widget.weibo.com,www.admin10000.com; YF-Page-G0=aabeaa17d9557111c805fb15a9959531; SUB=_2AkMtw7kEf8NxqwJRmPoVy2PgaY1_wgHEieKbn0jfJRMxHRl-yT9kqlwBtRB6BkOX6h5o9Cjh8ozmwaeFlzaomdaeUHvQ; SUBP=0033WrSXqPxfM72-Ws9jqgMF55529P9D9W5fuZyBoB9qQpmbxOBYvzFh; _s_tentry=passport.weibo.com; Apache=5428924485518.857.1520383539946; ULV=1520383539951:13:7:5:5428924485518.857.1520383539946:1520213653636
+
