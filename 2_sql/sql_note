@@ -5,7 +5,8 @@
 4.聚合函数不能直接在where里用
 5.select database() 查看当前使用的数据库
 6.show create table customers
-4.select * from table1 t1 left join table2 t2 on t1.id = t2.id
+7.select * from table1 t1 left join table2 t2 on t1.id = t2.id
+8.select count(user_id),dat from (select distinct user_id,convert(create_time,char(10)) as dat from operation_record where name != '被赞' order by convert(create_time,char(10))) as t group by dat
 
 
 
