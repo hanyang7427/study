@@ -13,33 +13,38 @@
     例：
       def deco(fn):
           print("装饰器被调用")
-          print(fn)
+          fn()
           return lambda: print("hello world")
       @deco
       def myfunc():
           print("函数mufunc被调用")
-      myfunc()      # myfunc() 已经变成print("hello world")
+      myfunc()
+      # myfunc()会输出装饰器和原myfunc的所有print:
+      装饰器被调用
+      函数mufunc被调用
+      hello world
     注：
-      @deco在定义函数上一行使用，表示
-      1、把下边定义的函数传入deco并执行deco()
-      2、下边定义的函数绑定到deco的返回的对象(一般是下边定义的函数，也可以是值)
-      3、下边定义的函数已经改变为deco返回的对象
+      
+      1、将@deco下定义的函数fn当做参数传入deco
+      2、deco函数里做了一些事情，可能还调用了fn，然后return一个函数
+      3、fn变成了deco return的函数
       @deco             \     /          def fn():
       def fn():          } = {               ...
           ...           /     \          fn = deco(fn)
     被装饰函数带有参数的装饰器：
       例：
         def msg_service(fn):
-            def savemoney2(name,x):
-                print("欢迎，"+name+"，请取号")
-                fn(name,x)
-                print(name+"存入"+x+"元钱")
+            def savemoney2(name, x):
+                print("欢迎 " + name + " 请取号")
+                fn(name, x)
+                print("再见 " + name)
             return savemoney2
+
         @msg_service
-        def savemoney(name,x):
-            print("name", "存钱",x,"元")
-        savemoney("小张",200)
-        savemoney("小赵",500)
+        def savemoney(name, x):
+            print(name + "存钱" + str(x) + "元")
+        
+        savemoney("小张", 200)
 函数的文档字符串：
     语法：
       def 函数名(参数列表):
