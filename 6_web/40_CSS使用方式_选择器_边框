@@ -128,6 +128,15 @@ CSS  Cascading Style Sheets - 样式表
           其他伪类
             :before	 p:before	在每个<p>元素之前插入内容
             :after	 p:after	在每个<p>元素之后插入内容
+       8)伪元素选择器
+         同样是添加到选择器后面去选择某个元素的某个部分
+           /* 所有含有"href"属性并且值以"http"开始的元素，
+           将会在其内容后增加一个箭头（去表明它是外部链接）
+           */
+
+           [href^=http]::after {
+           content: '⤴';
+           }
     6.尺寸与边框
       单位
         %     百分比
