@@ -28,9 +28,9 @@
       1、将@deco下定义的函数fn当做参数传入deco
       2、deco函数里做了一些事情，可能还调用了fn，然后return一个函数
       3、fn变成了deco return的函数
-      @deco             \     /          def fn():
-      def fn():          } = {               ...
-          ...           /     \          fn = deco(fn)
+      @deco                            def fn():
+      def fn():           =                ...
+          ...                          fn = deco(fn)
     被装饰函数带有参数的装饰器：
       例：
         def msg_service(fn):
