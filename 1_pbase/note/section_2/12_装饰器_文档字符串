@@ -41,6 +41,7 @@
             return savemoney2
 
         @msg_service
+        # 这里被装饰的函数带有参数
         def savemoney(name, x):
             print(name + "存钱" + str(x) + "元")
         
